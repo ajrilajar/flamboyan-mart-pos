@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kasir Flamboyan Mart</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+        .animate-slide-up { animation: slideUp 0.3s ease-out; }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+    <header class="bg-white p-4 flex justify-between items-center shadow-sm sticky top-0 z-50">
+        <div class="flex items-center gap-2">
+            <div class="w-8 h-8 bg-emerald-600 rounded-full flex items-center justify-center text-white font-bold tracking-tighter">F</div>
+            <h1 id="header-title" class="font-bold text-lg text-emerald-900 tracking-tight">Flamboyan Mart</h1>
+        </div>
+        <i class="fa-regular fa-bell text-xl text-gray-500"></i>
+    </header>
+
+    <main id="main-content" class="pb-24 p-4"></main>
+
+    <nav class="fixed bottom-0 left-0 right-0 bg-white border-t flex justify-around p-3 shadow-lg z-50">
+        <button onclick="switchTab('beranda')" class="nav-btn flex flex-col items-center gap-1 text-emerald-600" id="btn-beranda">
+            <i class="fa-solid fa-house text-xl"></i><span class="text-[10px] font-medium">Beranda</span>
+        </button>
+        <button onclick="switchTab('transaksi')" class="nav-btn flex flex-col items-center gap-1 text-gray-400" id="btn-transaksi">
+            <i class="fa-solid fa-receipt text-xl"></i><span class="text-[10px] font-medium">Transaksi</span>
+        </button>
+        <button onclick="switchTab('pihak')" class="nav-btn flex flex-col items-center gap-1 text-gray-400" id="btn-pihak">
+            <i class="fa-solid fa-address-book text-xl"></i><span class="text-[10px] font-medium">Pihak</span>
+        </button>
+        <button onclick="switchTab('inventori')" class="nav-btn flex flex-col items-center gap-1 text-gray-400" id="btn-inventori">
+            <i class="fa-solid fa-boxes-stacked text-xl"></i><span class="text-[10px] font-medium">Inventori</span>
+        </button>
+        <button onclick="switchTab('lainnya')" class="nav-btn flex flex-col items-center gap-1 text-gray-400" id="btn-lainnya">
+            <i class="fa-solid fa-bars text-xl"></i><span class="text-[10px] font-medium">Lainnya</span>
+        </button>
+    </nav>
+
+<script type="module">
+        import { renderInventori } from "./modul-inventori.js";
+        import { renderPihak } from "./modul-pihak.js";
+
+        // Mendaftarkan fungsi ke window agar bisa dipanggil oleh onclick di HTML
+        window.switchTab = (tabName) => {
+            const content = document.getElementById('main-content');
+            const headerTitle = document.getElementById('header-title');
+            
+            // Perbaikan warna ikon
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('text-emerald-600');
+                btn.classList.add('text-gray-400');
+            });
+            const activeBtn = document.getElementById(`btn-${tabName}`);
+            if(activeBtn) {
+                activeBtn.classList.remove('text-gray-400');
+                activeBtn.classList.add('text-emerald-600');
+            }
+
+            if (tabName === 'beranda') {
+                headerTitle.innerText = "Flamboyan Mart";
+                content.innerHTML = `<div class="p-10 text-center text-gray-400">Dashboard Utama</div>`;
+            } else if (tabName === 'inventori') {
+                headerTitle.innerText = "Inventori";
+                renderInventori();
+            } else if (tabName === 'pihak') {
+                headerTitle.innerText = "Pihak";
+                renderPihak();
+            } else {
+                headerTitle.innerText = tabName.charAt(0).toUpperCase() + tabName.slice(1);
+                content.innerHTML = `<div class="p-10 text-center text-gray-400">Sedang dalam pengembangan.</div>`;
+            }
+        };
+
+        // Muat halaman pertama
+        window.onload = () => window.switchTab('beranda');
+    </script>
+</body>
+</html>
