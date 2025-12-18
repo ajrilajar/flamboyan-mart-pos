@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Kasir Flamboyan Mart</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -10,9 +10,20 @@
         @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
         .animate-slide-up { animation: slideUp 0.3s ease-out; }
         .no-scrollbar::-webkit-scrollbar { display: none; }
-        /* Transisi halus antar view */
         .animate-fadeIn { animation: fadeIn 0.3s ease-in-out; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        /* Poin 1: Propercase */
+        .proper-case { text-transform: capitalize; }
+
+        /* Poin 5: Drag to Close & Anti-Refresh */
+        body.modal-open { overflow: hidden; overscroll-behavior-y: contain; }
+        #modal-panel { 
+            touch-action: pan-y; 
+            transition: transform 0.1s ease-out;
+            display: flex;
+            flex-direction: column;
+        }
     </style>
 </head>
 <body class="bg-gray-50 text-gray-800 font-sans">
@@ -38,32 +49,26 @@
     </nav>
 
     <script type="module">
-        // PASTIKAN NAMA FILE DAN FUNGSI SESUAI DENGAN MODUL TERBARU
         import { renderInventaris } from "./modul-inventaris.js";
         import { renderPihak } from "./modul-pihak.js";
         import { renderTransaksi } from "./modul-transaksi.js";
 
         window.switchTab = (tabName) => {
             const content = document.getElementById('main-content');
-            
-            // Reset Warna Navigasi
             document.querySelectorAll('.nav-btn').forEach(btn => {
                 btn.classList.remove('text-emerald-600');
                 btn.classList.add('text-gray-400');
             });
-            
-            // Aktifkan Warna Navigasi Pilihan
             const activeBtn = document.getElementById(`btn-${tabName}`);
             if(activeBtn) {
                 activeBtn.classList.remove('text-gray-400');
                 activeBtn.classList.add('text-emerald-600');
             }
 
-            // Routing
             if (tabName === 'beranda') {
                 renderBeranda();
             } else if (tabName === 'inventori') {
-                renderInventaris(); // Memanggil fungsi baru
+                renderInventaris();
             } else if (tabName === 'pihak') {
                 renderPihak();
             } else if (tabName === 'transaksi') {
@@ -82,7 +87,6 @@
                     </div>
                     <i class="fa-regular fa-bell text-xl text-gray-500"></i>
                 </header>
-
                 <div class="px-4 animate-fadeIn">
                     <div class="grid grid-cols-2 gap-3 mb-6">
                         <div class="bg-emerald-50 p-4 rounded-xl border border-emerald-100">
@@ -97,8 +101,6 @@
                 </div>
             `;
         }
-
-        // Jalankan beranda saat pertama kali load
         window.onload = () => window.switchTab('beranda');
     </script>
 </body>
