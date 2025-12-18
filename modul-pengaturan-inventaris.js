@@ -11,13 +11,15 @@ export async function hapusKategori(id) {
     if (confirm('Hapus kategori ini?')) await remove(ref(db, `settings/categories/${id}`));
 }
 
-export async function simpanSatuan(nama, pendek, id = null) {
+export async function simpanSatuanDasar(nama, pendek, id = null) {
     if (!nama || !pendek) return;
+    // Limit 5 karakter untuk satuan pendek
+    const pndk = pendek.substring(0, 5).toUpperCase();
     const path = id ? `settings/units/${id}` : `settings/units`;
-    const data = { nama, pendek: pendek.toUpperCase() };
+    const data = { nama, pendek: pndk };
     id ? await update(ref(db, path), data) : await push(ref(db, path), data);
 }
 
-export async function hapusSatuan(id) {
-    if (confirm('Hapus satuan ini?')) await remove(ref(db, `settings/units/${id}`));
+export async function hapusSatuanDasar(id) {
+    if (confirm('Hapus satuan dasar ini?')) await remove(ref(db, `settings/units/${id}`));
 }
