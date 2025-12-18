@@ -43,6 +43,7 @@
 <script type="module">
         import { renderInventori } from "./modul-inventori.js";
         import { renderPihak } from "./modul-pihak.js";
+        import { renderTransaksi } from "./modul-transaksi.js";
 
         // Mendaftarkan fungsi ke window agar bisa dipanggil oleh onclick di HTML
         window.switchTab = (tabName) => {
@@ -69,6 +70,9 @@
             } else if (tabName === 'pihak') {
                 headerTitle.innerText = "Pihak";
                 renderPihak();
+            } else if (tabName === 'transaksi') { // Tambah ini
+                headerTitle.innerText = "POS Cepat";
+                renderTransaksi();
             } else {
                 headerTitle.innerText = tabName.charAt(0).toUpperCase() + tabName.slice(1);
                 content.innerHTML = `<div class="p-10 text-center text-gray-400">Sedang dalam pengembangan.</div>`;
