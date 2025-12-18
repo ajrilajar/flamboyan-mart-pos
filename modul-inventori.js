@@ -3,19 +3,13 @@ import { db } from "./firebase-config.js";
 
 let databaseBarang = {};
 let currentEditId = null;
-
-// Daftar Kategori sesuai gambar INVENTORI 5.jpeg
-let daftarKategori = [
-    "Palen", "Sabun Cuci", "Obat Nyamuk", "Shampoo", 
-    "Sabun", "Obat", "Sembako", "Snack", 
-    "Sampo Saset", "Minuman"
-];
+let daftarKategori = ["Palen", "Sabun Cuci", "Obat Nyamuk", "Shampoo", "Sabun", "Obat", "Sembako", "Snack", "Sampo Saset", "Minuman"];
 
 export function renderInventori() {
     const content = document.getElementById('main-content');
     content.innerHTML = `
         <div id="view-list" class="flex flex-col gap-4 max-w-7xl mx-auto p-4 animate-fadeIn">
-            <div class="flex justify-between items-center mb-2 px-1">
+            <div class="flex justify-between items-center mb-2">
                 <h2 class="text-2xl font-bold text-gray-800">Inventaris</h2>
                 <button class="p-2 text-emerald-600"><i class="fa-solid fa-gear text-xl"></i></button>
             </div>
@@ -24,61 +18,49 @@ export function renderInventori() {
                     <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
                     <input type="text" id="cariBarang" oninput="window.filterInventori()" placeholder="Cari Barang..." class="w-full pl-11 pr-4 py-3 bg-white border border-gray-200 rounded-xl outline-none shadow-sm focus:border-emerald-500">
                 </div>
-                <button class="px-4 py-3 bg-white border border-gray-200 rounded-xl text-gray-600 shadow-sm"><i class="fa-solid fa-sliders"></i></button>
             </div>
             <div id="list-barang" class="grid grid-cols-1 sm:grid-cols-2 gap-4 pb-32"></div>
-            <button onclick="window.bukaHalamanEdit(null)" class="fixed bottom-24 right-6 bg-emerald-500 text-white px-6 py-4 rounded-full shadow-2xl flex items-center gap-3 font-bold z-40 active:scale-95 border-4 border-white">
+            <button onclick="window.bukaHalamanEdit(null)" class="fixed bottom-24 right-6 bg-emerald-500 text-white px-6 py-4 rounded-full shadow-2xl flex items-center gap-3 font-bold z-40 border-4 border-white active:scale-95 transition-all">
                 <i class="fa-solid fa-box-open"></i> Tambah Barang
             </button>
         </div>
 
-        <div id="view-detail" class="hidden fixed inset-0 bg-white z-[60] overflow-y-auto">
+        <div id="view-detail" class="hidden fixed inset-0 bg-white z-[60] overflow-y-auto pb-32">
             <div class="flex items-center justify-between p-4 border-b sticky top-0 bg-white z-10">
                 <button onclick="window.switchView('view-list')" class="p-2 text-gray-600"><i class="fa-solid fa-arrow-left text-xl"></i></button>
                 <div class="flex gap-2">
-                    <button id="btnKeEdit" class="p-2 text-gray-500"><i class="fa-solid fa-pen text-lg"></i></button>
-                    <button id="btnHapus" class="p-2 text-rose-400"><i class="fa-solid fa-trash-can text-lg"></i></button>
+                    <button id="btnKeEdit" class="p-2 text-gray-500"><i class="fa-solid fa-pen"></i></button>
+                    <button id="btnHapus" class="p-2 text-rose-400"><i class="fa-solid fa-trash-can"></i></button>
                 </div>
             </div>
-            <div id="detail-render" class="p-5 pb-32"></div>
-            <div class="fixed bottom-0 left-0 right-0 p-4 bg-white border-t flex gap-3 z-20">
-                <button class="flex-1 bg-emerald-500 text-white py-4 rounded-full font-bold shadow-lg flex items-center justify-center gap-2"><i class="fa-solid fa-box-open"></i> Tambah Stok</button>
-                <button class="flex-1 bg-rose-500 text-white py-4 rounded-full font-bold shadow-lg flex items-center justify-center gap-2"><i class="fa-solid fa-box-archive"></i> Kurangi Stok</button>
-            </div>
+            <div id="detail-render" class="p-5"></div>
         </div>
 
-        <div id="view-edit" class="hidden fixed inset-0 bg-gray-50 z-[70] overflow-y-auto">
+        <div id="view-edit" class="hidden fixed inset-0 bg-gray-50 z-[70] overflow-y-auto pb-24">
             <div class="flex items-center p-4 bg-white border-b sticky top-0 z-10">
                 <button onclick="window.batalEdit()" class="p-2 text-gray-600 mr-4"><i class="fa-solid fa-arrow-left text-xl"></i></button>
-                <h3 id="edit-title" class="font-bold text-lg text-gray-800">Ubah Barang</h3>
+                <h3 id="edit-title" class="font-bold text-lg text-gray-800 tracking-tight">Ubah Barang</h3>
             </div>
-            <div class="p-4 space-y-4">
+            <div class="p-4 space-y-4 max-w-3xl mx-auto">
                 <div class="bg-white p-4 rounded-xl border border-gray-100 shadow-sm">
                     <label class="text-[10px] font-bold text-gray-400 uppercase">Nama Barang</label>
                     <input type="text" id="edit-nama" class="w-full mt-1 font-bold text-gray-700 outline-none border-b border-gray-50 focus:border-emerald-500 py-1">
                 </div>
-                
                 <div onclick="window.bukaPickerKategori()" class="bg-white p-4 rounded-xl border border-gray-100 shadow-sm flex justify-between items-center cursor-pointer active:bg-gray-50">
                     <div>
                         <label class="text-[10px] font-bold text-gray-400 uppercase">Kategori</label>
-                        <input type="text" id="edit-kategori" class="w-full mt-1 font-bold text-gray-700 outline-none pointer-events-none" placeholder="Pilih Kategori" readonly>
+                        <input type="text" id="edit-kategori" class="w-full mt-1 font-bold text-gray-700 outline-none pointer-events-none" readonly>
                     </div>
                     <i class="fa-solid fa-chevron-right text-gray-300"></i>
                 </div>
-
                 <div class="flex border-b">
-                    <button class="flex-1 py-3 text-emerald-600 font-bold border-b-2 border-emerald-500 text-sm uppercase">Detail Stok</button>
-                    <button class="flex-1 py-3 text-gray-400 font-bold text-sm uppercase">Detail Tambahan</button>
+                    <button class="flex-1 py-3 text-emerald-600 font-bold border-b-2 border-emerald-500 text-sm">Detail Stok</button>
+                    <button class="flex-1 py-3 text-gray-400 font-bold text-sm">Detail Tambahan</button>
                 </div>
-
-                <div class="bg-white p-4 rounded-xl border border-gray-100 shadow-sm flex justify-between items-center">
-                    <div class="flex-1">
-                        <label class="text-[10px] font-bold text-gray-400 uppercase">Satuan</label>
-                        <input type="text" id="edit-satuan" class="w-full mt-1 font-bold text-gray-700 outline-none uppercase" placeholder="PCS">
-                    </div>
-                    <i class="fa-solid fa-chevron-right text-gray-300"></i>
+                <div class="bg-white p-4 rounded-xl border border-gray-100 shadow-sm">
+                    <label class="text-[10px] font-bold text-gray-400 uppercase">Satuan</label>
+                    <input type="text" id="edit-satuan" class="w-full mt-1 font-bold text-gray-700 outline-none uppercase">
                 </div>
-
                 <div class="grid grid-cols-2 gap-4">
                     <div class="bg-white p-4 rounded-xl border border-gray-100 shadow-sm">
                         <label class="text-[10px] font-bold text-gray-400 uppercase">Harga Jual</label>
@@ -89,41 +71,53 @@ export function renderInventori() {
                         <div class="flex items-center gap-1 mt-1 font-bold text-gray-700"><span>Rp</span><input type="number" id="edit-beli" class="w-full outline-none"></div>
                     </div>
                 </div>
-
-                <div class="bg-white p-4 rounded-xl border border-gray-100 shadow-sm flex justify-between items-center">
-                    <div class="flex items-center gap-3"><i class="fa-solid fa-bell text-emerald-500"></i><span class="font-bold text-gray-700">Peringatan Stok Rendah</span></div>
-                    <div class="w-10 h-5 bg-emerald-500 rounded-full relative p-1"><div class="w-3 h-3 bg-white rounded-full ml-auto"></div></div>
-                </div>
-
-                <div class="bg-white p-4 rounded-xl border border-gray-100 shadow-sm">
-                    <label class="text-[10px] font-bold text-gray-400 uppercase">Jumlah Stok Rendah</label>
-                    <input type="number" id="edit-limit" class="w-full mt-1 font-bold text-gray-700 outline-none" placeholder="10">
-                </div>
             </div>
-            <div class="p-4 sticky bottom-0 bg-gray-50 border-t">
-                <button onclick="window.simpanPerubahan()" class="w-full bg-emerald-500 text-white py-4 rounded-xl font-bold text-lg shadow-lg active:scale-95 transition-all uppercase">Perbarui Barang</button>
+            <div class="p-4 fixed bottom-0 left-0 right-0 bg-gray-50 border-t flex justify-center">
+                <button onclick="window.simpanPerubahan()" class="w-full max-w-3xl bg-emerald-500 text-white py-4 rounded-xl font-bold text-lg shadow-lg active:scale-95 transition-all">Perbarui Barang</button>
             </div>
         </div>
 
-        <div id="picker-kategori" class="hidden fixed inset-0 bg-black/50 z-[100] flex items-end justify-center">
-            <div class="bg-white w-full max-w-md rounded-t-3xl animate-slide-up flex flex-col max-h-[85vh]">
-                <div class="w-12 h-1.5 bg-gray-200 rounded-full mx-auto my-3"></div>
+        <div id="picker-kategori" class="hidden fixed inset-0 bg-black/50 z-[100] flex items-end justify-center overflow-hidden">
+            <div class="bg-white w-full sm:w-1/2 lg:w-1/2 rounded-t-3xl animate-slide-up flex flex-col h-full sm:h-3/4 lg:h-3/4">
+                <div class="w-12 h-1.5 bg-gray-200 rounded-full mx-auto my-3 flex-shrink-0"></div>
                 
-                <div class="px-6 pb-4">
-                    <h3 class="font-bold text-xl text-gray-800 mb-4">Pilih Kategori Barang</h3>
-                    <div class="relative mb-4">
-                        <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
-                        <input type="text" id="cariKategori" oninput="window.filterKategoriList()" placeholder="Cari Kategori" class="w-full pl-11 pr-4 py-3 bg-gray-50 border border-gray-100 rounded-xl outline-none focus:border-emerald-500">
+                <div id="view-pilih-kategori" class="flex flex-col h-full overflow-hidden">
+                    <div class="px-6 pb-4 flex-shrink-0">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="font-bold text-xl text-gray-800 tracking-tight">Pilih Kategori Barang</h3>
+                            <button onclick="window.tutupPickerKategori()" class="text-gray-400"><i class="fa-solid fa-xmark text-xl"></i></button>
+                        </div>
+                        <div class="relative">
+                            <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                            <input type="text" id="cariKategori" oninput="window.renderKategoriList()" placeholder="Cari Kategori" class="w-full pl-11 pr-4 py-3 bg-gray-50 border border-gray-100 rounded-xl outline-none focus:border-emerald-500 transition-all">
+                        </div>
+                    </div>
+
+                    <div id="list-kategori-picker" class="flex-1 overflow-y-auto px-6 space-y-1"></div>
+
+                    <div class="p-6 border-t flex-shrink-0">
+                        <button onclick="window.switchKategoriView('view-buat-kategori')" class="w-full bg-emerald-500 text-white py-4 rounded-xl font-bold flex items-center justify-center gap-2 active:scale-95">
+                            <i class="fa-solid fa-plus"></i> Tambah Kategori Baru
+                        </button>
                     </div>
                 </div>
 
-                <div id="list-kategori-picker" class="overflow-y-auto px-6 space-y-1 flex-1">
+                <div id="view-buat-kategori" class="hidden flex flex-col h-full p-6">
+                    <div class="flex items-center mb-8">
+                        <button onclick="window.switchKategoriView('view-pilih-kategori')" class="mr-4 text-gray-600"><i class="fa-solid fa-arrow-left text-xl"></i></button>
+                        <h3 class="font-bold text-xl text-gray-800">Buat Kategori Barang</h3>
+                    </div>
+                    
+                    <div class="flex-1">
+                        <div class="relative group">
+                            <label class="absolute -top-2.5 left-4 px-1 bg-white text-[11px] font-bold text-emerald-500">Nama Kategori</label>
+                            <input type="text" id="input-kategori-baru" class="w-full p-4 border-2 border-emerald-500 rounded-xl outline-none text-gray-700 font-medium" placeholder="Masukkan nama kategori">
+                        </div>
                     </div>
 
-                <div class="p-6 border-t">
-                    <button onclick="window.tambahKategoriBaru()" class="w-full bg-emerald-500 text-white py-4 rounded-xl font-bold flex items-center justify-center gap-2 active:scale-95 transition-all">
-                        <i class="fa-solid fa-plus"></i> Tambah Kategori Baru
-                    </button>
+                    <div class="pt-6">
+                        <button id="btn-simpan-kategori" onclick="window.prosesTambahKategori()" class="w-full bg-gray-100 text-gray-400 py-4 rounded-xl font-bold transition-all">Simpan</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -133,17 +127,36 @@ export function renderInventori() {
         databaseBarang = snap.val() || {};
         window.filterInventori();
     });
+
+    // Event listener untuk tombol simpan kategori (Gambar 6)
+    setTimeout(() => {
+        const input = document.getElementById('input-kategori-baru');
+        const btn = document.getElementById('btn-simpan-kategori');
+        if(input && btn) {
+            input.oninput = () => {
+                if(input.value.trim().length > 0) {
+                    btn.classList.replace('bg-gray-100', 'bg-emerald-500');
+                    btn.classList.replace('text-gray-400', 'text-white');
+                } else {
+                    btn.classList.replace('bg-emerald-500', 'bg-gray-100');
+                    btn.classList.replace('text-white', 'text-gray-400');
+                }
+            };
+        }
+    }, 500);
 }
 
-// Logika Navigasi
-window.switchView = (viewId) => {
-    ['view-list', 'view-detail', 'view-edit'].forEach(id => document.getElementById(id).classList.add('hidden'));
+// LOGIKA PICKER KATEGORI (Gambar 5 & 6)
+window.switchKategoriView = (viewId) => {
+    document.getElementById('view-pilih-kategori').classList.add('hidden');
+    document.getElementById('view-buat-kategori').classList.add('hidden');
     document.getElementById(viewId).classList.remove('hidden');
+    if(viewId === 'view-buat-kategori') document.getElementById('input-kategori-baru').focus();
 };
 
-// Picker Kategori Logic
 window.bukaPickerKategori = () => {
     document.getElementById('picker-kategori').classList.remove('hidden');
+    window.switchKategoriView('view-pilih-kategori');
     window.renderKategoriList();
 };
 
@@ -153,7 +166,6 @@ window.renderKategoriList = () => {
     const list = document.getElementById('list-kategori-picker');
     const cari = document.getElementById('cariKategori').value.toLowerCase();
     const kategoriSekarang = document.getElementById('edit-kategori').value;
-    
     list.innerHTML = "";
     daftarKategori.forEach(kat => {
         if (kat.toLowerCase().includes(cari)) {
@@ -161,31 +173,35 @@ window.renderKategoriList = () => {
             list.innerHTML += `
                 <div onclick="window.pilihKategori('${kat}')" class="flex justify-between items-center py-4 border-b border-gray-50 cursor-pointer active:bg-gray-50">
                     <span class="text-gray-700 font-medium ${isSelected ? 'text-emerald-600 font-bold' : ''}">${kat}</span>
-                    <div class="w-5 h-5 rounded-full border-2 ${isSelected ? 'border-emerald-500 bg-emerald-500 ring-2 ring-emerald-100' : 'border-gray-200'} flex items-center justify-center">
+                    <div class="w-5 h-5 rounded-full border-2 ${isSelected ? 'border-emerald-500 bg-emerald-500' : 'border-gray-200'} flex items-center justify-center">
                         ${isSelected ? '<i class="fa-solid fa-check text-[10px] text-white"></i>' : ''}
                     </div>
-                </div>
-            `;
+                </div>`;
         }
     });
 };
-
-window.filterKategoriList = () => window.renderKategoriList();
 
 window.pilihKategori = (kat) => {
     document.getElementById('edit-kategori').value = kat;
     window.tutupPickerKategori();
 };
 
-window.tambahKategoriBaru = () => {
-    const nama = prompt("Masukkan Nama Kategori Baru:");
-    if (nama && !daftarKategori.includes(nama)) {
-        daftarKategori.unshift(nama);
+window.prosesTambahKategori = () => {
+    const input = document.getElementById('input-kategori-baru');
+    const nama = input.value.trim();
+    if (nama) {
+        if(!daftarKategori.includes(nama)) daftarKategori.unshift(nama);
         window.pilihKategori(nama);
+        input.value = "";
     }
 };
 
-// Sisanya (List, Detail, Simpan) tetap konsisten dengan Patch sebelumnya
+// --- LOGIKA UTAMA (Sama Seperti Sebelumnya) ---
+window.switchView = (viewId) => {
+    ['view-list', 'view-detail', 'view-edit'].forEach(id => document.getElementById(id).classList.add('hidden'));
+    document.getElementById(viewId).classList.remove('hidden');
+};
+
 window.filterInventori = () => {
     const keyword = document.getElementById('cariBarang')?.value.toLowerCase() || "";
     const listDiv = document.getElementById('list-barang');
@@ -201,14 +217,14 @@ window.filterInventori = () => {
                             <div class="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center font-bold text-gray-400 text-lg">${inisial}</div>
                             <div>
                                 <h4 class="font-bold text-gray-800">${item.nama}</h4>
-                                <span class="text-[10px] bg-gray-100 text-gray-400 px-2 py-0.5 rounded font-bold uppercase">${item.kategori || 'Umum'}</span>
+                                <span class="text-[10px] bg-gray-100 text-gray-400 px-2 py-0.5 rounded font-bold uppercase tracking-tight">${item.kategori || 'Umum'}</span>
                             </div>
                         </div>
                     </div>
-                    <div class="grid grid-cols-3 gap-2 border-t pt-3">
-                        <div><p class="text-[9px] text-gray-400 font-bold uppercase">Jual</p><p class="text-xs font-bold">Rp ${Number(item.harga_jual).toLocaleString()}</p></div>
-                        <div><p class="text-[9px] text-gray-400 font-bold uppercase">Beli</p><p class="text-xs font-bold">Rp ${Number(item.harga_beli).toLocaleString()}</p></div>
-                        <div class="text-right"><p class="text-[9px] text-gray-400 font-bold uppercase">Stok</p><p class="text-xs font-bold ${item.stok <= (item.limit || 0) ? 'text-rose-500' : 'text-gray-700'}">${item.stok} ${item.satuan}</p></div>
+                    <div class="grid grid-cols-3 gap-2 border-t pt-3 mt-1">
+                        <div><p class="text-[9px] text-gray-400 font-bold uppercase tracking-tighter">Jual</p><p class="text-xs font-bold text-gray-700">Rp ${Number(item.harga_jual).toLocaleString()}</p></div>
+                        <div><p class="text-[9px] text-gray-400 font-bold uppercase tracking-tighter">Beli</p><p class="text-xs font-bold text-gray-700">Rp ${Number(item.harga_beli).toLocaleString()}</p></div>
+                        <div class="text-right"><p class="text-[9px] text-gray-400 font-bold uppercase tracking-tighter">Stok</p><p class="text-xs font-bold ${item.stok <= 0 ? 'text-rose-500' : 'text-gray-700'}">${item.stok} ${item.satuan}</p></div>
                     </div>
                 </div>`;
         }
@@ -231,7 +247,7 @@ window.bukaDetail = (id) => {
             <div><p class="text-[10px] text-gray-400 font-bold uppercase">Beli</p><p class="font-bold">Rp ${item.harga_beli.toLocaleString()}</p></div>
             <div><p class="text-[10px] text-gray-400 font-bold uppercase">Nilai Stok</p><p class="font-bold text-emerald-600">Rp ${(item.stok * item.harga_beli).toLocaleString()}</p></div>
         </div>
-        <div class="flex border-b mb-6"><button class="flex-1 py-3 border-b-2 border-emerald-500 text-emerald-600 font-bold text-sm">Aktivitas Item</button><button class="flex-1 py-3 text-gray-400 font-bold text-sm">Detail Barang</button></div>
+        <div class="flex border-b mb-6"><button class="flex-1 py-3 border-b-2 border-emerald-500 text-emerald-600 font-bold text-sm uppercase">Aktivitas Item</button><button class="flex-1 py-3 text-gray-400 font-bold text-sm uppercase">Detail Barang</button></div>
     `;
     document.getElementById('btnKeEdit').onclick = () => window.bukaHalamanEdit(id);
     document.getElementById('btnHapus').onclick = () => { if(confirm('Hapus?')) remove(ref(db, 'products/'+id)).then(() => window.switchView('view-list')); };
