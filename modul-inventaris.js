@@ -138,7 +138,95 @@ window.tutupPickerKategori = () => {
     overlay.classList.add('hidden');
 };
 
-// ... (Sisa logika CRUD, renderKategoriList, dsb tetap sama) ...
+// LOGIKA KATEGORI DINAMIS
+window.bukaPickerKategori = () => { 
+    document.getElementById('picker-kategori').classList.remove('hidden'); 
+    window.switchKategoriView('view-pilih-kategori'); 
+    window.renderKategoriList(); 
+};
+window.tutupPickerKategori = () => document.getElementById('picker-kategori').classList.add('hidden');
+
+window.switchKategoriView = (viewId) => { 
+    document.getElementById('view-pilih-kategori').classList.add('hidden'); 
+    document.getElementById('view-buat-kategori').classList.add('hidden'); 
+    document.getElementById(viewId).classList.remove('hidden'); 
+};
+
+window.renderKategoriList = () => {
+    const list = document.getElementById('list-kategori-picker');
+    const cari = document.getElementById('cariKategori').value.toLowerCase();
+    const kategoriSekarang = document.getElementById('edit-kategori').value;
+    list.innerHTML = "";
+    daftarKategori.forEach(kat => {
+        if (kat.toLowerCase().includes(cari)) {
+            const isSelected = kat === kategoriSekarang;
+            list.innerHTML += `
+                <div onclick="window.pilihKategori('${kat}')" class="flex justify-between items-center py-4 border-b border-gray-50 cursor-pointer active:bg-gray-50">
+                    <span class="text-gray-700 font-medium ${isSelected ? 'text-emerald-600 font-bold' : ''}">${kat}</span>
+                    <div class="w-5 h-5 rounded-full border-2 ${isSelected ? 'border-emerald-500 bg-emerald-500' : 'border-gray-200'} flex items-center justify-center transition-all">
+                        ${isSelected ? '<i class="fa-solid fa-check text-[10px] text-white"></i>' : ''}
+                    </div>
+                </div>`;
+        }
+    });
+};
+
+window.pilihKategori = (kat) => { 
+    document.getElementById('edit-kategori').value = kat; 
+    window.tutupPickerKategori(); 
+};
+
+window.cekInputKategoriBaru = (val) => {
+    const btn = document.getElementById('btn-simpan-kategori');
+    if (val.trim().length > 0) {
+        btn.classList.replace('bg-gray-100', 'bg-emerald-500');
+        btn.classList.replace('text-gray-400', 'text-white');
+        btn.disabled = false;
+    } else {
+        btn.classList.replace('bg-emerald-500', 'bg-gray-100');
+        btn.classList.replace('text-white', 'text-gray-400');
+        btn.disabled = true;
+    }
+};
+
+window.prosesTambahKategori = () => {
+    const input = document.getElementById('input-kategori-baru');
+    const nama = input.value.trim();
+    if (nama && !daftarKategori.includes(nama)) {
+        daftarKategori.unshift(nama);
+        window.pilihKategori(nama);
+        input.value = "";
+    }
+};
+
+// SISA LOGIKA (Navigasi & Firebase) Tetap Sama...
+window.switchView = (viewId) => { ['view-list', 'view-detail', 'view-edit'].forEach(id => {const el = document.getElementById(id); if(el) el.classList.add('hidden');}); document.getElementById(viewId).classList.remove('hidden'); window.scrollTo(0,0);};
+window.filterInventaris = () => {
+    const keyword = document.getElementById('cariBarang')?.value.toLowerCase() || "";
+    const listDiv = document.getElementById('list-barang');
+    if (!listDiv) return;
+    listDiv.innerHTML = "";
+    Object.entries(databaseBarang).forEach(([id, item]) => {
+        if (item.nama.toLowerCase().includes(keyword)) {
+            const inisial = item.nama.substring(0, 2).toUpperCase();
+            listDiv.innerHTML += `
+                <div onclick="window.bukaDetailBarang('${id}')" class="bg-white p-3 rounded-xl border border-gray-100 shadow-sm active:bg-gray-50 flex flex-col gap-2 transition-all cursor-pointer">
+                    <div class="flex gap-3 items-center">
+                        <div class="w-11 h-11 bg-gray-100 text-gray-400 rounded-lg flex items-center justify-center font-bold text-sm flex-shrink-0">${inisial}</div>
+                        <div class="flex-1 overflow-hidden">
+                            <h4 class="font-bold text-gray-800 text-sm truncate">${item.nama}</h4>
+                            <span class="text-[9px] bg-gray-50 text-gray-400 px-1.5 py-0.5 rounded font-bold uppercase border border-gray-100">${item.kategori || 'Umum'}</span>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-3 gap-1 border-t pt-2 mt-1 text-center">
+                        <div><p class="text-[8px] text-gray-400 uppercase">Jual</p><p class="text-[10px] font-bold text-gray-700">Rp ${Number(item.harga_jual || 0).toLocaleString()}</p></div>
+                        <div><p class="text-[8px] text-gray-400 uppercase">Beli</p><p class="text-[10px] font-bold text-gray-700">Rp ${Number(item.harga_beli || 0).toLocaleString()}</p></div>
+                        <div class="text-right"><p class="text-[8px] text-gray-400 uppercase">Stok</p><p class="text-[10px] font-black text-emerald-700">${item.stok || 0} ${item.satuan || 'PCS'}</p></div>
+                    </div>
+                </div>`;
+        }
+    });
+};
 
 window.bukaDetailBarang = (id) => {
     const item = databaseBarang[id];
@@ -200,3 +288,39 @@ window.bukaDetailBarang = (id) => {
         }
     };
 };
+
+window.bukaHalamanEdit = (id) => {
+    currentEditId = id; 
+    window.switchView('view-edit');
+    if (id) {
+        const item = databaseBarang[id];
+        document.getElementById('edit-nama').value = item.nama || "";
+        document.getElementById('edit-kategori').value = item.kategori || "";
+        document.getElementById('edit-satuan').value = item.satuan || "PCS";
+        document.getElementById('edit-jual').value = item.harga_jual || 0;
+        document.getElementById('edit-beli').value = item.harga_beli || 0;
+        document.getElementById('edit-stok').value = item.stok || 0;
+    } else {
+        ['edit-nama', 'edit-kategori', 'edit-jual', 'edit-beli', 'edit-stok'].forEach(el => {
+            const f = document.getElementById(el); if(f) f.value = el.includes('nama') ? "" : 0;
+        });
+        document.getElementById('edit-satuan').value = "PCS";
+    }
+};
+
+window.simpanPerubahanBarang = async () => {
+    const data = {
+        nama: document.getElementById('edit-nama').value,
+        kategori: document.getElementById('edit-kategori').value,
+        satuan: document.getElementById('edit-satuan').value.toUpperCase(),
+        harga_jual: Number(document.getElementById('edit-jual').value),
+        harga_beli: Number(document.getElementById('edit-beli').value),
+        stok: Number(document.getElementById('edit-stok').value),
+        updatedAt: Date.now()
+    };
+    if (currentEditId) { await update(ref(db, `products/${currentEditId}`), data); }
+    else { await set(push(ref(db, 'products')), data); }
+    window.switchView('view-list');
+};
+
+window.batalEdit = () => currentEditId ? window.switchView('view-detail') : window.switchView('view-list');
