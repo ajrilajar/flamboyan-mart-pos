@@ -1,41 +1,6 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kasir Flamboyan Mart</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <style>
-        @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
-        .animate-slide-up { animation: slideUp 0.3s ease-out; }
-        .no-scrollbar::-webkit-scrollbar { display: none; }
-    </style>
-</head>
-<body class="bg-gray-50 text-gray-800 font-sans">
-
-    <main id="main-content" class="pb-28"></main>
-
-    <nav class="fixed bottom-0 left-0 right-0 bg-white border-t flex justify-around p-3 shadow-lg z-50">
-        <button onclick="switchTab('beranda')" class="nav-btn flex flex-col items-center gap-1 text-emerald-600" id="btn-beranda">
-            <i class="fa-solid fa-house text-xl"></i><span class="text-[10px] font-medium">Beranda</span>
-        </button>
-        <button onclick="switchTab('transaksi')" class="nav-btn flex flex-col items-center gap-1 text-gray-400" id="btn-transaksi">
-            <i class="fa-solid fa-receipt text-xl"></i><span class="text-[10px] font-medium">Transaksi</span>
-        </button>
-        <button onclick="switchTab('pihak')" class="nav-btn flex flex-col items-center gap-1 text-gray-400" id="btn-pihak">
-            <i class="fa-solid fa-address-book text-xl"></i><span class="text-[10px] font-medium">Pihak</span>
-        </button>
-        <button onclick="switchTab('inventori')" class="nav-btn flex flex-col items-center gap-1 text-gray-400" id="btn-inventori">
-            <i class="fa-solid fa-boxes-stacked text-xl"></i><span class="text-[10px] font-medium">Inventori</span>
-        </button>
-        <button onclick="switchTab('lainnya')" class="nav-btn flex flex-col items-center gap-1 text-gray-400" id="btn-lainnya">
-            <i class="fa-solid fa-bars text-xl"></i><span class="text-[10px] font-medium">Lainnya</span>
-        </button>
-    </nav>
-
-    <script type="module">
-        import { renderInventori } from "./modul-inventori.js";
+<script type="module">
+        // 1. Pastikan IMPORT menggunakan nama fungsi yang baru
+        import { renderInventaris } from "./modul-inventaris.js"; 
         import { renderPihak } from "./modul-pihak.js";
         import { renderTransaksi } from "./modul-transaksi.js";
 
@@ -43,13 +8,22 @@
             const content = document.getElementById('main-content');
             
             // UI Update Button Color
-            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.replace('text-emerald-600', 'text-gray-400'));
-            document.getElementById(`btn-${tabName}`).classList.replace('text-gray-400', 'text-emerald-600');
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('text-emerald-600');
+                btn.classList.add('text-gray-400');
+            });
+            
+            const activeBtn = document.getElementById(`btn-${tabName}`);
+            if(activeBtn) {
+                activeBtn.classList.remove('text-gray-400');
+                activeBtn.classList.add('text-emerald-600');
+            }
 
             if (tabName === 'beranda') {
                 renderBeranda();
-            } else if (tabName === 'inventori') {
-                renderInventori();
+            } else if (tabName === 'inventori') { // ID tombol tetap 'inventori' di HTML
+                // 2. Panggil fungsi yang sudah di-standardisasi
+                renderInventaris(); 
             } else if (tabName === 'pihak') {
                 renderPihak();
             } else if (tabName === 'transaksi') {
@@ -64,11 +38,10 @@
                 <header class="bg-white p-4 flex justify-between items-center shadow-sm mb-4">
                     <div class="flex items-center gap-2">
                         <div class="w-8 h-8 bg-emerald-600 rounded-full flex items-center justify-center text-white font-bold">F</div>
-                        <h1 class="font-bold text-lg text-emerald-900">Flamboyan Mart</h1>
+                        <h1 class="font-bold text-lg text-emerald-900 tracking-tight">Flamboyan Mart</h1>
                     </div>
                     <i class="fa-regular fa-bell text-xl text-gray-500"></i>
                 </header>
-
                 <div class="px-4">
                     <div class="grid grid-cols-2 gap-3 mb-6">
                         <div class="bg-emerald-50 p-4 rounded-xl border border-emerald-100">
@@ -84,7 +57,7 @@
             `;
         }
 
-        window.onload = () => switchTab('beranda');
+        window.onload = () => window.switchTab('beranda');
     </script>
 </body>
 </html>
