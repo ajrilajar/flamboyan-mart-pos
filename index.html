@@ -1,29 +1,69 @@
-<script type="module">
-        // 1. Pastikan IMPORT menggunakan nama fungsi yang baru
-        import { renderInventaris } from "./modul-inventaris.js"; 
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kasir Flamboyan Mart</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+        .animate-slide-up { animation: slideUp 0.3s ease-out; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        /* Transisi halus antar view */
+        .animate-fadeIn { animation: fadeIn 0.3s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 font-sans">
+
+    <main id="main-content" class="pb-28"></main>
+
+    <nav class="fixed bottom-0 left-0 right-0 bg-white border-t flex justify-around p-3 shadow-lg z-50">
+        <button onclick="switchTab('beranda')" class="nav-btn flex flex-col items-center gap-1 text-emerald-600" id="btn-beranda">
+            <i class="fa-solid fa-house text-xl"></i><span class="text-[10px] font-medium">Beranda</span>
+        </button>
+        <button onclick="switchTab('transaksi')" class="nav-btn flex flex-col items-center gap-1 text-gray-400" id="btn-transaksi">
+            <i class="fa-solid fa-receipt text-xl"></i><span class="text-[10px] font-medium">Transaksi</span>
+        </button>
+        <button onclick="switchTab('pihak')" class="nav-btn flex flex-col items-center gap-1 text-gray-400" id="btn-pihak">
+            <i class="fa-solid fa-address-book text-xl"></i><span class="text-[10px] font-medium">Pihak</span>
+        </button>
+        <button onclick="switchTab('inventori')" class="nav-btn flex flex-col items-center gap-1 text-gray-400" id="btn-inventori">
+            <i class="fa-solid fa-boxes-stacked text-xl"></i><span class="text-[10px] font-medium">Inventaris</span>
+        </button>
+        <button onclick="switchTab('lainnya')" class="nav-btn flex flex-col items-center gap-1 text-gray-400" id="btn-lainnya">
+            <i class="fa-solid fa-bars text-xl"></i><span class="text-[10px] font-medium">Lainnya</span>
+        </button>
+    </nav>
+
+    <script type="module">
+        // PASTIKAN NAMA FILE DAN FUNGSI SESUAI DENGAN MODUL TERBARU
+        import { renderInventaris } from "./modul-inventaris.js";
         import { renderPihak } from "./modul-pihak.js";
         import { renderTransaksi } from "./modul-transaksi.js";
 
         window.switchTab = (tabName) => {
             const content = document.getElementById('main-content');
             
-            // UI Update Button Color
+            // Reset Warna Navigasi
             document.querySelectorAll('.nav-btn').forEach(btn => {
                 btn.classList.remove('text-emerald-600');
                 btn.classList.add('text-gray-400');
             });
             
+            // Aktifkan Warna Navigasi Pilihan
             const activeBtn = document.getElementById(`btn-${tabName}`);
             if(activeBtn) {
                 activeBtn.classList.remove('text-gray-400');
                 activeBtn.classList.add('text-emerald-600');
             }
 
+            // Routing
             if (tabName === 'beranda') {
                 renderBeranda();
-            } else if (tabName === 'inventori') { // ID tombol tetap 'inventori' di HTML
-                // 2. Panggil fungsi yang sudah di-standardisasi
-                renderInventaris(); 
+            } else if (tabName === 'inventori') {
+                renderInventaris(); // Memanggil fungsi baru
             } else if (tabName === 'pihak') {
                 renderPihak();
             } else if (tabName === 'transaksi') {
@@ -35,14 +75,15 @@
 
         function renderBeranda() {
             document.getElementById('main-content').innerHTML = `
-                <header class="bg-white p-4 flex justify-between items-center shadow-sm mb-4">
+                <header class="bg-white p-4 flex justify-between items-center shadow-sm mb-4 animate-fadeIn">
                     <div class="flex items-center gap-2">
                         <div class="w-8 h-8 bg-emerald-600 rounded-full flex items-center justify-center text-white font-bold">F</div>
                         <h1 class="font-bold text-lg text-emerald-900 tracking-tight">Flamboyan Mart</h1>
                     </div>
                     <i class="fa-regular fa-bell text-xl text-gray-500"></i>
                 </header>
-                <div class="px-4">
+
+                <div class="px-4 animate-fadeIn">
                     <div class="grid grid-cols-2 gap-3 mb-6">
                         <div class="bg-emerald-50 p-4 rounded-xl border border-emerald-100">
                             <p class="text-emerald-700 font-bold text-lg">Rp 0</p>
@@ -57,6 +98,7 @@
             `;
         }
 
+        // Jalankan beranda saat pertama kali load
         window.onload = () => window.switchTab('beranda');
     </script>
 </body>
