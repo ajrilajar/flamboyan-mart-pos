@@ -7,40 +7,47 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
+        /* ================================================================
+           BASE ANIMATIONS
+           ================================================================ */
         @keyframes slideUp { 
             from { transform: translateY(100%); } 
             to { transform: translateY(0); } 
         }
+        @keyframes fadeIn { 
+            from { opacity: 0; } 
+            to { opacity: 1; } 
+        }
+        
         .animate-slide-up { 
             animation: slideUp 0.3s ease-out; 
         }
         .animate-fadeIn { 
             animation: fadeIn 0.3s ease-in-out; 
         }
-        @keyframes fadeIn { 
-            from { opacity: 0; } 
-            to { opacity: 1; } 
-        }
 
+        /* ================================================================
+           UTILITY CLASSES
+           ================================================================ */
         .proper-case { 
             text-transform: capitalize; 
         }
         .no-scrollbar::-webkit-scrollbar { 
             display: none; 
         }
-
         body.modal-open { 
             overflow: hidden; 
             touch-action: none; 
         }
 
-        /* PERBAIKAN BACKDROP */
+        /* ================================================================
+           MODAL BACKDROP & ANIMATIONS
+           ================================================================ */
         .fixed.inset-0.bg-black\/60 {
             background-color: rgba(0, 0, 0, 0.6) !important;
             backdrop-filter: blur(2px);
         }
 
-        /* PERBAIKAN ANIMASI */
         @keyframes slideUp {
             from { transform: translateY(100%); opacity: 0; }
             to { transform: translateY(0); opacity: 1; }
@@ -50,6 +57,9 @@
             animation: slideUp 0.25s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
+        /* ================================================================
+           FORM CONTROLS
+           ================================================================ */
         .std-input {
             height: 3.5rem;
             display: flex;
@@ -75,88 +85,135 @@
         }
 
         /* ================================================================
-           MOBILE KEYBOARD AWARE STYLES untuk Kode Lama
+           UNIFORM TAB NAVIGATION STYLES - SEMUA TOMBOL SEPERTI TAB NAV
            ================================================================ */
-        .mobile-keyboard-aware {
-            /* Desktop: normal positioning */
-            position: relative;
+        
+        /* SEMUA TOMBOL AKSI SEPERTI TAB NAV - TIDAK NAIK SAAT KEYBOARD */
+        .action-button-container {
+            /* SAMA SEPERTI NAVIGATION TAB */
+            position: relative !important;
+            bottom: auto !important;
+            left: auto !important;
+            right: auto !important;
+            z-index: auto !important;
+            background: transparent !important;
+            box-shadow: none !important;
+            transition: none !important;
         }
 
-        /* Mobile styles */
+        /* TOMBOL DI DALAM FORM - STICKY BOTTOM TAPI DI DALAM CONTAINER */
+        .form-actions-container {
+            position: sticky;
+            bottom: 0;
+            background: white;
+            border-top: 1px solid #e5e7eb;
+            z-index: 20;
+            padding: 1rem;
+            margin-top: auto;
+        }
+
+        /* ================================================================
+           NAVIGATION BAR - BASE STYLE (UNTUK SEMUA TOMBOL)
+           ================================================================ */
+        nav.fixed.bottom-0 {
+            z-index: 50;
+            transition: none;
+        }
+
+        .nav-btn {
+            /* STYLE UNTUK SEMUA TOMBOL (TAB NAV & ACTION BUTTONS) */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.25rem;
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+            transition: all 0.2s;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+        }
+
+        .nav-btn:active {
+            transform: scale(0.95);
+        }
+
+        .nav-btn i {
+            font-size: 1.25rem;
+        }
+
+        .nav-btn span {
+            font-size: 0.625rem;
+            font-weight: 500;
+        }
+
+        /* ================================================================
+           MOBILE OPTIMIZATION (TANPA KEYBOARD HANDLING)
+           ================================================================ */
         @media (max-width: 767px) {
-            .mobile-keyboard-aware {
-                position: fixed !important;
-                bottom: 1rem !important;
-                left: 1rem !important;
-                right: 1rem !important;
-                z-index: 1000 !important;
-                transition: bottom 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
-                background: white !important;
-                padding: 1rem !important;
-                border-radius: 1rem !important;
-                box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.15) !important;
+            /* Form containers dengan padding untuk tombol sticky */
+            #view-edit .flex-1,
+            #view-multi-satuan .flex-1 {
+                padding-bottom: 5rem !important;
             }
             
-            /* Form containers agar tidak tertutup tombol */
-            #view-edit .flex-1,
-            #view-multi-satuan .flex-1,
-            #view-picker .flex-1 {
-                padding-bottom: 6rem !important;
+            /* Picker modal full height */
+            #view-picker {
+                padding-bottom: 4rem !important;
+            }
+            
+            /* Touch-friendly buttons */
+            .btn-touch {
+                min-height: 44px;
+                min-width: 44px;
             }
         }
 
-        /* Desktop reset */
+        /* ================================================================
+           DESKTOP OPTIMIZATION
+           ================================================================ */
         @media (min-width: 768px) {
-            .mobile-keyboard-aware {
-                position: relative !important;
-                bottom: auto !important;
-                left: auto !important;
-                right: auto !important;
-                z-index: auto !important;
-                background: transparent !important;
-                padding: 0 !important;
-                box-shadow: none !important;
-                border-radius: 0 !important;
+            .form-actions-container {
+                position: relative;
+                border-top: none;
+                padding-top: 1.5rem;
+                margin-top: 2rem;
             }
             
             #view-edit .flex-1,
-            #view-multi-satuan .flex-1,
-            #view-picker .flex-1 {
+            #view-multi-satuan .flex-1 {
                 padding-bottom: 0 !important;
             }
         }
 
-        /* Navigation tetap di bawah - TIDAK ikut keyboard handler */
-        nav.fixed.bottom-0 {
-            z-index: 50 !important;
-            transition: none !important;
+        /* ================================================================
+           SCROLL CONTAINERS
+           ================================================================ */
+        .scroll-container {
+            flex: 1;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
         }
 
-        /* Safe area untuk iPhone notch */
+        /* ================================================================
+           SAFE AREA SUPPORT
+           ================================================================ */
         @supports (padding: max(0px)) {
-            .mobile-keyboard-aware {
-                padding-bottom: max(1rem, env(safe-area-inset-bottom)) !important;
+            nav.fixed.bottom-0 {
+                padding-bottom: max(0.5rem, env(safe-area-inset-bottom));
             }
-        }
-
-        /* Sticky headers dalam scroll containers */
-        .sticky.top-0 {
-            position: sticky;
-            top: 0;
-            z-index: 10;
-        }
-
-        .sticky.bottom-0 {
-            position: sticky;
-            bottom: 0;
-            z-index: 20;
+            
+            .form-actions-container {
+                padding-bottom: max(1rem, env(safe-area-inset-bottom));
+            }
         }
     </style>
 </head>
 <body class="bg-gray-50 text-gray-800 font-sans">
-    <main id="main-content" class="pb-28"></main>
+    <!-- MAIN CONTENT AREA -->
+    <main id="main-content" class="pb-28 scroll-container"></main>
 
-    <!-- Navigation Bar (TETAP DI BAWAH, TIDAK NAIK SAAT KEYBOARD) -->
+    <!-- BOTTOM NAVIGATION (FIXED POSITION - SEPERTI SEMUA TOMBOL LAIN) -->
     <nav class="fixed bottom-0 left-0 right-0 bg-white border-t flex justify-around p-3 shadow-lg z-50">
         <button onclick="switchTab('beranda')" class="nav-btn flex flex-col items-center gap-1 text-emerald-600" id="btn-beranda">
             <i class="fa-solid fa-house text-xl"></i>
@@ -186,7 +243,7 @@
         window.switchTab = (tabName) => {
             const content = document.getElementById('main-content');
             
-            // Update active tab styling
+            // Update active tab styling (SAMA SEPERTI TOMBOL LAIN)
             document.querySelectorAll('.nav-btn').forEach(btn => {
                 btn.classList.remove('text-emerald-600');
                 btn.classList.add('text-gray-400');
@@ -204,28 +261,50 @@
             } else if (tabName === 'inventori') { 
                 renderInventaris(); 
             } else { 
-                content.innerHTML = `<div class="p-10 text-center text-gray-400 uppercase text-xs">Modul ${tabName} segera hadir.</div>`; 
+                content.innerHTML = `
+                    <div class="flex flex-col h-full">
+                        <div class="flex-1 p-10 text-center text-gray-400 uppercase text-xs flex items-center justify-center">
+                            Modul ${tabName} segera hadir.
+                        </div>
+                        <!-- TOMBOL AKSI DI BAWAH (SEPERTI TAB NAV) -->
+                        <div class="form-actions-container">
+                            <button class="w-full bg-gray-100 text-gray-600 py-3.5 rounded-xl font-bold uppercase text-sm">
+                                Aksi ${tabName}
+                            </button>
+                        </div>
+                    </div>
+                `; 
             }
         };
 
         function renderBeranda() {
             document.getElementById('main-content').innerHTML = `
-                <header class="bg-white p-4 flex justify-between items-center shadow-sm mb-4">
-                    <div class="flex items-center gap-2">
-                        <div class="w-8 h-8 bg-emerald-600 rounded-full flex items-center justify-center text-white font-bold">F</div>
-                        <h1 class="font-bold text-lg text-emerald-900 tracking-tight">Flamboyan Mart</h1>
+                <div class="flex flex-col h-full">
+                    <header class="bg-white p-4 flex justify-between items-center shadow-sm">
+                        <div class="flex items-center gap-2">
+                            <div class="w-8 h-8 bg-emerald-600 rounded-full flex items-center justify-center text-white font-bold">F</div>
+                            <h1 class="font-bold text-lg text-emerald-900 tracking-tight">Flamboyan Mart</h1>
+                        </div>
+                    </header>
+                    
+                    <div class="flex-1 p-4">
+                        <div class="grid grid-cols-2 gap-3 mb-6">
+                            <div class="bg-emerald-50 p-4 rounded-xl border border-emerald-100">
+                                <p class="text-emerald-700 font-bold text-lg">Rp 0</p>
+                                <p class="text-[10px] text-emerald-600 font-bold uppercase tracking-widest">Terima Piutang</p>
+                            </div>
+                            <div class="bg-rose-50 p-4 rounded-xl border border-rose-100">
+                                <p class="text-rose-700 font-bold text-lg">Rp 0</p>
+                                <p class="text-[10px] text-rose-600 font-bold uppercase tracking-widest">Bayar Hutang</p>
+                            </div>
+                        </div>
                     </div>
-                </header>
-                <div class="px-4">
-                    <div class="grid grid-cols-2 gap-3 mb-6">
-                        <div class="bg-emerald-50 p-4 rounded-xl border border-emerald-100">
-                            <p class="text-emerald-700 font-bold text-lg">Rp 0</p>
-                            <p class="text-[10px] text-emerald-600 font-bold uppercase tracking-widest">Terima Piutang</p>
-                        </div>
-                        <div class="bg-rose-50 p-4 rounded-xl border border-rose-100">
-                            <p class="text-rose-700 font-bold text-lg">Rp 0</p>
-                            <p class="text-[10px] text-rose-600 font-bold uppercase tracking-widest">Bayar Hutang</p>
-                        </div>
+                    
+                    <!-- TOMBOL AKSI DI BAWAH (SEPERTI TAB NAV) -->
+                    <div class="form-actions-container">
+                        <button class="w-full bg-emerald-500 text-white py-3.5 rounded-xl font-bold uppercase text-sm shadow-lg">
+                            Aksi Beranda
+                        </button>
                     </div>
                 </div>
             `;
