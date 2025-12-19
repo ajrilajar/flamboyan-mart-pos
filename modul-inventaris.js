@@ -84,7 +84,7 @@ function calculatePickerBounds(origin) {
 }
 
 // ============================================================================
-// MOBILE KEYBOARD HANDLER (SIMPLIFIED)
+// MOBILE KEYBOARD HANDLER (INTEGRATED LAYOUT VERSION)
 // ============================================================================
 
 class MobileKeyboardHandler {
@@ -143,19 +143,14 @@ class MobileKeyboardHandler {
     
     applyDeviceStyle(wrapper) {
         if (this.isMobile) {
-            wrapper.style.position = 'fixed';
-            wrapper.style.bottom = '1rem';
-            wrapper.style.left = '1rem';
-            wrapper.style.right = '1rem';
-            wrapper.style.zIndex = '1000';
-            wrapper.style.transition = 'bottom 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
-        } else {
-            wrapper.style.position = 'relative';
-            wrapper.style.bottom = 'auto';
-            wrapper.style.left = 'auto';
-            wrapper.style.right = 'auto';
-            wrapper.style.zIndex = 'auto';
+            // Untuk integrated layout, kita butuh parent yang mengatur posisi
+            const parentModal = wrapper.closest('[class*="fixed inset-0"]');
+            if (parentModal) {
+                wrapper.style.transition = 'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
+                wrapper.style.transform = 'translateY(0)';
+            }
         }
+        // Desktop tetap normal
     }
     
     handleViewportChange() {
@@ -211,31 +206,28 @@ class MobileKeyboardHandler {
         
         this.saveButtons.forEach((data, buttonId) => {
             const wrapper = data.element;
-            wrapper.style.bottom = `${Math.max(this.keyboardHeight + 20, targetBottom)}px`;
+            wrapper.style.transform = `translateY(-${Math.max(this.keyboardHeight + 20, targetBottom)}px)`;
         });
     }
     
     raiseButtonsAboveKeyboard() {
         this.saveButtons.forEach((data, buttonId) => {
             const wrapper = data.element;
-            wrapper.style.bottom = `${this.keyboardHeight + 20}px`;
+            wrapper.style.transform = `translateY(-${this.keyboardHeight + 20}px)`;
         });
     }
     
     lowerButtonsToBottom() {
         this.saveButtons.forEach((data, buttonId) => {
             const wrapper = data.element;
-            wrapper.style.bottom = '1rem';
+            wrapper.style.transform = 'translateY(0)';
         });
     }
     
     resetAllButtons() {
         this.saveButtons.forEach((data, buttonId) => {
             const wrapper = data.element;
-            wrapper.style.position = 'relative';
-            wrapper.style.bottom = 'auto';
-            wrapper.style.left = 'auto';
-            wrapper.style.right = 'auto';
+            wrapper.style.transform = 'translateY(0)';
         });
     }
 }
@@ -261,13 +253,19 @@ export function renderInventaris() {
             </button>
         </div>
 
-        <div id="view-edit" class="hidden fixed inset-0 bg-white z-[70] overflow-y-auto">
-            <div class="${desktopWidth} mx-auto min-h-screen bg-white flex flex-col">
-                <div class="flex items-center p-2 border-b sticky top-0 bg-white z-10" id="header-edit">
-                    <button onclick="window.batalEdit()" class="p-2 text-gray-600 mr-1"><i class="fa-solid fa-arrow-left text-xl"></i></button>
-                    <h3 id="edit-title" class="font-bold text-base text-gray-800 proper-case">Tambah Barang</h3>
+        <!-- VIEW EDIT - TAMBAH BARANG -->
+        <div id="view-edit" class="hidden fixed inset-0 bg-white z-[70]">
+            <div class="${desktopWidth} mx-auto h-full bg-white flex flex-col">
+                <!-- HEADER - TINGGI TETAP -->
+                <div class="panel-header">
+                    <button onclick="window.batalEdit()" class="mr-3 p-2 rounded-full hover:bg-gray-100">
+                        <i class="fa-solid fa-arrow-left text-xl text-gray-600"></i>
+                    </button>
+                    <h3 id="edit-title" class="font-bold text-lg text-gray-800 proper-case">Tambah Barang</h3>
                 </div>
-                <div class="p-3 space-y-4 flex-1">
+                
+                <!-- CONTENT AREA - SCROLLABLE -->
+                <div class="content-scroll-area p-4 space-y-4">
                     <div class="relative border border-gray-200 rounded-xl std-input">
                         <label class="absolute -top-2.5 left-3 px-1 bg-white text-[9px] font-bold text-gray-400 proper-case tracking-widest">Nama Barang</label>
                         <input type="text" id="edit-nama" class="w-full h-full px-4 bg-transparent outline-none font-bold text-gray-700 proper-case text-sm">
@@ -299,12 +297,17 @@ export function renderInventaris() {
                         </div>
                     </div>
                 </div>
-                <div class="p-3 bg-white border-t sticky bottom-0 z-20">
-                    <button onclick="window.simpanBarang()" class="w-full bg-emerald-500 text-white py-3.5 rounded-xl font-bold uppercase text-sm">Simpan</button>
+                
+                <!-- ACTION BUTTONS - INTEGRATED BAGIAN DARI LAYOUT -->
+                <div class="action-buttons-integrated mobile-keyboard-aware" id="save-barang-wrapper">
+                    <button onclick="window.simpanBarang()" class="w-full bg-emerald-500 text-white py-3.5 rounded-xl font-bold uppercase text-sm shadow-lg hover:bg-emerald-600 active:scale-95 transition-all duration-200">
+                        Simpan Barang
+                    </button>
                 </div>
             </div>
         </div>
 
+        <!-- VIEW PENGATURAN -->
         <div id="view-pengaturan" class="hidden fixed inset-0 bg-gray-50 z-[100] overflow-y-auto">
              <div class="${desktopWidth} mx-auto min-h-screen bg-gray-50 flex flex-col shadow-2xl border-x">
                 <div class="flex items-center p-4 bg-white border-b sticky top-0 z-10">
@@ -324,13 +327,19 @@ export function renderInventaris() {
             </div>
         </div>
 
-        <div id="view-multi-satuan" class="hidden fixed inset-0 bg-white z-[120] flex flex-col">
-            <div class="${desktopWidth} mx-auto w-full h-full flex flex-col bg-white">
-                <div class="flex items-center p-3 border-b">
-                    <button onclick="window.tutupMultiSatuan()" class="mr-3 p-2 rounded-full"><i class="fa-solid fa-arrow-left text-xl text-gray-600"></i></button>
+        <!-- VIEW MULTI SATUAN -->
+        <div id="view-multi-satuan" class="hidden fixed inset-0 bg-white z-[120]">
+            <div class="${desktopWidth} mx-auto h-full bg-white flex flex-col">
+                <!-- HEADER -->
+                <div class="panel-header">
+                    <button onclick="window.tutupMultiSatuan()" class="mr-3 p-2 rounded-full hover:bg-gray-100">
+                        <i class="fa-solid fa-arrow-left text-xl text-gray-600"></i>
+                    </button>
                     <h3 class="font-bold text-lg text-gray-800 proper-case tracking-tight">Satuan Pengukuran</h3>
                 </div>
-                <div class="p-4 space-y-6 flex-1 overflow-y-auto no-scrollbar">
+                
+                <!-- CONTENT AREA -->
+                <div class="content-scroll-area p-4 space-y-6">
                     <div onclick="window.bukaPickerSelection('satuan', 'view-multi-satuan', 'utama')" class="relative border border-gray-200 rounded-xl flex justify-between items-center cursor-pointer px-4 std-input">
                         <label class="absolute -top-2.5 left-3 px-1 bg-white text-[9px] font-bold text-gray-400 proper-case tracking-widest">Satuan Utama</label>
                         <input type="text" id="val-satuan-utama" class="font-bold text-gray-700 outline-none pointer-events-none uppercase" readonly>
@@ -341,29 +350,34 @@ export function renderInventaris() {
                         <i class="fa-solid fa-circle-plus text-base"></i> Tambah Satuan Lainnya
                     </button>
                 </div>
-                <div class="p-3 bg-white border-t sticky bottom-0 z-20">
+                
+                <!-- ACTION BUTTONS -->
+                <div class="action-buttons-integrated mobile-keyboard-aware">
                     <div class="grid grid-cols-2 gap-3">
-                        <button onclick="window.tutupMultiSatuan()" class="w-full py-3.5 font-bold text-gray-400 uppercase text-sm bg-gray-100 rounded-xl active:scale-95 transition-all">Batal</button>
-                        <button onclick="window.konfirmasiSatuan()" class="w-full bg-emerald-500 text-white py-3.5 rounded-xl font-bold uppercase text-sm shadow-lg active:scale-95 transition-all">Simpan</button>
+                        <button onclick="window.tutupMultiSatuan()" class="w-full py-3.5 font-bold text-gray-500 uppercase text-sm bg-gray-100 rounded-xl hover:bg-gray-200 active:scale-95 transition-all duration-200">
+                            Batal
+                        </button>
+                        <button onclick="window.konfirmasiSatuan()" class="w-full bg-emerald-500 text-white py-3.5 rounded-xl font-bold uppercase text-sm shadow-lg hover:bg-emerald-600 active:scale-95 transition-all duration-200">
+                            Simpan
+                        </button>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- PANEL PICKER - FULLSCREEN MODAL SEPERTI view-edit -->
-        <div id="view-picker" class="hidden fixed inset-0 bg-white z-[200] overflow-y-auto">
-            <div class="${desktopWidth} mx-auto min-h-screen bg-white flex flex-col">
-                
+        <!-- VIEW PICKER - FULLSCREEN MODAL -->
+        <div id="view-picker" class="hidden fixed inset-0 bg-white z-[200]">
+            <div class="${desktopWidth} mx-auto h-full bg-white flex flex-col">
                 <!-- HEADER -->
-                <div class="flex items-center p-4 border-b sticky top-0 bg-white z-10">
-                    <button onclick="window.tutupPicker()" class="mr-3 p-2 rounded-full">
+                <div class="panel-header">
+                    <button onclick="window.tutupPicker()" class="mr-3 p-2 rounded-full hover:bg-gray-100">
                         <i class="fa-solid fa-arrow-left text-xl text-gray-600"></i>
                     </button>
                     <h3 id="picker-title" class="font-bold text-lg text-gray-800 proper-case">Pilih Kategori</h3>
                 </div>
                 
                 <!-- SEARCH -->
-                <div class="p-4">
+                <div class="p-4 flex-shrink-0">
                     <div class="relative border border-gray-100 bg-gray-50 rounded-xl std-input px-4 flex items-center gap-3">
                         <i class="fa-solid fa-magnifying-glass text-gray-300 text-sm"></i>
                         <input type="text" id="picker-search" oninput="window.filterPickerList(this.value)" 
@@ -373,24 +387,27 @@ export function renderInventaris() {
                 </div>
                 
                 <!-- LIST AREA - SCROLLABLE -->
-                <div id="picker-list" class="flex-1 overflow-y-auto px-4 space-y-1 no-scrollbar"></div>
+                <div id="picker-list" class="content-scroll-area px-4 space-y-1"></div>
                 
-                <!-- TOMBOL AKSI - STICKY BOTTOM SEPERTI view-edit -->
-                <div class="p-3 bg-white border-t sticky bottom-0 z-20">
+                <!-- ACTION BUTTONS -->
+                <div class="action-buttons-integrated mobile-keyboard-aware">
                     <button id="picker-btn-add" 
-                            class="w-full bg-emerald-500 text-white py-3.5 rounded-xl font-bold uppercase text-sm shadow-lg active:scale-95 transition-all">
+                            class="w-full bg-emerald-500 text-white py-3.5 rounded-xl font-bold uppercase text-sm shadow-lg hover:bg-emerald-600 active:scale-95 transition-all duration-200">
                         <i class="fa-solid fa-plus mr-2"></i> 
                         <span id="picker-btn-text">Tambah Kategori Baru</span>
                     </button>
                 </div>
-                
             </div>
         </div>
 
-        <div id="view-form-baru" class="hidden fixed inset-0 bg-black/60 z-[200] flex items-end justify-center overflow-hidden">
-            <div class="bg-white w-full ${desktopWidth} rounded-t-[2rem] animate-slide-up relative flex flex-col max-h-[85vh]">
+        <!-- VIEW FORM BARU - BOTTOM SHEET -->
+        <div id="view-form-baru" class="hidden fixed inset-0 bg-black/60 z-[200]">
+            <div class="absolute inset-0" onclick="document.getElementById('view-form-baru').classList.add('hidden')"></div>
+            <div class="bg-white w-full ${desktopWidth} rounded-t-[2rem] animate-slide-up relative flex flex-col max-h-[85vh] mx-auto mt-auto">
                 <div class="w-12 h-1.5 bg-gray-200 rounded-full mx-auto my-4"></div>
-                <div id="form-baru-content" class="flex flex-col p-6 pb-10"></div>
+                <div id="form-baru-content" class="flex flex-col">
+                    <!-- Content akan diisi dinamis -->
+                </div>
             </div>
         </div>
     `;
@@ -408,10 +425,10 @@ export function renderInventaris() {
         if (saveButton && !saveButton.closest('nav')) {
             console.log('✅ Registering save-barang button');
             saveButton.id = 'save-barang-button';
-            const wrapper = saveButton.parentElement;
-            wrapper.id = 'save-barang-wrapper';
-            wrapper.classList.add('mobile-keyboard-aware');
-            window.mobileKeyboardHandler.registerSaveButton('save-barang-button', 'save-barang-wrapper');
+            const wrapper = document.getElementById('save-barang-wrapper');
+            if (wrapper) {
+                window.mobileKeyboardHandler.registerSaveButton('save-barang-button', 'save-barang-wrapper');
+            }
         }
         
         // 2. Tombol di view-form-baru
@@ -428,18 +445,17 @@ export function renderInventaris() {
             }
         });
         
-        // 3. Tombol TAMBAH di view-picker (BARU!)
+        // 3. Tombol TAMBAH di view-picker
         const pickerAddButton = document.getElementById('picker-btn-add');
         if (pickerAddButton && !pickerAddButton.closest('nav')) {
             console.log('✅ Registering picker-add button for keyboard handling');
             const wrapper = pickerAddButton.parentElement;
             if (wrapper) {
-                wrapper.classList.add('mobile-keyboard-aware');
                 window.mobileKeyboardHandler.registerSaveButton('picker-btn-add');
             }
         }
         
-        // 4. Tombol di view-multi-satuan (jika ada)
+        // 4. Tombol di view-multi-satuan
         const multiSatuanButtons = document.querySelectorAll('#view-multi-satuan button.bg-emerald-500');
         multiSatuanButtons.forEach((btn, idx) => {
             if (btn && !btn.closest('nav')) {
@@ -447,7 +463,6 @@ export function renderInventaris() {
                 btn.id = btn.id || `multi-satuan-btn-${idx}`;
                 const wrapper = btn.parentElement;
                 if (wrapper) {
-                    wrapper.classList.add('mobile-keyboard-aware');
                     window.mobileKeyboardHandler.registerSaveButton(btn.id);
                 }
             }
@@ -476,7 +491,7 @@ window.bukaPickerSelection = (type, origin, mode = null, index = null) => {
     renderPickerList(type);
     picker.classList.remove('hidden');
     
-    // AUTOFOCUS KE SEARCH INPUT (TIDAK PERLU BATAS KOORDINAT LAGI)
+    // AUTOFOCUS KE SEARCH INPUT
     setTimeout(() => {
         const searchInput = document.getElementById('picker-search');
         if (searchInput) searchInput.focus();
@@ -517,23 +532,29 @@ window.renderFormTambahBaru = (type, mode, index, id = "") => {
     const item = safeId ? (type === 'kategori' ? dataKategori[safeId] : dataSatuan[safeId]) : { nama: "", pendek: "" };
     
     content.innerHTML = `
-        <h3 class="font-bold text-lg text-gray-800 proper-case mb-6">${safeId ? 'Ubah' : 'Buat'} ${type} Baru</h3>
-        <div class="space-y-6">
-            <div class="relative border-2 border-emerald-500 rounded-xl std-input">
-                <label class="absolute -top-2.5 left-3 px-1 bg-white text-[10px] font-bold text-emerald-500 proper-case">Nama ${type}</label>
-                <input type="text" id="new-name" value="${item.nama}" class="w-full h-full px-4 bg-transparent outline-none font-bold text-gray-700 proper-case">
-            </div>
-            ${type === 'satuan' ? `
-                <div class="relative border border-gray-200 rounded-xl bg-gray-50 std-input">
-                    <label class="absolute -top-2.5 left-3 px-1 bg-white text-[9px] font-bold text-gray-400 proper-case tracking-widest">Satuan Pendek</label>
-                    <input type="text" id="new-short" value="${item.pendek}" maxlength="5" class="w-full h-full px-4 bg-transparent outline-none font-bold text-gray-700 uppercase">
+        <div class="p-6">
+            <h3 class="font-bold text-lg text-gray-800 proper-case mb-6">${safeId ? 'Ubah' : 'Buat'} ${type} Baru</h3>
+            <div class="space-y-6">
+                <div class="relative border-2 border-emerald-500 rounded-xl std-input">
+                    <label class="absolute -top-2.5 left-3 px-1 bg-white text-[10px] font-bold text-emerald-500 proper-case">Nama ${type}</label>
+                    <input type="text" id="new-name" value="${item.nama}" class="w-full h-full px-4 bg-transparent outline-none font-bold text-gray-700 proper-case">
                 </div>
-            ` : ''}
+                ${type === 'satuan' ? `
+                    <div class="relative border border-gray-200 rounded-xl bg-gray-50 std-input">
+                        <label class="absolute -top-2.5 left-3 px-1 bg-white text-[9px] font-bold text-gray-400 proper-case tracking-widest">Satuan Pendek</label>
+                        <input type="text" id="new-short" value="${item.pendek}" maxlength="5" class="w-full h-full px-4 bg-transparent outline-none font-bold text-gray-700 uppercase">
+                    </div>
+                ` : ''}
+            </div>
         </div>
-        <div class="p-3 bg-white border-t sticky bottom-0 z-20 mt-8">
+        <div class="action-buttons-integrated mobile-keyboard-aware">
             <div class="grid grid-cols-2 gap-3">
-                <button onclick="document.getElementById('view-form-baru').classList.add('hidden')" class="w-full py-3.5 font-bold text-gray-400 uppercase text-sm bg-gray-100 rounded-xl active:scale-95 transition-all">Batal</button>
-                <button onclick="window.prosesSimpanData('${type}', '${safeId}', '${mode}', ${index})" class="w-full bg-emerald-500 text-white py-3.5 rounded-xl font-bold uppercase text-sm shadow-lg active:scale-95 transition-all">Simpan</button>
+                <button onclick="document.getElementById('view-form-baru').classList.add('hidden')" class="w-full py-3.5 font-bold text-gray-500 uppercase text-sm bg-gray-100 rounded-xl hover:bg-gray-200 active:scale-95 transition-all duration-200">
+                    Batal
+                </button>
+                <button onclick="window.prosesSimpanData('${type}', '${safeId}', '${mode}', ${index})" class="w-full bg-emerald-500 text-white py-3.5 rounded-xl font-bold uppercase text-sm shadow-lg hover:bg-emerald-600 active:scale-95 transition-all duration-200">
+                    Simpan
+                </button>
             </div>
         </div>
     `;
