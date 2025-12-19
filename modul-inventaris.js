@@ -6,6 +6,168 @@ let databaseBarang = {}, dataKategori = {}, dataSatuan = {};
 let currentEditId = null, multiUnits = [], lastOrigin = 'view-list', pickerTargetIndex = null;
 const desktopWidth = "max-w-4xl";
 
+// Fungsi untuk mendapatkan posisi elemen relatif terhadap viewport
+function getElementPosition(elementId) {
+    const el = document.getElementById(elementId);
+    if (!el) return { top: 0, bottom: 0 };
+    const rect = el.getBoundingClientRect();
+    return {
+        top: rect.top,
+        bottom: rect.bottom,
+        height: rect.height
+    };
+}
+
+// Fungsi untuk menghitung batas koordinat berdasarkan konteks
+function calculatePickerBounds(origin) {
+    let minTop = 0;
+    let maxTop = window.innerHeight * 0.6; // Default 60% dari layar
+    
+    if (origin === 'view-edit') {
+        // Untuk panel tambah barang
+        const headerPos = getElementPosition('header-edit');
+        const firstInput = document.getElementById('edit-nama');
+        
+        if (headerPos.bottom > 0) {
+            minTop = headerPos.bottom + 10; // 10px margin di bawah header
+        }
+        
+        if (firstInput) {
+            const inputRect = firstInput.getBoundingClientRect();
+            maxTop = Math.max(minTop, inputRect.bottom + 10);
+        }
+    } else if (origin === 'view-pengaturan') {
+        // Untuk panel pengaturan inventaris
+        const pengaturanHeader = document.querySelector('#view-pengaturan .sticky.top-0');
+        if (pengaturanHeader) {
+            const headerRect = pengaturanHeader.getBoundingClientRect();
+            minTop = headerRect.bottom + 10;
+        }
+    } else if (origin === 'view-multi-satuan') {
+        // Untuk panel multi satuan
+        const multiHeader = document.querySelector('#view-multi-satuan .border-b');
+        if (multiHeader) {
+            const headerRect = multiHeader.getBoundingClientRect();
+            minTop = headerRect.bottom + 10;
+        }
+    }
+    
+    // Batasi nilai
+    minTop = Math.max(50, minTop); // Minimum 50px dari atas
+    maxTop = Math.min(window.innerHeight * 0.7, maxTop); // Maksimum 70% dari layar
+    
+    return { minTop, maxTop };
+}
+
+// Inisialisasi drag dengan batasan
+function initPickerDrag() {
+    const picker = document.getElementById('view-picker');
+    const dragHandle = document.getElementById('picker-drag-handle');
+    const pickerContent = picker.querySelector('.picker-content-container');
+    
+    if (!picker || !dragHandle || !pickerContent) return;
+    
+    let startY = 0;
+    let startTop = 0;
+    let isDragging = false;
+    const bounds = calculatePickerBounds(lastOrigin);
+    
+    const startDrag = (e) => {
+        e.preventDefault();
+        isDragging = true;
+        startY = e.type === 'touchstart' ? e.touches[0].clientY : e.clientY;
+        startTop = parseFloat(pickerContent.style.top) || bounds.minTop;
+        pickerContent.style.transition = 'none';
+        dragHandle.classList.add('cursor-grabbing');
+    };
+    
+    const doDrag = (e) => {
+        if (!isDragging) return;
+        
+        const currentY = e.type === 'touchmove' ? e.touches[0].clientY : e.clientY;
+        const deltaY = currentY - startY;
+        let newTop = startTop + deltaY;
+        
+        // Batasi pergerakan
+        newTop = Math.max(bounds.minTop, Math.min(bounds.maxTop, newTop));
+        
+        // Update posisi
+        pickerContent.style.top = `${newTop}px`;
+        pickerContent.style.height = `calc(100% - ${newTop}px)`;
+        
+        // Adjust opacity backdrop berdasarkan posisi
+        const progress = (newTop - bounds.minTop) / (bounds.maxTop - bounds.minTop);
+        const backdrop = picker.querySelector('.absolute.inset-0');
+        if (backdrop) {
+            backdrop.style.backgroundColor = `rgba(0, 0, 0, ${0.6 - (progress * 0.3)})`;
+        }
+    };
+    
+    const endDrag = () => {
+        if (!isDragging) return;
+        isDragging = false;
+        pickerContent.style.transition = 'top 0.25s cubic-bezier(0.4, 0, 0.2, 1), height 0.25s cubic-bezier(0.4, 0, 0.2, 1)';
+        dragHandle.classList.remove('cursor-grabbing');
+        
+        const currentTop = parseFloat(pickerContent.style.top);
+        const threshold = (bounds.minTop + bounds.maxTop) / 2;
+        
+        // Snap to nearest bound
+        const snapTop = currentTop > threshold ? bounds.maxTop : bounds.minTop;
+        pickerContent.style.top = `${snapTop}px`;
+        pickerContent.style.height = `calc(100% - ${snapTop}px)`;
+        
+        // Reset backdrop opacity
+        const backdrop = picker.querySelector('.absolute.inset-0');
+        if (backdrop) {
+            backdrop.style.backgroundColor = 'rgba(0, 0, 0, 0.6)';
+            backdrop.style.transition = 'background-color 0.25s';
+        }
+    };
+    
+    // Event listeners
+    dragHandle.addEventListener('touchstart', startDrag, { passive: false });
+    dragHandle.addEventListener('mousedown', startDrag);
+    
+    document.addEventListener('touchmove', doDrag, { passive: false });
+    document.addEventListener('mousemove', doDrag);
+    
+    document.addEventListener('touchend', endDrag);
+    document.addEventListener('mouseup', endDrag);
+    
+    // Hentikan drag jika klik di backdrop
+    const backdrop = picker.querySelector('.absolute.inset-0');
+    backdrop.addEventListener('touchstart', (e) => {
+        if (e.target === backdrop) {
+            endDrag();
+            window.tutupPicker();
+        }
+    });
+    backdrop.addEventListener('mousedown', (e) => {
+        if (e.target === backdrop) {
+            endDrag();
+            window.tutupPicker();
+        }
+    });
+}
+
+// Update bounds saat window resize
+window.addEventListener('resize', () => {
+    const picker = document.getElementById('view-picker');
+    if (picker && !picker.classList.contains('hidden')) {
+        const bounds = calculatePickerBounds(lastOrigin);
+        const pickerContent = picker.querySelector('.picker-content-container');
+        
+        if (pickerContent) {
+            const currentTop = parseFloat(pickerContent.style.top) || bounds.minTop;
+            const clampedTop = Math.max(bounds.minTop, Math.min(bounds.maxTop, currentTop));
+            
+            pickerContent.style.top = `${clampedTop}px`;
+            pickerContent.style.height = `calc(100% - ${clampedTop}px)`;
+        }
+    }
+});
+
 export function renderInventaris() {
     const content = document.getElementById('main-content');
     content.innerHTML = `
@@ -107,25 +269,34 @@ export function renderInventaris() {
             </div>
         </div>
 
-        <!-- PERBAIKAN: Panel Picker baru dengan struktur yang sama seperti view-form-baru -->
-        <div id="view-picker" class="hidden fixed inset-0 bg-black/60 z-[200] flex items-end justify-center overflow-hidden">
-            <div class="bg-white w-full ${desktopWidth} rounded-t-[2rem] animate-slide-up relative flex flex-col max-h-[85vh]">
-                <div class="w-12 h-1.5 bg-gray-200 rounded-full mx-auto my-4"></div>
-                <div class="flex-1 overflow-hidden flex flex-col">
+        <!-- Panel Picker dengan sistem batas koordinat -->
+        <div id="view-picker" class="hidden fixed inset-0 z-[200] overflow-hidden">
+            <div class="absolute inset-0 bg-black/60" onclick="window.tutupPicker()"></div>
+            <div class="picker-content-container absolute left-0 right-0 bg-white ${desktopWidth} mx-auto rounded-t-[2rem] animate-slide-up"
+                 style="will-change: transform;">
+                <div class="w-full flex flex-col" style="max-height: 70vh;">
+                    <div class="w-12 h-1.5 bg-gray-200 rounded-full mx-auto my-4 cursor-grab active:cursor-grabbing touch-none"
+                         id="picker-drag-handle"></div>
                     <div class="px-6 mb-4 flex justify-between items-center">
                         <h3 id="picker-title" class="font-bold text-lg text-gray-800 proper-case">Pilih Kategori</h3>
-                        <button onclick="window.tutupPicker()" class="text-gray-400"><i class="fa-solid fa-xmark text-xl"></i></button>
+                        <button onclick="window.tutupPicker()" class="text-gray-400 p-2">
+                            <i class="fa-solid fa-xmark text-xl"></i>
+                        </button>
                     </div>
                     <div class="px-6 mb-4">
                         <div class="relative border border-gray-100 bg-gray-50 rounded-xl std-input px-4 flex items-center gap-3">
                             <i class="fa-solid fa-magnifying-glass text-gray-300 text-sm"></i>
-                            <input type="text" id="picker-search" oninput="window.filterPickerList(this.value)" class="w-full h-full bg-transparent outline-none font-medium text-gray-600 text-sm">
+                            <input type="text" id="picker-search" oninput="window.filterPickerList(this.value)" 
+                                   class="w-full h-full bg-transparent outline-none font-medium text-gray-600 text-sm"
+                                   placeholder="Cari...">
                         </div>
                     </div>
                     <div id="picker-list" class="flex-1 overflow-y-auto px-6 space-y-2 no-scrollbar"></div>
                     <div class="p-4 bg-white border-t mt-auto">
-                        <button id="picker-btn-add" class="w-full bg-emerald-500 text-white py-4 rounded-xl font-bold uppercase text-xs tracking-widest flex items-center justify-center gap-2 shadow-lg active:scale-95 transition-all">
-                            <i class="fa-solid fa-plus"></i> <span id="picker-btn-text">Tambah Kategori Baru</span>
+                        <button id="picker-btn-add" 
+                                class="w-full bg-emerald-500 text-white py-4 rounded-xl font-bold uppercase text-xs tracking-widest flex items-center justify-center gap-2 shadow-lg active:scale-95 transition-all">
+                            <i class="fa-solid fa-plus"></i> 
+                            <span id="picker-btn-text">Tambah Kategori Baru</span>
                         </button>
                     </div>
                 </div>
@@ -140,6 +311,8 @@ export function renderInventaris() {
         </div>
     `;
     loadFirebaseData();
+    // Inisialisasi drag setelah DOM selesai render
+    setTimeout(() => initPickerDrag(), 100);
 }
 
 // LOGIKA PICKER CERDAS
@@ -157,6 +330,19 @@ window.bukaPickerSelection = (type, origin, mode = null, index = null) => {
     
     renderPickerList(type);
     picker.classList.remove('hidden');
+    
+    // HITUNG DAN TERAPKAN BATAS KOORDINAT
+    setTimeout(() => {
+        const bounds = calculatePickerBounds(origin);
+        const pickerContent = picker.querySelector('.picker-content-container');
+        
+        if (pickerContent) {
+            // Set posisi awal berdasarkan batas minimal
+            pickerContent.style.top = `${bounds.minTop}px`;
+            pickerContent.style.height = `calc(100% - ${bounds.minTop}px)`;
+            pickerContent.style.transition = 'top 0.25s cubic-bezier(0.4, 0, 0.2, 1), height 0.25s cubic-bezier(0.4, 0, 0.2, 1)';
+        }
+    }, 10);
 };
 
 function renderPickerList(type, filter = "") {
@@ -244,19 +430,54 @@ window.selectAndClose = (type, val) => {
     window.tutupPicker();
 };
 
-// PERBAIKAN: Fungsi tutupPicker sederhana
 window.tutupPicker = () => {
-    document.getElementById('view-picker').classList.add('hidden');
+    const picker = document.getElementById('view-picker');
+    const pickerContent = picker.querySelector('.picker-content-container');
+    
+    if (pickerContent) {
+        pickerContent.style.transition = 'top 0.25s cubic-bezier(0.4, 0, 0.2, 1), height 0.25s cubic-bezier(0.4, 0, 0.2, 1)';
+        
+        // Animate out
+        const bounds = calculatePickerBounds(lastOrigin);
+        pickerContent.style.top = `${bounds.maxTop + 100}px`;
+        pickerContent.style.height = `calc(100% - ${bounds.maxTop + 100}px)`;
+        
+        setTimeout(() => {
+            picker.classList.add('hidden');
+            // Reset untuk next time
+            pickerContent.style.top = '';
+            pickerContent.style.height = '';
+            pickerContent.style.transition = '';
+        }, 250);
+    } else {
+        picker.classList.add('hidden');
+    }
 };
 
 // NAVIGASI VIEW & UTILITY
-window.switchView = (v) => { document.querySelectorAll('[id^="view-"]').forEach(el => el.classList.add('hidden')); document.getElementById(v).classList.remove('hidden'); };
-window.bukaHalamanEdit = (id) => { currentEditId = id; multiUnits = []; window.switchView('view-edit'); };
+window.switchView = (v) => { 
+    document.querySelectorAll('[id^="view-"]').forEach(el => el.classList.add('hidden')); 
+    document.getElementById(v).classList.remove('hidden'); 
+};
+window.bukaHalamanEdit = (id) => { 
+    currentEditId = id; 
+    multiUnits = []; 
+    window.switchView('view-edit'); 
+};
 window.batalEdit = () => window.switchView('view-list');
-window.bukaPilihSatuanPengukuran = () => { window.switchView('view-multi-satuan'); renderKonversiList(); };
+window.bukaPilihSatuanPengukuran = () => { 
+    window.switchView('view-multi-satuan'); 
+    renderKonversiList(); 
+};
 window.tutupMultiSatuan = () => window.switchView('view-edit');
-window.tambahSatuanSekunder = () => { multiUnits.push({ unit: '', ratio: '' }); renderKonversiList(); };
-window.hapusRowKonversi = (idx) => { multiUnits.splice(idx, 1); renderKonversiList(); };
+window.tambahSatuanSekunder = () => { 
+    multiUnits.push({ unit: '', ratio: '' }); 
+    renderKonversiList(); 
+};
+window.hapusRowKonversi = (idx) => { 
+    multiUnits.splice(idx, 1); 
+    renderKonversiList(); 
+};
 window.updateRatio = (idx, val) => multiUnits[idx].ratio = val;
 window.hapusSettingData = async (type, id) => { 
     type === 'kategori' ? await SetingInv.hapusKategori(id) : await SetingInv.hapusSatuanDasar(id); 
@@ -269,11 +490,20 @@ window.konfirmasiSatuan = () => {
     if (!utama) return alert("Pilih Satuan Utama!");
     let display = utama;
     let chainInfo = `1 ${utama}`;
-    multiUnits.forEach(m => { if (m.unit && m.ratio) { display += ` & ${m.unit}`; chainInfo += ` → ${m.ratio} ${m.unit}`; } });
+    multiUnits.forEach(m => { 
+        if (m.unit && m.ratio) { 
+            display += ` & ${m.unit}`; 
+            chainInfo += ` → ${m.ratio} ${m.unit}`; 
+        } 
+    });
     document.getElementById('edit-satuan-display').value = display;
     const infoDiv = document.getElementById('info-konversi');
-    if (multiUnits.length > 0) { infoDiv.classList.remove('hidden'); document.getElementById('text-konversi').innerText = chainInfo; } 
-    else { infoDiv.classList.add('hidden'); }
+    if (multiUnits.length > 0) { 
+        infoDiv.classList.remove('hidden'); 
+        document.getElementById('text-konversi').innerText = chainInfo; 
+    } else { 
+        infoDiv.classList.add('hidden'); 
+    }
     window.switchView('view-edit');
 };
 
@@ -297,15 +527,35 @@ function renderKonversiList() {
 }
 
 window.loadFirebaseData = () => { 
-    onValue(ref(db, 'products'), s => { databaseBarang = s.val() || {}; window.filterInventaris(); }); 
-    onValue(ref(db, 'settings/categories'), s => { dataKategori = s.val() || {}; }); 
-    onValue(ref(db, 'settings/units'), s => { dataSatuan = s.val() || {}; }); 
+    onValue(ref(db, 'products'), s => { 
+        databaseBarang = s.val() || {}; 
+        window.filterInventaris(); 
+    }); 
+    onValue(ref(db, 'settings/categories'), s => { 
+        dataKategori = s.val() || {}; 
+    }); 
+    onValue(ref(db, 'settings/units'), s => { 
+        dataSatuan = s.val() || {}; 
+    }); 
 };
 
 window.filterInventaris = () => {
-    const list = document.getElementById('list-barang'); if(!list) return; list.innerHTML = "";
+    const list = document.getElementById('list-barang'); 
+    if(!list) return; 
+    list.innerHTML = "";
     Object.entries(databaseBarang).forEach(([id, item]) => {
         const inisial = item.nama.substring(0, 2).toUpperCase();
-        list.innerHTML += `<div class="bg-white p-5 rounded-xl border border-gray-100 flex items-center gap-4 shadow-sm active:bg-gray-50 transition-all"><div class="w-12 h-12 bg-gray-100 text-gray-400 rounded-lg flex items-center justify-center font-bold text-xs uppercase">${inisial}</div><div class="flex-1 overflow-hidden"><h4 class="font-bold text-[16px] text-gray-700 truncate proper-case">${item.nama}</h4><p class="text-[11px] text-gray-400 font-bold tracking-tighter proper-case">${item.kategori}</p></div><div class="text-right"><p class="text-sm font-black text-emerald-600">${item.stok} <span class="uppercase text-[10px]">${item.satuan}</span></p></div></div>`;
+        list.innerHTML += `
+            <div class="bg-white p-5 rounded-xl border border-gray-100 flex items-center gap-4 shadow-sm active:bg-gray-50 transition-all">
+                <div class="w-12 h-12 bg-gray-100 text-gray-400 rounded-lg flex items-center justify-center font-bold text-xs uppercase">${inisial}</div>
+                <div class="flex-1 overflow-hidden">
+                    <h4 class="font-bold text-[16px] text-gray-700 truncate proper-case">${item.nama}</h4>
+                    <p class="text-[11px] text-gray-400 font-bold tracking-tighter proper-case">${item.kategori}</p>
+                </div>
+                <div class="text-right">
+                    <p class="text-sm font-black text-emerald-600">${item.stok} <span class="uppercase text-[10px]">${item.satuan}</span></p>
+                </div>
+            </div>
+        `;
     });
 };
