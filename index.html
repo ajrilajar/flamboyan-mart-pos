@@ -131,6 +131,56 @@
                 max-width: 56rem !important; /* desktopWidth: max-w-4xl = 56rem */
             }
         }
+
+/* ================================================================
+   ACTION BUTTONS MOBILE KEYBOARD AWARE
+================================================================ */
+
+.action-button-mobile {
+    /* Desktop default */
+    position: relative;
+}
+
+@media (max-width: 767px) {
+    .action-button-mobile {
+        position: fixed !important;
+        bottom: 1rem !important;
+        left: 1rem !important;
+        right: 1rem !important;
+        z-index: 1000 !important;
+        transition: bottom 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+        background: white;
+        padding: 1rem;
+        border-radius: 1rem;
+        box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.15);
+    }
+}
+
+@media (min-width: 768px) {
+    .action-button-mobile {
+        position: relative !important;
+        bottom: auto !important;
+        left: auto !important;
+        right: auto !important;
+        z-index: auto !important;
+        box-shadow: none !important;
+        background: transparent !important;
+        padding: 0 !important;
+    }
+}
+
+/* Navigation tetap di bawah - JANGAN diubah */
+nav.fixed.bottom-0 {
+    z-index: 50 !important;
+    transition: none !important;
+}
+
+/* Tombol di dalam navigation tetap statis */
+nav.fixed.bottom-0 button {
+    position: static !important;
+    bottom: auto !important;
+}
+
     </style>
 </head>
 <body class="bg-gray-50 text-gray-800 font-sans">
