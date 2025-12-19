@@ -13,39 +13,43 @@
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
         .proper-case { text-transform: capitalize; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
         
-        /* Anti Pull-to-Refresh & Scroll Lock */
         body.modal-open { overflow: hidden; touch-action: none; }
         
-        #modal-panel { 
-            will-change: transform;
-            transition: transform 0.25s cubic-bezier(0, 0, 0.2, 1);
+        /* Parent View Picker Style */
+        #view-picker {
+            position: fixed;
+            inset: 0;
+            background: white;
+            z-index: 150;
             display: flex;
             flex-direction: column;
-            height: 88vh; 
-            max-height: 88vh;
-            bottom: 0;
+            transition: transform 0.25s cubic-bezier(0, 0, 0.2, 1);
         }
 
-        .modal-scrollable-content {
-            flex: 1 1 0%;
-            overflow-y: auto;
-            -webkit-overflow-scrolling: touch;
-            overscroll-behavior: contain;
-        }
-        .no-scrollbar::-webkit-scrollbar { display: none; }
-
-        /* Standarisasi Tinggi Kolom Input */
         .std-input {
-            height: 3.5rem; /* Tinggi standar sesuai panel satuan utama */
+            height: 3.5rem;
             display: flex;
             align-items: center;
             width: 100%;
         }
+
+        /* Custom Radio Style */
+        .radio-custom {
+            width: 1.25rem;
+            height: 1.25rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+        .radio-active { border-color: #10b981; background: #10b981; box-shadow: inset 0 0 0 3px white; }
     </style>
 </head>
 <body class="bg-gray-50 text-gray-800 font-sans">
-
     <main id="main-content" class="pb-28"></main>
 
     <nav class="fixed bottom-0 left-0 right-0 bg-white border-t flex justify-around p-3 shadow-lg z-50">
@@ -68,9 +72,7 @@
 
     <script type="module">
         import { renderInventaris } from "./modul-inventaris.js";
-        import { renderPihak } from "./modul-pihak.js";
-        import { renderTransaksi } from "./modul-transaksi.js";
-
+        // Import lainnya tetap
         window.switchTab = (tabName) => {
             const content = document.getElementById('main-content');
             document.querySelectorAll('.nav-btn').forEach(btn => {
@@ -83,17 +85,9 @@
                 activeBtn.classList.add('text-emerald-600');
             }
 
-            if (tabName === 'beranda') {
-                renderBeranda();
-            } else if (tabName === 'inventori') {
-                renderInventaris();
-            } else if (tabName === 'pihak') {
-                renderPihak();
-            } else if (tabName === 'transaksi') {
-                renderTransaksi();
-            } else {
-                content.innerHTML = `<div class="p-10 text-center text-gray-400">Modul ${tabName} segera hadir.</div>`;
-            }
+            if (tabName === 'beranda') { renderBeranda(); } 
+            else if (tabName === 'inventori') { renderInventaris(); } 
+            else { content.innerHTML = `<div class="p-10 text-center text-gray-400 uppercase text-xs">Modul ${tabName} segera hadir.</div>`; }
         };
 
         function renderBeranda() {
@@ -103,7 +97,6 @@
                         <div class="w-8 h-8 bg-emerald-600 rounded-full flex items-center justify-center text-white font-bold">F</div>
                         <h1 class="font-bold text-lg text-emerald-900 tracking-tight">Flamboyan Mart</h1>
                     </div>
-                    <i class="fa-regular fa-bell text-xl text-gray-500"></i>
                 </header>
                 <div class="px-4 animate-fadeIn">
                     <div class="grid grid-cols-2 gap-3 mb-6">
