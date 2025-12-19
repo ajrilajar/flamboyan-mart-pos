@@ -3,36 +3,33 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Flamboyan Mart - Inventaris</title>
-    
+    <title>Flamboyan Mart</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <div id="app">
+        <div class="header">
+            <h2>Inventaris</h2>
+            <div class="settings-icon">⚙️</div>
+        </div>
 
-    <div class="header">
-        <h2>Inventaris</h2>
-        <span class="settings-icon">⚙️</span>
-    </div>
-
-    <div id="tab-inventaris">
-        <div class="search-container">
-            <input type="text" placeholder="Cari Barang...">
+        <div class="search-section">
+            <input type="text" id="searchInput" placeholder="Cari Barang...">
             <div class="filter-row">
-                <button>Kategori ▾</button>
-                <button>Stok ▾</button>
-                <button>Jenis ▾</button>
+                <div class="filter-item">Kategori ▾</div>
+                <div class="filter-item">Stok ▾</div>
+                <div class="filter-item">Jenis ▾</div>
             </div>
         </div>
 
         <div id="inventory-list" class="inventory-list">
             </div>
 
-        <button class="fab-add" onclick="openAddModal()">
-            <span>📦 Tambah Barang</span>
+        <button class="fab-add" onclick="openModal()">
+            <span>Tambah Barang</span>
         </button>
     </div>
 
     <script type="module" src="app.js"></script>
-
 </body>
 </html>

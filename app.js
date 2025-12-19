@@ -1,7 +1,6 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
 import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js";
 
-// Konfigurasi milik Anda
 const firebaseConfig = {
     apiKey: "AIzaSyDL9F1DOnjrCCtDZ13aXL-yX4oAyQfUu9Y",
     databaseURL: "https://gen-lang-client-0116140691-default-rtdb.asia-southeast1.firebasedatabase.app",
@@ -11,28 +10,33 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
-const listDiv = document.getElementById('inventory-list');
+const inventoryContainer = document.getElementById('inventory-list');
 
-// Ambil data dan tampilkan ke HTML
+// Mendengarkan data secara Realtime
 onValue(ref(db, 'products'), (snapshot) => {
     const data = snapshot.val();
-    listDiv.innerHTML = "";
+    inventoryContainer.innerHTML = "";
+
     for (let id in data) {
         const item = data[id];
-        listDiv.innerHTML += `
+        const initial = item.nama.substring(0, 2).toUpperCase();
+
+        const cardHTML = `
             <div class="card-item">
-                <div class="initial-box">${item.nama.substring(0,2).toUpperCase()}</div>
+                <div class="initial-box">${initial}</div>
                 <div class="item-info">
-                    <div class="item-name"><strong>${item.nama}</strong></div>
+                    <div class="item-name">${item.nama}</div>
                     <div class="price-row">
-                        <span>Penjualan<br><strong>Rp ${item.hargaJual}</strong></span>
-                        <span>Pembelian<br><strong>Rp ${item.hargaBeli}</strong></span>
+                        <div class="price-col">Penjualan<strong>Rp ${Number(item.hargaJual).toLocaleString('id-ID')}</strong></div>
+                        <div class="price-col">Pembelian<strong>Rp ${Number(item.hargaBeli).toLocaleString('id-ID')}</strong></div>
                     </div>
                 </div>
                 <div class="stock-side">
-                    <span class="tag">${item.kategori}</span>
-                    <div class="stock"><strong>${item.stok} ${item.satuan}</strong></div>
+                    <span class="category-tag">${item.kategori}</span>
+                    <div class="stock-count">${item.stok} ${item.satuan || 'PCS'}</div>
                 </div>
-            </div>`;
+            </div>
+        `;
+        inventoryContainer.insertAdjacentHTML('beforeend', cardHTML);
     }
 });
