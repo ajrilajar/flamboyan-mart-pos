@@ -84,7 +84,7 @@ function calculatePickerBounds(origin) {
 }
 
 // ============================================================================
-// MOBILE KEYBOARD HANDLER (VERSI DIPERBAIKI)
+// MOBILE KEYBOARD HANDLER (VERSI REVISI - TOMBOL NAIK SAAT KEYBOARD)
 // ============================================================================
 
 class MobileKeyboardHandler {
@@ -94,17 +94,29 @@ class MobileKeyboardHandler {
         this.initialViewportHeight = window.innerHeight;
         this.activeInput = null;
         this.keyboardHeight = 0;
+        this.isMobile = window.innerWidth < 768;
         
         this.init();
     }
     
     init() {
-        window.addEventListener('resize', () => this.handleViewportChange());
-        document.addEventListener('focusin', (e) => this.handleFocusIn(e));
-        document.addEventListener('focusout', (e) => this.handleFocusOut(e));
+        // Deteksi mobile/desktop
+        window.addEventListener('resize', () => {
+            this.isMobile = window.innerWidth < 768;
+            if (!this.isMobile) this.resetAllButtons(); // Reset jika beralih ke desktop
+        });
         
+        // Deteksi keyboard via viewport height change
+        window.addEventListener('resize', () => this.handleViewportChange());
+        
+        // Track input focus untuk positioning lebih akurat
+        document.addEventListener('focusin', (e) => this.handleFocusIn(e));
+        document.addEventListener('focusout', () => this.handleFocusOut());
+        
+        // Visual Viewport API untuk akurasi lebih tinggi
         if (window.visualViewport) {
             window.visualViewport.addEventListener('resize', () => this.handleVisualViewportChange());
+            window.visualViewport.addEventListener('scroll', () => this.handleVisualViewportChange());
         }
     }
     
@@ -117,64 +129,112 @@ class MobileKeyboardHandler {
             wrapper = document.getElementById(containerId);
         }
         
-        if (!wrapper.classList.contains('keyboard-aware-button')) {
-            wrapper.classList.add('keyboard-aware-button');
-            wrapper.dataset.originalBottom = '1rem';
-            
-            this.saveButtons.set(buttonId, {
-                element: wrapper,
-                originalPosition: 'fixed',
-                originalBottom: '1rem'
-            });
+        // Setup wrapper untuk mobile
+        wrapper.classList.add('mobile-keyboard-aware');
+        
+        // Simpan posisi asli dan state
+        const originalStyle = {
+            position: wrapper.style.position || 'relative',
+            bottom: wrapper.style.bottom || 'auto',
+            top: wrapper.style.top || 'auto',
+            left: wrapper.style.left || 'auto',
+            right: wrapper.style.right || 'auto',
+            zIndex: wrapper.style.zIndex || 'auto'
+        };
+        
+        this.saveButtons.set(buttonId, {
+            element: wrapper,
+            button: button,
+            originalStyle: originalStyle,
+            isFixed: false
+        });
+        
+        // Apply initial style berdasarkan device
+        this.applyDeviceStyle(wrapper);
+    }
+    
+    applyDeviceStyle(wrapper) {
+        if (this.isMobile) {
+            // MOBILE: Tombol fixed di bawah
+            wrapper.style.position = 'fixed';
+            wrapper.style.bottom = '1rem';
+            wrapper.style.left = '1rem';
+            wrapper.style.right = '1rem';
+            wrapper.style.zIndex = '1000';
+            wrapper.style.transition = 'bottom 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
+        } else {
+            // DESKTOP: Tombol relative normal
+            wrapper.style.position = 'relative';
+            wrapper.style.bottom = 'auto';
+            wrapper.style.left = 'auto';
+            wrapper.style.right = 'auto';
+            wrapper.style.zIndex = 'auto';
         }
     }
     
     handleViewportChange() {
+        if (!this.isMobile) return;
+        
         const newHeight = window.innerHeight;
         const heightDiff = this.initialViewportHeight - newHeight;
-        const isKeyboardOpen = heightDiff > 100 && newHeight < 500;
+        
+        // Keyboard muncul jika tinggi berkurang signifikan
+        const keyboardThreshold = 150;
+        const isKeyboardOpen = heightDiff > keyboardThreshold;
         
         if (isKeyboardOpen && !this.isKeyboardVisible) {
+            console.log('Keyboard OPEN - Height diff:', heightDiff);
             this.keyboardHeight = heightDiff;
             this.isKeyboardVisible = true;
-            this.adjustButtonsForKeyboard();
+            this.raiseButtonsAboveKeyboard();
         } else if (!isKeyboardOpen && this.isKeyboardVisible) {
+            console.log('Keyboard CLOSED');
             this.isKeyboardVisible = false;
-            this.resetButtonsPosition();
+            this.lowerButtonsToBottom();
         }
         
         this.initialViewportHeight = newHeight;
     }
     
     handleVisualViewportChange() {
-        if (!window.visualViewport) return;
+        if (!window.visualViewport || !this.isMobile) return;
         
         const viewport = window.visualViewport;
         const offsetTop = viewport.offsetTop;
-        const viewportHeight = viewport.height;
         
+        // Jika ada offset (keyboard visible), tombol harus naik
         if (offsetTop > 0) {
             this.isKeyboardVisible = true;
-            this.keyboardHeight = window.innerHeight - viewportHeight;
+            this.keyboardHeight = window.innerHeight - viewport.height;
             
             this.saveButtons.forEach((data, buttonId) => {
-                const button = data.element;
-                const padding = 10;
+                const wrapper = data.element;
+                const padding = 20; // Padding di atas keyboard
                 
-                button.style.bottom = `${this.keyboardHeight + padding}px`;
-                button.style.transition = 'bottom 0.25s cubic-bezier(0.4, 0, 0.2, 1)';
+                // Naikkan tombol ke atas keyboard
+                wrapper.style.bottom = `${this.keyboardHeight + padding}px`;
+                wrapper.style.transition = 'bottom 0.25s cubic-bezier(0.4, 0, 0.2, 1)';
             });
+        } else if (this.isKeyboardVisible) {
+            // Keyboard hilang, kembalikan ke bawah
+            this.isKeyboardVisible = false;
+            this.lowerButtonsToBottom();
         }
     }
     
     handleFocusIn(event) {
+        if (!this.isMobile) return;
+        
         const target = event.target;
         if (target.matches('input, textarea, [contenteditable="true"]')) {
             this.activeInput = target;
             
-            if (this.isKeyboardVisible) {
-                setTimeout(() => this.positionButtonNearInput(target), 150);
-            }
+            // Saat input fokus di mobile, pastikan tombol di atas keyboard
+            setTimeout(() => {
+                if (this.isKeyboardVisible) {
+                    this.positionButtonNearActiveInput();
+                }
+            }, 300); // Delay untuk keyboard animation
         }
     }
     
@@ -182,48 +242,88 @@ class MobileKeyboardHandler {
         this.activeInput = null;
     }
     
-    positionButtonNearInput(inputElement) {
-        if (!inputElement || !this.isKeyboardVisible) return;
+    positionButtonNearActiveInput() {
+        if (!this.activeInput || !this.isKeyboardVisible) return;
         
-        const inputRect = inputElement.getBoundingClientRect();
+        const inputRect = this.activeInput.getBoundingClientRect();
         const viewportHeight = window.innerHeight;
+        
+        // Hitung posisi optimal: di atas keyboard atau di atas input (mana yang lebih tinggi)
         const buttonHeight = 60;
-        const margin = 15;
-        const targetBottom = viewportHeight - inputRect.bottom + buttonHeight + margin;
+        const minPadding = 20;
+        const maxPadding = 100;
+        
+        // Posisi di atas keyboard
+        const aboveKeyboard = this.keyboardHeight + minPadding;
+        
+        // Posisi di atas input (jika input sangat rendah)
+        const aboveInput = viewportHeight - inputRect.bottom + buttonHeight + minPadding;
+        
+        // Gunakan posisi yang lebih tinggi
+        const targetPosition = Math.max(aboveKeyboard, aboveInput);
+        
+        // Apply ke semua tombol terdaftar
+        this.saveButtons.forEach((data, buttonId) => {
+            const wrapper = data.element;
+            wrapper.style.bottom = `${targetPosition}px`;
+        });
+    }
+    
+    raiseButtonsAboveKeyboard() {
+        console.log('Raising buttons above keyboard, height:', this.keyboardHeight);
         
         this.saveButtons.forEach((data, buttonId) => {
-            const button = data.element;
-            button.style.bottom = `${Math.max(this.keyboardHeight + 10, targetBottom)}px`;
+            const wrapper = data.element;
+            const padding = 20; // Padding di atas keyboard
+            
+            wrapper.style.bottom = `${this.keyboardHeight + padding}px`;
+            wrapper.style.transition = 'bottom 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
+            
+            // Tambah backdrop blur untuk visibility
+            wrapper.style.backdropFilter = 'blur(10px)';
+            wrapper.style.backgroundColor = 'rgba(255, 255, 255, 0.95)';
         });
     }
     
-    adjustButtonsForKeyboard() {
+    lowerButtonsToBottom() {
+        console.log('Lowering buttons to bottom');
+        
         this.saveButtons.forEach((data, buttonId) => {
-            const button = data.element;
-            const padding = 10;
+            const wrapper = data.element;
             
-            button.style.position = 'fixed';
-            button.style.bottom = `${this.keyboardHeight + padding}px`;
-            button.style.left = '1rem';
-            button.style.right = '1rem';
-            button.style.zIndex = '1000';
-            button.style.transition = 'bottom 0.25s cubic-bezier(0.4, 0, 0.2, 1)';
+            // Kembalikan ke posisi bawah dengan safe area
+            const safeAreaBottom = this.getSafeAreaBottom();
+            wrapper.style.bottom = `${safeAreaBottom}px`;
+            wrapper.style.transition = 'bottom 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
+            
+            // Hapus backdrop effect
+            wrapper.style.backdropFilter = '';
+            wrapper.style.backgroundColor = '';
         });
     }
     
-    resetButtonsPosition() {
+    resetAllButtons() {
         this.saveButtons.forEach((data, buttonId) => {
-            const button = data.element;
-            button.style.bottom = data.originalBottom;
+            const wrapper = data.element;
+            const original = data.originalStyle;
             
-            if (window.innerWidth >= 768) {
-                button.style.position = 'relative';
-                button.style.bottom = 'auto';
-                button.style.left = 'auto';
-                button.style.right = 'auto';
-                button.style.zIndex = 'auto';
-            }
+            // Reset ke style asli
+            Object.keys(original).forEach(prop => {
+                wrapper.style[prop] = original[prop];
+            });
+            
+            wrapper.style.transition = '';
+            wrapper.style.backdropFilter = '';
+            wrapper.style.backgroundColor = '';
         });
+    }
+    
+    getSafeAreaBottom() {
+        // Handle iPhone notch/safe area
+        if (CSS.supports('padding-bottom: env(safe-area-inset-bottom)')) {
+            return 'calc(1rem + env(safe-area-inset-bottom))';
+        }
+        return '1rem';
     }
 }
 
