@@ -1,22 +1,38 @@
-<div id="inventaris-page" class="page">
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flamboyan Mart - Inventaris</title>
+    
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
     <div class="header">
         <h2>Inventaris</h2>
-        <i class="settings-icon">⚙️</i>
+        <span class="settings-icon">⚙️</span>
     </div>
 
-    <div class="search-container">
-        <input type="text" id="searchBar" placeholder="Cari Barang...">
-        <div class="filter-group">
-            <select><option>Kategori</option></select>
-            <select><option>Stok</option></select>
-            <select><option>Jenis</option></select>
+    <div id="tab-inventaris">
+        <div class="search-container">
+            <input type="text" placeholder="Cari Barang...">
+            <div class="filter-row">
+                <button>Kategori ▾</button>
+                <button>Stok ▾</button>
+                <button>Jenis ▾</button>
+            </div>
         </div>
+
+        <div id="inventory-list" class="inventory-list">
+            </div>
+
+        <button class="fab-add" onclick="openAddModal()">
+            <span>📦 Tambah Barang</span>
+        </button>
     </div>
 
-    <div id="inventory-list" class="inventory-list">
-        </div>
+    <script type="module" src="app.js"></script>
 
-    <button class="fab-add" onclick="showAddModal()">
-        <span>📦 Tambah Barang</span>
-    </button>
-</div>
+</body>
+</html>
