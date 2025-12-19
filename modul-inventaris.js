@@ -244,106 +244,6 @@ class MobileKeyboardHandler {
 window.mobileKeyboardHandler = new MobileKeyboardHandler();
 
 // ============================================================================
-// DRAG HANDLER FOR PICKER
-// ============================================================================
-
-function initPickerDrag() {
-    const picker = document.getElementById('view-picker');
-    const dragHandle = document.getElementById('picker-drag-handle');
-    const pickerContent = picker.querySelector('.picker-content-container');
-    
-    if (!picker || !dragHandle || !pickerContent) return;
-    
-    let startY = 0;
-    let startTop = 0;
-    let isDragging = false;
-    const bounds = calculatePickerBounds(lastOrigin);
-    
-    const startDrag = (e) => {
-        e.preventDefault();
-        isDragging = true;
-        startY = e.type === 'touchstart' ? e.touches[0].clientY : e.clientY;
-        startTop = parseFloat(pickerContent.style.top) || bounds.minTop;
-        pickerContent.style.transition = 'none';
-        dragHandle.classList.add('cursor-grabbing');
-    };
-    
-    const doDrag = (e) => {
-        if (!isDragging) return;
-        
-        const currentY = e.type === 'touchmove' ? e.touches[0].clientY : e.clientY;
-        const deltaY = currentY - startY;
-        let newTop = startTop + deltaY;
-        
-        // Batasi pergerakan
-        newTop = Math.max(bounds.minTop, Math.min(bounds.maxTop, newTop));
-        
-        // Update posisi
-        pickerContent.style.top = `${newTop}px`;
-        pickerContent.style.height = `calc(100% - ${newTop}px)`;
-    };
-    
-    const endDrag = () => {
-        if (!isDragging) return;
-        isDragging = false;
-        pickerContent.style.transition = 'top 0.25s cubic-bezier(0.4, 0, 0.2, 1), height 0.25s cubic-bezier(0.4, 0, 0.2, 1)';
-        dragHandle.classList.remove('cursor-grabbing');
-        
-        const currentTop = parseFloat(pickerContent.style.top);
-        const threshold = (bounds.minTop + bounds.maxTop) / 2;
-        
-        // Snap to nearest bound
-        const snapTop = currentTop > threshold ? bounds.maxTop : bounds.minTop;
-        pickerContent.style.top = `${snapTop}px`;
-        pickerContent.style.height = `calc(100% - ${snapTop}px)`;
-    };
-    
-    // Event listeners
-    dragHandle.addEventListener('touchstart', startDrag, { passive: false });
-    dragHandle.addEventListener('mousedown', startDrag);
-    
-    document.addEventListener('touchmove', doDrag, { passive: false });
-    document.addEventListener('mousemove', doDrag);
-    
-    document.addEventListener('touchend', endDrag);
-    document.addEventListener('mouseup', endDrag);
-    
-    // Hentikan drag jika klik di backdrop
-    const backdrop = picker.querySelector('.absolute.inset-0');
-    if (backdrop) {
-        backdrop.addEventListener('touchstart', (e) => {
-            if (e.target === backdrop) {
-                endDrag();
-                window.tutupPicker();
-            }
-        });
-        backdrop.addEventListener('mousedown', (e) => {
-            if (e.target === backdrop) {
-                endDrag();
-                window.tutupPicker();
-            }
-        });
-    }
-}
-
-// Update bounds saat window resize
-window.addEventListener('resize', () => {
-    const picker = document.getElementById('view-picker');
-    if (picker && !picker.classList.contains('hidden')) {
-        const bounds = calculatePickerBounds(lastOrigin);
-        const pickerContent = picker.querySelector('.picker-content-container');
-        
-        if (pickerContent) {
-            const currentTop = parseFloat(pickerContent.style.top) || bounds.minTop;
-            const clampedTop = Math.max(bounds.minTop, Math.min(bounds.maxTop, currentTop));
-            
-            pickerContent.style.top = `${clampedTop}px`;
-            pickerContent.style.height = `calc(100% - ${clampedTop}px)`;
-        }
-    }
-});
-
-// ============================================================================
 // RENDER INVENTARIS
 // ============================================================================
 
@@ -450,48 +350,42 @@ export function renderInventaris() {
             </div>
         </div>
 
-        <!-- Panel Picker dengan sistem batas koordinat & tombol sticky -->
-<div id="view-picker" class="hidden fixed inset-0 z-[200] overflow-hidden">
-    <div class="absolute inset-0 bg-black/60" onclick="window.tutupPicker()"></div>
-    <div class="picker-content-container absolute left-0 right-0 ${desktopWidth} mx-auto rounded-t-[2rem] animate-slide-up bg-white flex flex-col"
-         style="will-change: transform; max-height: 85vh;">
-        
-        <!-- DRAG HANDLE -->
-        <div class="w-12 h-1.5 bg-gray-200 rounded-full mx-auto my-4 cursor-grab active:cursor-grabbing touch-none"
-             id="picker-drag-handle"></div>
-        
-        <!-- HEADER -->
-        <div class="px-6 mb-4 flex justify-between items-center flex-shrink-0">
-            <h3 id="picker-title" class="font-bold text-lg text-gray-800 proper-case">Pilih Kategori</h3>
-            <button onclick="window.tutupPicker()" class="text-gray-400 p-2">
-                <i class="fa-solid fa-xmark text-xl"></i>
-            </button>
-        </div>
-        
-        <!-- SEARCH -->
-        <div class="px-6 mb-4 flex-shrink-0">
-            <div class="relative border border-gray-100 bg-gray-50 rounded-xl std-input px-4 flex items-center gap-3">
-                <i class="fa-solid fa-magnifying-glass text-gray-300 text-sm"></i>
-                <input type="text" id="picker-search" oninput="window.filterPickerList(this.value)" 
-                       class="w-full h-full bg-transparent outline-none font-medium text-gray-600 text-sm"
-                       placeholder="Cari...">
+        <!-- PANEL PICKER - FULLSCREEN MODAL SEPERTI view-edit -->
+        <div id="view-picker" class="hidden fixed inset-0 bg-white z-[200] overflow-y-auto">
+            <div class="${desktopWidth} mx-auto min-h-screen bg-white flex flex-col">
+                
+                <!-- HEADER -->
+                <div class="flex items-center p-4 border-b sticky top-0 bg-white z-10">
+                    <button onclick="window.tutupPicker()" class="mr-3 p-2 rounded-full">
+                        <i class="fa-solid fa-arrow-left text-xl text-gray-600"></i>
+                    </button>
+                    <h3 id="picker-title" class="font-bold text-lg text-gray-800 proper-case">Pilih Kategori</h3>
+                </div>
+                
+                <!-- SEARCH -->
+                <div class="p-4">
+                    <div class="relative border border-gray-100 bg-gray-50 rounded-xl std-input px-4 flex items-center gap-3">
+                        <i class="fa-solid fa-magnifying-glass text-gray-300 text-sm"></i>
+                        <input type="text" id="picker-search" oninput="window.filterPickerList(this.value)" 
+                               class="w-full h-full bg-transparent outline-none font-medium text-gray-600 text-sm"
+                               placeholder="Cari kategori atau satuan...">
+                    </div>
+                </div>
+                
+                <!-- LIST AREA - SCROLLABLE -->
+                <div id="picker-list" class="flex-1 overflow-y-auto px-4 space-y-1 no-scrollbar"></div>
+                
+                <!-- TOMBOL AKSI - STICKY BOTTOM SEPERTI view-edit -->
+                <div class="p-3 bg-white border-t sticky bottom-0 z-20">
+                    <button id="picker-btn-add" 
+                            class="w-full bg-emerald-500 text-white py-3.5 rounded-xl font-bold uppercase text-sm shadow-lg active:scale-95 transition-all">
+                        <i class="fa-solid fa-plus mr-2"></i> 
+                        <span id="picker-btn-text">Tambah Kategori Baru</span>
+                    </button>
+                </div>
+                
             </div>
         </div>
-        
-        <!-- SCROLLABLE LIST AREA (TANPA TOMBOL) -->
-        <div id="picker-list" class="flex-1 overflow-y-auto px-6 space-y-2 no-scrollbar"></div>
-        
-        <!-- TOMBOL AKSI - DI LUAR SCROLL AREA, STICKY KE BOTTOM CONTAINER -->
-        <div class="p-3 bg-white border-t border-gray-100 mt-auto flex-shrink-0 sticky bottom-0 z-10">
-            <button id="picker-btn-add" 
-                    class="w-full bg-emerald-500 text-white py-3.5 rounded-xl font-bold uppercase text-sm shadow-lg active:scale-95 transition-all">
-                <i class="fa-solid fa-plus mr-2"></i> 
-                <span id="picker-btn-text">Tambah Kategori Baru</span>
-            </button>
-        </div>
-        
-    </div>
-</div>
 
         <div id="view-form-baru" class="hidden fixed inset-0 bg-black/60 z-[200] flex items-end justify-center overflow-hidden">
             <div class="bg-white w-full ${desktopWidth} rounded-t-[2rem] animate-slide-up relative flex flex-col max-h-[85vh]">
@@ -503,54 +397,64 @@ export function renderInventaris() {
     
     loadFirebaseData();
     
-    // Inisialisasi drag setelah DOM selesai render
-    setTimeout(() => initPickerDrag(), 100);
-    
     // ============================================================================
     // REGISTER ACTION BUTTONS FOR KEYBOARD HANDLING
     // ============================================================================
-    setTimeout(() => {
-        console.log('🔧 Registering ACTION buttons...');
-        
-        // 1. Tombol SIMPAN di view-edit
-        const saveButton = document.querySelector('[onclick="window.simpanBarang()"]');
-        if (saveButton && !saveButton.closest('nav')) {
-            console.log('✅ Registering save-barang button');
-            saveButton.id = 'save-barang-button';
-            const wrapper = saveButton.parentElement;
-            wrapper.id = 'save-barang-wrapper';
-            wrapper.classList.add('mobile-keyboard-aware');
-            window.mobileKeyboardHandler.registerSaveButton('save-barang-button', 'save-barang-wrapper');
-        }
-        
-        // 2. Tombol di view-form-baru
-        const formSaveButtons = document.querySelectorAll('[onclick*="window.prosesSimpanData"]');
-        formSaveButtons.forEach((btn, idx) => {
-            if (btn && !btn.closest('nav')) {
-                console.log(`✅ Registering form-save-button-${idx}`);
-                btn.id = `form-save-button-${idx}`;
-                const wrapper = btn.parentElement;
-                if (wrapper) {
-                    wrapper.classList.add('mobile-keyboard-aware');
-                    window.mobileKeyboardHandler.registerSaveButton(btn.id);
-                }
-            }
-        });
-        
-        // 3. Tombol TAMBAH di view-picker
-        const pickerAddButton = document.getElementById('picker-btn-add');
-        if (pickerAddButton && !pickerAddButton.closest('nav')) {
-            console.log('✅ Registering picker-add button');
-            const wrapper = pickerAddButton.parentElement;
+setTimeout(() => {
+    console.log('🔧 Registering ACTION buttons...');
+    
+    // 1. Tombol SIMPAN di view-edit
+    const saveButton = document.querySelector('[onclick="window.simpanBarang()"]');
+    if (saveButton && !saveButton.closest('nav')) {
+        console.log('✅ Registering save-barang button');
+        saveButton.id = 'save-barang-button';
+        const wrapper = saveButton.parentElement;
+        wrapper.id = 'save-barang-wrapper';
+        wrapper.classList.add('mobile-keyboard-aware');
+        window.mobileKeyboardHandler.registerSaveButton('save-barang-button', 'save-barang-wrapper');
+    }
+    
+    // 2. Tombol di view-form-baru
+    const formSaveButtons = document.querySelectorAll('[onclick*="window.prosesSimpanData"]');
+    formSaveButtons.forEach((btn, idx) => {
+        if (btn && !btn.closest('nav')) {
+            console.log(`✅ Registering form-save-button-${idx}`);
+            btn.id = `form-save-button-${idx}`;
+            const wrapper = btn.parentElement;
             if (wrapper) {
                 wrapper.classList.add('mobile-keyboard-aware');
-                window.mobileKeyboardHandler.registerSaveButton('picker-btn-add');
+                window.mobileKeyboardHandler.registerSaveButton(btn.id);
             }
         }
-        
-        console.log('🔧 Total action buttons registered:', window.mobileKeyboardHandler.saveButtons.size);
-    }, 500);
-}
+    });
+    
+    // 3. Tombol TAMBAH di view-picker (BARU!)
+    const pickerAddButton = document.getElementById('picker-btn-add');
+    if (pickerAddButton && !pickerAddButton.closest('nav')) {
+        console.log('✅ Registering picker-add button for keyboard handling');
+        const wrapper = pickerAddButton.parentElement;
+        if (wrapper) {
+            wrapper.classList.add('mobile-keyboard-aware');
+            window.mobileKeyboardHandler.registerSaveButton('picker-btn-add');
+        }
+    }
+    
+    // 4. Tombol di view-multi-satuan (jika ada)
+    const multiSatuanButtons = document.querySelectorAll('#view-multi-satuan button.bg-emerald-500');
+    multiSatuanButtons.forEach((btn, idx) => {
+        if (btn && !btn.closest('nav')) {
+            console.log(`✅ Registering multi-satuan-button-${idx}`);
+            btn.id = btn.id || `multi-satuan-btn-${idx}`;
+            const wrapper = btn.parentElement;
+            if (wrapper) {
+                wrapper.classList.add('mobile-keyboard-aware');
+                window.mobileKeyboardHandler.registerSaveButton(btn.id);
+            }
+        }
+    });
+    
+    console.log('🔧 Total action buttons registered:', window.mobileKeyboardHandler.saveButtons.size);
+}, 500);
 
 // ============================================================================
 // PICKER LOGIC
@@ -674,26 +578,7 @@ window.selectAndClose = (type, val) => {
 
 window.tutupPicker = () => {
     const picker = document.getElementById('view-picker');
-    const pickerContent = picker.querySelector('.picker-content-container');
-    
-    if (pickerContent) {
-        pickerContent.style.transition = 'top 0.25s cubic-bezier(0.4, 0, 0.2, 1), height 0.25s cubic-bezier(0.4, 0, 0.2, 1)';
-        
-        // Animate out
-        const bounds = calculatePickerBounds(lastOrigin);
-        pickerContent.style.top = `${bounds.maxTop + 100}px`;
-        pickerContent.style.height = `calc(100% - ${bounds.maxTop + 100}px)`;
-        
-        setTimeout(() => {
-            picker.classList.add('hidden');
-            // Reset untuk next time
-            pickerContent.style.top = '';
-            pickerContent.style.height = '';
-            pickerContent.style.transition = '';
-        }, 250);
-    } else {
-        picker.classList.add('hidden');
-    }
+    picker.classList.add('hidden');
 };
 
 // ============================================================================
