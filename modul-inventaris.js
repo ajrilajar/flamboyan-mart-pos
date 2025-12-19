@@ -107,26 +107,27 @@ export function renderInventaris() {
             </div>
         </div>
 
-        <div id="view-picker" class="hidden picker-container shadow-2xl">
-            <div class="w-full h-full flex flex-col bg-white">
-                <div id="picker-drag-handle" class="w-full py-4 cursor-grab flex-shrink-0 touch-none">
-                    <div class="w-12 h-1.5 bg-gray-200 rounded-full mx-auto"></div>
-                </div>
-                <div class="px-6 mb-4 flex justify-between items-center">
-                    <h3 id="picker-title" class="font-bold text-lg text-gray-800 proper-case">Pilih Kategori</h3>
-                    <button onclick="window.tutupPicker()" class="text-gray-400"><i class="fa-solid fa-xmark text-xl"></i></button>
-                </div>
-                <div class="px-6 mb-4 flex-shrink-0">
-                    <div class="relative border border-gray-100 bg-gray-50 rounded-xl std-input px-4 flex items-center gap-3">
-                        <i class="fa-solid fa-magnifying-glass text-gray-300 text-sm"></i>
-                        <input type="text" id="picker-search" oninput="window.filterPickerList(this.value)" class="w-full h-full bg-transparent outline-none font-medium text-gray-600 text-sm">
+        <!-- PERBAIKAN: Panel Picker baru dengan struktur yang sama seperti view-form-baru -->
+        <div id="view-picker" class="hidden fixed inset-0 bg-black/60 z-[200] flex items-end justify-center overflow-hidden">
+            <div class="bg-white w-full ${desktopWidth} rounded-t-[2rem] animate-slide-up relative flex flex-col max-h-[85vh]">
+                <div class="w-12 h-1.5 bg-gray-200 rounded-full mx-auto my-4"></div>
+                <div class="flex-1 overflow-hidden flex flex-col">
+                    <div class="px-6 mb-4 flex justify-between items-center">
+                        <h3 id="picker-title" class="font-bold text-lg text-gray-800 proper-case">Pilih Kategori</h3>
+                        <button onclick="window.tutupPicker()" class="text-gray-400"><i class="fa-solid fa-xmark text-xl"></i></button>
                     </div>
-                </div>
-                <div id="picker-list" class="flex-1 overflow-y-auto px-6 space-y-2 pb-24 no-scrollbar"></div>
-                <div class="p-4 bg-white border-t sticky bottom-0 z-20 mt-auto flex-shrink-0">
-                    <button id="picker-btn-add" class="w-full bg-emerald-500 text-white py-4 rounded-xl font-bold uppercase text-xs tracking-widest flex items-center justify-center gap-2 shadow-lg active:scale-95 transition-all">
-                        <i class="fa-solid fa-plus"></i> <span id="picker-btn-text">Tambah Kategori Baru</span>
-                    </button>
+                    <div class="px-6 mb-4">
+                        <div class="relative border border-gray-100 bg-gray-50 rounded-xl std-input px-4 flex items-center gap-3">
+                            <i class="fa-solid fa-magnifying-glass text-gray-300 text-sm"></i>
+                            <input type="text" id="picker-search" oninput="window.filterPickerList(this.value)" class="w-full h-full bg-transparent outline-none font-medium text-gray-600 text-sm">
+                        </div>
+                    </div>
+                    <div id="picker-list" class="flex-1 overflow-y-auto px-6 space-y-2 no-scrollbar"></div>
+                    <div class="p-4 bg-white border-t mt-auto">
+                        <button id="picker-btn-add" class="w-full bg-emerald-500 text-white py-4 rounded-xl font-bold uppercase text-xs tracking-widest flex items-center justify-center gap-2 shadow-lg active:scale-95 transition-all">
+                            <i class="fa-solid fa-plus"></i> <span id="picker-btn-text">Tambah Kategori Baru</span>
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -138,7 +139,6 @@ export function renderInventaris() {
             </div>
         </div>
     `;
-    initPickerDrag();
     loadFirebaseData();
 }
 
@@ -147,26 +147,16 @@ window.bukaPickerSelection = (type, origin, mode = null, index = null) => {
     lastOrigin = origin;
     pickerTargetIndex = { mode, index };
     const picker = document.getElementById('view-picker');
-    // Atur tinggi maksimal untuk mobile
-    if (window.innerWidth < 768) {
-        picker.style.maxHeight = '85vh'; // Menutupi 85% layar
-        picker.style.top = '15vh'; // Mulai dari 15% dari atas
-        picker.style.borderTopLeftRadius = '1.5rem';
-        picker.style.borderTopRightRadius = '1.5rem';
-    }
     const isKategori = type === 'kategori';
     
     document.getElementById('picker-title').innerText = isKategori ? 'Pilih Kategori Barang' : 'Pilih Satuan Dasar';
     document.getElementById('picker-btn-text').innerText = isKategori ? 'Tambah Kategori Baru' : 'Tambah Satuan Baru';
     document.getElementById('picker-search').value = "";
     
-    // Poin 3: Pastikan tombol tambah berfungsi
     document.getElementById('picker-btn-add').onclick = () => window.renderFormTambahBaru(type, mode, index, '');
     
     renderPickerList(type);
     picker.classList.remove('hidden');
-    picker.style.transform = 'translateY(100%)';
-    setTimeout(() => picker.style.transform = 'translateY(0)', 10);
 };
 
 function renderPickerList(type, filter = "") {
@@ -254,10 +244,9 @@ window.selectAndClose = (type, val) => {
     window.tutupPicker();
 };
 
+// PERBAIKAN: Fungsi tutupPicker sederhana
 window.tutupPicker = () => {
-    const p = document.getElementById('view-picker');
-    p.style.transform = 'translateY(100%)';
-    setTimeout(() => p.classList.add('hidden'), 250);
+    document.getElementById('view-picker').classList.add('hidden');
 };
 
 // NAVIGASI VIEW & UTILITY
@@ -307,22 +296,12 @@ function renderKonversiList() {
     `).join('');
 }
 
-function initPickerDrag() {
-    const p = document.getElementById('view-picker'), h = document.getElementById('picker-drag-handle'), c = document.getElementById('picker-list');
-    let sY = 0, cY = 0;
-    const start = (e) => { if (c.scrollTop > 0) { sY = 0; return; } sY = e.type === 'touchstart' ? e.touches[0].clientY : e.clientY; p.style.transition = 'none'; };
-    const move = (e) => { if (!sY) return; cY = e.type === 'touchmove' ? e.touches[0].clientY : e.clientY; const dY = cY - sY; if (dY > 0 && c.scrollTop <= 0) { e.preventDefault(); p.style.transform = `translateY(${dY}px)`; } else { sY = 0; p.style.transform = `translateY(0)`; } };
-    const end = () => { if (!sY) return; const dY = cY - sY; p.style.transition = 'transform 0.25s ease-out'; if (dY > 180) window.tutupPicker(); else p.style.transform = `translateY(0)`; sY = 0; };
-    h.addEventListener('touchstart', start, { passive: false });
-    h.addEventListener('touchmove', move, { passive: false });
-    h.addEventListener('touchend', end);
-}
-
 window.loadFirebaseData = () => { 
     onValue(ref(db, 'products'), s => { databaseBarang = s.val() || {}; window.filterInventaris(); }); 
     onValue(ref(db, 'settings/categories'), s => { dataKategori = s.val() || {}; }); 
     onValue(ref(db, 'settings/units'), s => { dataSatuan = s.val() || {}; }); 
 };
+
 window.filterInventaris = () => {
     const list = document.getElementById('list-barang'); if(!list) return; list.innerHTML = "";
     Object.entries(databaseBarang).forEach(([id, item]) => {
