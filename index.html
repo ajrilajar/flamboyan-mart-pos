@@ -1,200 +1,22 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Kasir Flamboyan Mart</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <style>
-        /* ================================================================
-           BASE ANIMATIONS
-           ================================================================ */
-        @keyframes fadeIn { 
-            from { opacity: 0; } 
-            to { opacity: 1; } 
-        }
-        
-        .animate-fadeIn { 
-            animation: fadeIn 0.2s ease-in-out; 
-        }
+<div id="inventaris-page" class="page">
+    <div class="header">
+        <h2>Inventaris</h2>
+        <i class="settings-icon">⚙️</i>
+    </div>
 
-        /* ================================================================
-           UTILITY CLASSES
-           ================================================================ */
-        .proper-case { 
-            text-transform: capitalize; 
-        }
-        .no-scrollbar::-webkit-scrollbar { 
-            display: none; 
-        }
-        
-        .std-input {
-            height: 3.5rem;
-            display: flex;
-            align-items: center;
-            width: 100%;
-        }
+    <div class="search-container">
+        <input type="text" id="searchBar" placeholder="Cari Barang...">
+        <div class="filter-group">
+            <select><option>Kategori</option></select>
+            <select><option>Stok</option></select>
+            <select><option>Jenis</option></select>
+        </div>
+    </div>
 
-        .radio-custom {
-            width: 1.25rem;
-            height: 1.25rem;
-            border: 2px solid #e5e7eb;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.2s;
-        }
+    <div id="inventory-list" class="inventory-list">
+        </div>
 
-        .radio-active { 
-            border-color: #10b981; 
-            background: #10b981; 
-            box-shadow: inset 0 0 0 3px white; 
-        }
-
-        /* ================================================================
-           FULL SCREEN VIEW STYLES
-           ================================================================ */
-        [id^="view-"]:not(#view-list) {
-            position: fixed !important;
-            inset: 0 !important;
-            background: white !important;
-            z-index: 100 !important;
-            display: flex !important;
-            flex-direction: column !important;
-        }
-
-        /* Navigation bar tetap di bawah */
-        nav.fixed.bottom-0 {
-            z-index: 50;
-        }
-
-        /* ================================================================
-           MOBILE OPTIMIZATION
-           ================================================================ */
-        @media (max-width: 767px) {
-            /* Touch-friendly buttons */
-            .btn-touch {
-                min-height: 44px;
-                min-width: 44px;
-            }
-            
-            /* Better scrolling on iOS */
-            .ios-scroll {
-                -webkit-overflow-scrolling: touch;
-            }
-        }
-
-        /* ================================================================
-           SAFE AREA SUPPORT
-           ================================================================ */
-        @supports (padding: max(0px)) {
-            nav.fixed.bottom-0 {
-                padding-bottom: max(0.5rem, env(safe-area-inset-bottom));
-            }
-        }
-
-        /* ================================================================
-           CUSTOM UTILITIES
-           ================================================================ */
-        .no-select {
-            -webkit-touch-callout: none;
-            -webkit-user-select: none;
-            user-select: none;
-        }
-    </style>
-</head>
-<body class="bg-gray-50 text-gray-800 font-sans">
-    <!-- MAIN CONTENT AREA -->
-    <main id="main-content" class="pb-28"></main>
-
-    <!-- BOTTOM NAVIGATION -->
-    <nav class="fixed bottom-0 left-0 right-0 bg-white border-t flex justify-around p-3 shadow-lg z-50">
-        <button onclick="switchTab('beranda')" class="nav-btn flex flex-col items-center gap-1 text-emerald-600" id="btn-beranda">
-            <i class="fa-solid fa-house text-xl"></i>
-            <span class="text-[10px] font-medium">Beranda</span>
-        </button>
-        <button onclick="switchTab('transaksi')" class="nav-btn flex flex-col items-center gap-1 text-gray-400" id="btn-transaksi">
-            <i class="fa-solid fa-receipt text-xl"></i>
-            <span class="text-[10px] font-medium">Transaksi</span>
-        </button>
-        <button onclick="switchTab('pihak')" class="nav-btn flex flex-col items-center gap-1 text-gray-400" id="btn-pihak">
-            <i class="fa-solid fa-address-book text-xl"></i>
-            <span class="text-[10px] font-medium">Pihak</span>
-        </button>
-        <button onclick="switchTab('inventori')" class="nav-btn flex flex-col items-center gap-1 text-gray-400" id="btn-inventori">
-            <i class="fa-solid fa-boxes-stacked text-xl"></i>
-            <span class="text-[10px] font-medium">Inventaris</span>
-        </button>
-        <button onclick="switchTab('lainnya')" class="nav-btn flex flex-col items-center gap-1 text-gray-400" id="btn-lainnya">
-            <i class="fa-solid fa-bars text-xl"></i>
-            <span class="text-[10px] font-medium">Lainnya</span>
-        </button>
-    </nav>
-
-    <script type="module">
-        import { renderInventaris } from "./modul-inventaris.js";
-        
-        window.switchTab = (tabName) => {
-            const content = document.getElementById('main-content');
-            
-            // Update active tab styling
-            document.querySelectorAll('.nav-btn').forEach(btn => {
-                btn.classList.remove('text-emerald-600');
-                btn.classList.add('text-gray-400');
-            });
-
-            const activeBtn = document.getElementById(`btn-${tabName}`);
-            if (activeBtn) {
-                activeBtn.classList.remove('text-gray-400');
-                activeBtn.classList.add('text-emerald-600');
-            }
-
-            // Load module content
-            if (tabName === 'beranda') { 
-                renderBeranda(); 
-            } else if (tabName === 'inventori') { 
-                renderInventaris(); 
-            } else { 
-                content.innerHTML = `
-                    <div class="flex flex-col h-full">
-                        <div class="flex-1 p-10 text-center text-gray-400 uppercase text-xs flex items-center justify-center">
-                            Modul ${tabName} segera hadir.
-                        </div>
-                    </div>
-                `; 
-            }
-        };
-
-        function renderBeranda() {
-            document.getElementById('main-content').innerHTML = `
-                <div class="flex flex-col h-full">
-                    <header class="bg-white p-4 flex justify-between items-center shadow-sm">
-                        <div class="flex items-center gap-2">
-                            <div class="w-8 h-8 bg-emerald-600 rounded-full flex items-center justify-center text-white font-bold">F</div>
-                            <h1 class="font-bold text-lg text-emerald-900 tracking-tight">Flamboyan Mart</h1>
-                        </div>
-                    </header>
-                    
-                    <div class="flex-1 p-4">
-                        <div class="grid grid-cols-2 gap-3 mb-6">
-                            <div class="bg-emerald-50 p-4 rounded-xl border border-emerald-100">
-                                <p class="text-emerald-700 font-bold text-lg">Rp 0</p>
-                                <p class="text-[10px] text-emerald-600 font-bold uppercase tracking-widest">Terima Piutang</p>
-                            </div>
-                            <div class="bg-rose-50 p-4 rounded-xl border border-rose-100">
-                                <p class="text-rose-700 font-bold text-lg">Rp 0</p>
-                                <p class="text-[10px] text-rose-600 font-bold uppercase tracking-widest">Bayar Hutang</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            `;
-        }
-
-        // Initialize dengan beranda
-        window.onload = () => window.switchTab('beranda');
-    </script>
-</body>
-</html>
+    <button class="fab-add" onclick="showAddModal()">
+        <span>📦 Tambah Barang</span>
+    </button>
+</div>
