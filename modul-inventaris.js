@@ -833,3 +833,32 @@ window.filterInventaris = () => {
         `;
     });
 };
+
+// ============================================================================
+// NAVIGATION FIX - Pastikan navigation bisa diklik
+// ============================================================================
+
+window.fixNavigationClicks = () => {
+    const navButtons = document.querySelectorAll('nav button');
+    console.log('Navigation buttons found:', navButtons.length);
+    
+    navButtons.forEach(btn => {
+        btn.style.pointerEvents = 'auto';
+        btn.style.touchAction = 'auto';
+        btn.style.zIndex = '9999';
+    });
+};
+
+// Fix navigation setelah DOM siap
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => {
+        setTimeout(window.fixNavigationClicks, 500);
+    });
+} else {
+    setTimeout(window.fixNavigationClicks, 500);
+}
+
+// ============================================================================
+// END OF FILE - PASTIKAN TIDAK ADA KARAKTER TAMBAHAN
+// ============================================================================
+// File harus berakhir di sini tanpa karakter tambahan
