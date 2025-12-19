@@ -1,67 +1,51 @@
-:root {
-    --bg-color: #f8f9fa;
-    --card-white: #ffffff;
-    --text-main: #333333;
-    --text-muted: #888888;
-    --green-accent: #27ae60;
+/* Reset & Base */
+body { 
+    margin: 0; 
+    font-family: 'Inter', sans-serif; 
+    background-color: #f8f9fa; /* Warna latar abu-abu sesuai gambar */
 }
 
-body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    background-color: var(--bg-color);
-    margin: 0;
-    color: var(--text-main);
+.header { 
+    background: white; 
+    padding: 15px 20px; 
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center; 
 }
 
-.header {
+.search-box { 
+    background: white; 
+    padding: 10px 20px; 
+    border-bottom: 1px solid #eee; 
+}
+
+#findItem { 
+    width: 100%; 
+    padding: 12px; 
+    border: 1px solid #ddd; 
+    border-radius: 8px; 
+    box-sizing: border-box; 
+}
+
+.filter-group { display: flex; gap: 8px; margin-top: 10px; }
+.chip { background: #f0f2f5; padding: 5px 12px; border-radius: 20px; font-size: 13px; color: #555; }
+
+/* KARTU BARANG - INI YANG MEMBUATNYA MIRIP */
+.inventory-body { padding: 10px; padding-bottom: 80px; }
+
+.item-card {
     background: white;
-    padding: 15px 20px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.search-section {
-    background: white;
-    padding: 10px 20px;
-    border-bottom: 1px solid #eee;
-}
-
-#searchInput {
-    width: 100%;
-    padding: 12px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    box-sizing: border-box;
-}
-
-.filter-row {
-    display: flex;
-    gap: 10px;
-    margin-top: 10px;
-}
-
-.filter-item {
-    background: #f0f2f5;
-    padding: 6px 12px;
-    border-radius: 20px;
-    font-size: 13px;
-}
-
-/* Card Inventaris Persis Gambar 1 */
-.card-item {
-    background: var(--card-white);
-    margin: 12px;
-    padding: 15px;
     border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 12px;
     display: flex;
     align-items: center;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.04); /* Bayangan halus */
 }
 
-.initial-box {
-    width: 48px;
-    height: 48px;
+/* Inisial SS, FC, dsb */
+.box-initial {
+    width: 48px; height: 48px;
     background: #f0f2f5;
     border-radius: 8px;
     display: flex;
@@ -69,60 +53,29 @@ body {
     justify-content: center;
     font-weight: bold;
     margin-right: 15px;
-    color: #444;
+    color: #333;
 }
 
-.item-info { flex: 1; }
+.info-center { flex: 1; }
+.name-product { font-weight: 700; font-size: 15px; margin-bottom: 6px; color: #1a1a1a; }
 
-.item-name {
-    font-weight: bold;
-    font-size: 15px;
-    margin-bottom: 5px;
+.price-container { display: flex; gap: 20px; }
+.price-label { font-size: 11px; color: #888; margin-bottom: 2px; }
+.price-val { font-size: 13px; font-weight: 600; color: #333; }
+
+/* Bagian Kanan */
+.info-right { text-align: right; }
+.badge-cat { 
+    background: #eceff1; color: #546e7a; 
+    font-size: 10px; padding: 3px 8px; border-radius: 4px; 
+    text-transform: uppercase;
 }
+.total-stock { font-weight: 800; font-size: 14px; margin-top: 6px; color: #333; }
 
-.price-row {
-    display: flex;
-    gap: 20px;
-}
-
-.price-col {
-    font-size: 11px;
-    color: var(--text-muted);
-}
-
-.price-col strong {
-    display: block;
-    color: var(--text-main);
-    font-size: 13px;
-    margin-top: 2px;
-}
-
-.stock-side {
-    text-align: right;
-}
-
-.category-tag {
-    background: #eceff1;
-    color: #607d8b;
-    font-size: 10px;
-    padding: 3px 8px;
-    border-radius: 4px;
-}
-
-.stock-count {
-    font-weight: bold;
-    margin-top: 5px;
-}
-
-.fab-add {
-    position: fixed;
-    bottom: 30px;
-    right: 20px;
-    background: var(--green-accent);
-    color: white;
-    border: none;
-    padding: 12px 25px;
-    border-radius: 30px;
-    font-weight: bold;
-    box-shadow: 0 4px 10px rgba(39, 174, 96, 0.3);
+/* FAB Hijau */
+.btn-add-item {
+    position: fixed; bottom: 25px; right: 20px;
+    background: #27ae60; color: white; border: none;
+    padding: 12px 25px; border-radius: 50px; font-weight: bold;
+    box-shadow: 0 4px 12px rgba(39, 174, 96, 0.4);
 }
