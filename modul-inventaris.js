@@ -451,42 +451,47 @@ export function renderInventaris() {
         </div>
 
         <!-- Panel Picker dengan sistem batas koordinat & tombol sticky -->
-        <div id="view-picker" class="hidden fixed inset-0 z-[200] overflow-hidden">
-            <div class="absolute inset-0 bg-black/60" onclick="window.tutupPicker()"></div>
-            <div class="picker-content-container absolute left-0 right-0 bg-white ${desktopWidth} mx-auto rounded-t-[2rem] animate-slide-up"
-                 style="will-change: transform;">
-                <div class="w-full flex flex-col" style="height: 70vh; max-height: 70vh;">
-                    <div class="w-12 h-1.5 bg-gray-200 rounded-full mx-auto my-4 cursor-grab active:cursor-grabbing touch-none"
-                         id="picker-drag-handle"></div>
-                    <div class="px-6 mb-4 flex justify-between items-center flex-shrink-0">
-                        <h3 id="picker-title" class="font-bold text-lg text-gray-800 proper-case">Pilih Kategori</h3>
-                        <button onclick="window.tutupPicker()" class="text-gray-400 p-2">
-                            <i class="fa-solid fa-xmark text-xl"></i>
-                        </button>
-                    </div>
-                    <div class="px-6 mb-4 flex-shrink-0">
-                        <div class="relative border border-gray-100 bg-gray-50 rounded-xl std-input px-4 flex items-center gap-3">
-                            <i class="fa-solid fa-magnifying-glass text-gray-300 text-sm"></i>
-                            <input type="text" id="picker-search" oninput="window.filterPickerList(this.value)" 
-                                   class="w-full h-full bg-transparent outline-none font-medium text-gray-600 text-sm"
-                                   placeholder="Cari...">
-                        </div>
-                    </div>
-                    <!-- SCROLL AREA yang mencakup tombol -->
-                    <div class="flex-1 min-h-0 overflow-hidden flex flex-col">
-                        <div id="picker-list" class="flex-1 overflow-y-auto px-6 space-y-2 no-scrollbar"></div>
-<!-- TOMBOL AKSI STANDARD - SAMA SEPERTI view-edit -->
-<div class="p-3 bg-white border-t sticky bottom-0 z-20">
-    <button id="picker-btn-add" 
-            class="w-full bg-emerald-500 text-white py-3.5 rounded-xl font-bold uppercase text-sm shadow-lg active:scale-95 transition-all">
-        <i class="fa-solid fa-plus mr-2"></i> 
-        <span id="picker-btn-text">Tambah Kategori Baru</span>
-    </button>
-</div>
-                    </div>
-                </div>
+<div id="view-picker" class="hidden fixed inset-0 z-[200] overflow-hidden">
+    <div class="absolute inset-0 bg-black/60" onclick="window.tutupPicker()"></div>
+    <div class="picker-content-container absolute left-0 right-0 ${desktopWidth} mx-auto rounded-t-[2rem] animate-slide-up bg-white flex flex-col"
+         style="will-change: transform; max-height: 85vh;">
+        
+        <!-- DRAG HANDLE -->
+        <div class="w-12 h-1.5 bg-gray-200 rounded-full mx-auto my-4 cursor-grab active:cursor-grabbing touch-none"
+             id="picker-drag-handle"></div>
+        
+        <!-- HEADER -->
+        <div class="px-6 mb-4 flex justify-between items-center flex-shrink-0">
+            <h3 id="picker-title" class="font-bold text-lg text-gray-800 proper-case">Pilih Kategori</h3>
+            <button onclick="window.tutupPicker()" class="text-gray-400 p-2">
+                <i class="fa-solid fa-xmark text-xl"></i>
+            </button>
+        </div>
+        
+        <!-- SEARCH -->
+        <div class="px-6 mb-4 flex-shrink-0">
+            <div class="relative border border-gray-100 bg-gray-50 rounded-xl std-input px-4 flex items-center gap-3">
+                <i class="fa-solid fa-magnifying-glass text-gray-300 text-sm"></i>
+                <input type="text" id="picker-search" oninput="window.filterPickerList(this.value)" 
+                       class="w-full h-full bg-transparent outline-none font-medium text-gray-600 text-sm"
+                       placeholder="Cari...">
             </div>
         </div>
+        
+        <!-- SCROLLABLE LIST AREA (TANPA TOMBOL) -->
+        <div id="picker-list" class="flex-1 overflow-y-auto px-6 space-y-2 no-scrollbar"></div>
+        
+        <!-- TOMBOL AKSI - DI LUAR SCROLL AREA, STICKY KE BOTTOM CONTAINER -->
+        <div class="p-3 bg-white border-t border-gray-100 mt-auto flex-shrink-0 sticky bottom-0 z-10">
+            <button id="picker-btn-add" 
+                    class="w-full bg-emerald-500 text-white py-3.5 rounded-xl font-bold uppercase text-sm shadow-lg active:scale-95 transition-all">
+                <i class="fa-solid fa-plus mr-2"></i> 
+                <span id="picker-btn-text">Tambah Kategori Baru</span>
+            </button>
+        </div>
+        
+    </div>
+</div>
 
         <div id="view-form-baru" class="hidden fixed inset-0 bg-black/60 z-[200] flex items-end justify-center overflow-hidden">
             <div class="bg-white w-full ${desktopWidth} rounded-t-[2rem] animate-slide-up relative flex flex-col max-h-[85vh]">
