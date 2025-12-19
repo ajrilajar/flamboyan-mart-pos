@@ -22,7 +22,7 @@ export function renderInventaris() {
 
         <div id="view-edit" class="hidden fixed inset-0 bg-white z-[70] overflow-y-auto">
             <div class="${desktopWidth} mx-auto min-h-screen bg-white flex flex-col">
-                <div class="flex items-center p-2 border-b sticky top-0 bg-white z-10">
+                <div class="flex items-center p-2 border-b sticky top-0 bg-white z-10" id="header-edit">
                     <button onclick="window.batalEdit()" class="p-2 text-gray-600 mr-1"><i class="fa-solid fa-arrow-left text-xl"></i></button>
                     <h3 id="edit-title" class="font-bold text-base text-gray-800 proper-case">Tambah Barang</h3>
                 </div>
@@ -71,11 +71,11 @@ export function renderInventaris() {
                     <h3 class="font-bold text-lg text-gray-800 proper-case">Pengaturan Inventaris</h3>
                 </div>
                 <div class="p-3 space-y-2">
-                    <div onclick="window.bukaKelolaSetting('kategori')" class="bg-white p-4 rounded-xl flex justify-between items-center border border-gray-100">
+                    <div onclick="window.bukaPickerSelection('kategori', 'view-pengaturan')" class="bg-white p-4 rounded-xl flex justify-between items-center border border-gray-100 active:bg-gray-50 cursor-pointer">
                         <div class="flex items-center gap-4"><i class="fa-solid fa-boxes-stacked text-emerald-500"></i><span class="font-bold text-gray-700 proper-case text-sm">Kelola Kategori</span></div>
                         <i class="fa-solid fa-chevron-right text-gray-300 text-xs"></i>
                     </div>
-                    <div onclick="window.bukaKelolaSetting('satuan')" class="bg-white p-4 rounded-xl flex justify-between items-center border border-gray-100">
+                    <div onclick="window.bukaPickerSelection('satuan', 'view-pengaturan')" class="bg-white p-4 rounded-xl flex justify-between items-center border border-gray-100 active:bg-gray-50 cursor-pointer">
                         <div class="flex items-center gap-4"><i class="fa-solid fa-scale-balanced text-emerald-500"></i><span class="font-bold text-gray-700 proper-case text-sm">Kelola Satuan Ukur</span></div>
                         <i class="fa-solid fa-chevron-right text-gray-300 text-xs"></i>
                     </div>
@@ -107,12 +107,15 @@ export function renderInventaris() {
             </div>
         </div>
 
-        <div id="view-picker" class="hidden picker-container">
-            <div class="${desktopWidth} mx-auto h-full flex flex-col bg-white">
+        <div id="view-picker" class="hidden picker-container ${desktopWidth} mx-auto border-x shadow-2xl">
+            <div class="w-full h-full flex flex-col bg-white">
                 <div id="picker-drag-handle" class="w-full py-4 cursor-grab flex-shrink-0 touch-none">
                     <div class="w-12 h-1.5 bg-gray-200 rounded-full mx-auto"></div>
                 </div>
-                <div class="px-6 mb-4"><h3 id="picker-title" class="font-bold text-lg text-gray-800 proper-case">Pilih Kategori</h3></div>
+                <div class="px-6 mb-4 flex justify-between items-center">
+                    <h3 id="picker-title" class="font-bold text-lg text-gray-800 proper-case">Pilih Kategori</h3>
+                    <button onclick="window.tutupPicker()" class="text-gray-400"><i class="fa-solid fa-xmark text-xl"></i></button>
+                </div>
                 <div class="px-6 mb-4 flex-shrink-0">
                     <div class="relative border border-gray-100 bg-gray-50 rounded-xl std-input px-4 flex items-center gap-3">
                         <i class="fa-solid fa-magnifying-glass text-gray-300 text-sm"></i>
@@ -121,10 +124,17 @@ export function renderInventaris() {
                 </div>
                 <div id="picker-list" class="flex-1 overflow-y-auto px-6 space-y-2 pb-24 no-scrollbar"></div>
                 <div class="p-4 bg-white border-t sticky bottom-0 z-20 mt-auto flex-shrink-0">
-                    <button id="picker-btn-add" class="w-full bg-emerald-500 text-white py-4 rounded-xl font-bold uppercase text-xs tracking-widest flex items-center justify-center gap-2 shadow-lg">
+                    <button id="picker-btn-add" class="w-full bg-emerald-500 text-white py-4 rounded-xl font-bold uppercase text-xs tracking-widest flex items-center justify-center gap-2 shadow-lg active:scale-95 transition-all">
                         <i class="fa-solid fa-plus"></i> <span id="picker-btn-text">Tambah Kategori Baru</span>
                     </button>
                 </div>
+            </div>
+        </div>
+
+        <div id="view-form-baru" class="hidden fixed inset-0 bg-black/60 z-[200] flex items-end justify-center overflow-hidden">
+            <div class="bg-white w-full ${desktopWidth} rounded-t-[2rem] animate-slide-up relative flex flex-col max-h-[85vh]">
+                <div class="w-12 h-1.5 bg-gray-200 rounded-full mx-auto my-4"></div>
+                <div id="form-baru-content" class="flex flex-col p-6 pb-10"></div>
             </div>
         </div>
     `;
@@ -132,14 +142,19 @@ export function renderInventaris() {
     loadFirebaseData();
 }
 
-// LOGIKA NAVIGASI PICKER & KONVERSI
+// LOGIKA PICKER CERDAS
 window.bukaPickerSelection = (type, origin, mode = null, index = null) => {
     lastOrigin = origin;
     pickerTargetIndex = { mode, index };
     const picker = document.getElementById('view-picker');
-    document.getElementById('picker-title').innerText = type === 'kategori' ? 'Pilih Kategori Barang' : 'Pilih Satuan Dasar';
-    document.getElementById('picker-btn-text').innerText = type === 'kategori' ? 'Tambah Kategori Baru' : 'Tambah Satuan Baru';
+    const isKategori = type === 'kategori';
+    
+    document.getElementById('picker-title').innerText = isKategori ? 'Pilih Kategori Barang' : 'Pilih Satuan Dasar';
+    document.getElementById('picker-btn-text').innerText = isKategori ? 'Tambah Kategori Baru' : 'Tambah Satuan Baru';
     document.getElementById('picker-search').value = "";
+    
+    // Poin 3: Pastikan tombol tambah berfungsi
+    document.getElementById('picker-btn-add').onclick = () => window.renderFormTambahBaru(type, mode, index, '');
     
     renderPickerList(type);
     picker.classList.remove('hidden');
@@ -150,18 +165,76 @@ window.bukaPickerSelection = (type, origin, mode = null, index = null) => {
 function renderPickerList(type, filter = "") {
     const list = document.getElementById('picker-list');
     const data = type === 'kategori' ? dataKategori : dataSatuan;
+    const isManageMode = lastOrigin === 'view-pengaturan';
+    
     list.innerHTML = Object.entries(data)
         .filter(([id, item]) => item.nama.toLowerCase().includes(filter.toLowerCase()))
         .map(([id, item]) => {
             const val = type === 'satuan' ? item.pendek : item.nama;
             return `
-                <div onclick="window.selectAndClose('${type}', '${val}')" class="py-4 flex justify-between items-center cursor-pointer border-b border-gray-50">
-                    <span class="font-bold text-gray-700 text-sm proper-case">${item.nama} ${item.pendek ? `<span class="text-gray-300 ml-2 font-medium uppercase">${item.pendek}</span>` : ''}</span>
-                    <div class="radio-custom"></div>
+                <div class="py-4 flex justify-between items-center border-b border-gray-50 active:bg-gray-50 cursor-pointer">
+                    <div class="flex-1" onclick="window.selectAndClose('${type}', '${val}')">
+                        <span class="font-bold text-gray-700 text-sm proper-case">${item.nama} ${item.pendek ? `<span class="text-gray-300 ml-2 font-medium uppercase">${item.pendek}</span>` : ''}</span>
+                    </div>
+                    ${isManageMode ? `
+                        <div class="flex gap-4">
+                            <button onclick="window.renderFormTambahBaru('${type}', null, null, '${id}')" class="text-gray-300"><i class="fa-solid fa-pen text-sm"></i></button>
+                            <button onclick="window.hapusSettingData('${type}', '${id}')" class="text-rose-200"><i class="fa-solid fa-trash-can text-sm"></i></button>
+                        </div>
+                    ` : `
+                        <div class="radio-custom" onclick="window.selectAndClose('${type}', '${val}')"></div>
+                    `}
                 </div>
             `;
         }).join('');
 }
+
+window.renderFormTambahBaru = (type, mode, index, id = "") => {
+    const view = document.getElementById('view-form-baru');
+    const content = document.getElementById('form-baru-content');
+    const safeId = (id === "null" || id === null || id === "") ? "" : id;
+    const item = safeId ? (type === 'kategori' ? dataKategori[safeId] : dataSatuan[safeId]) : { nama: "", pendek: "" };
+    
+    content.innerHTML = `
+        <h3 class="font-bold text-lg text-gray-800 proper-case mb-6">${safeId ? 'Ubah' : 'Buat'} ${type} Baru</h3>
+        <div class="space-y-6">
+            <div class="relative border-2 border-emerald-500 rounded-xl std-input">
+                <label class="absolute -top-2.5 left-3 px-1 bg-white text-[10px] font-bold text-emerald-500 proper-case">Nama ${type}</label>
+                <input type="text" id="new-name" value="${item.nama}" class="w-full h-full px-4 bg-transparent outline-none font-bold text-gray-700 proper-case">
+            </div>
+            ${type === 'satuan' ? `
+                <div class="relative border border-gray-200 rounded-xl bg-gray-50 std-input">
+                    <label class="absolute -top-2.5 left-3 px-1 bg-white text-[9px] font-bold text-gray-400 proper-case tracking-widest">Satuan Pendek</label>
+                    <input type="text" id="new-short" value="${item.pendek}" maxlength="5" class="w-full h-full px-4 bg-transparent outline-none font-bold text-gray-700 uppercase">
+                </div>
+            ` : ''}
+        </div>
+        <div class="grid grid-cols-2 gap-3 mt-8">
+            <button onclick="document.getElementById('view-form-baru').classList.add('hidden')" class="py-4 font-bold text-gray-400 uppercase text-xs tracking-widest bg-gray-50 rounded-xl">Batal</button>
+            <button onclick="window.prosesSimpanData('${type}', '${safeId}', '${mode}', ${index})" class="py-4 bg-emerald-500 text-white rounded-xl font-bold shadow-lg uppercase text-xs tracking-widest">Simpan</button>
+        </div>
+    `;
+    view.classList.remove('hidden');
+};
+
+window.prosesSimpanData = async (type, id, mode, index) => {
+    const nama = document.getElementById('new-name').value.trim();
+    if (!nama) return;
+    const finalId = (id === "" || id === null) ? null : id;
+    if (type === 'kategori') { 
+        await SetingInv.simpanKategori(nama, finalId); 
+    } else { 
+        const pendek = document.getElementById('new-short').value; 
+        await SetingInv.simpanSatuanDasar(nama, pendek, finalId); 
+    }
+    document.getElementById('view-form-baru').classList.add('hidden');
+    renderPickerList(type);
+};
+
+window.filterPickerList = (val) => {
+    const type = document.getElementById('picker-btn-text').innerText.includes('Kategori') ? 'kategori' : 'satuan';
+    renderPickerList(type, val);
+};
 
 window.selectAndClose = (type, val) => {
     if (lastOrigin === 'view-edit') {
@@ -172,6 +245,27 @@ window.selectAndClose = (type, val) => {
         renderKonversiList();
     }
     window.tutupPicker();
+};
+
+window.tutupPicker = () => {
+    const p = document.getElementById('view-picker');
+    p.style.transform = 'translateY(100%)';
+    setTimeout(() => p.classList.add('hidden'), 250);
+};
+
+// NAVIGASI VIEW & UTILITY
+window.switchView = (v) => { document.querySelectorAll('[id^="view-"]').forEach(el => el.classList.add('hidden')); document.getElementById(v).classList.remove('hidden'); };
+window.bukaHalamanEdit = (id) => { currentEditId = id; multiUnits = []; window.switchView('view-edit'); };
+window.batalEdit = () => window.switchView('view-list');
+window.bukaPilihSatuanPengukuran = () => { window.switchView('view-multi-satuan'); renderKonversiList(); };
+window.tutupMultiSatuan = () => window.switchView('view-edit');
+window.tambahSatuanSekunder = () => { multiUnits.push({ unit: '', ratio: '' }); renderKonversiList(); };
+window.hapusRowKonversi = (idx) => { multiUnits.splice(idx, 1); renderKonversiList(); };
+window.updateRatio = (idx, val) => multiUnits[idx].ratio = val;
+window.hapusSettingData = async (type, id) => { 
+    type === 'kategori' ? await SetingInv.hapusKategori(id) : await SetingInv.hapusSatuanDasar(id); 
+    const currentType = document.getElementById('picker-btn-text').innerText.includes('Kategori') ? 'kategori' : 'satuan';
+    renderPickerList(currentType); 
 };
 
 window.konfirmasiSatuan = () => {
@@ -206,29 +300,17 @@ function renderKonversiList() {
     `).join('');
 }
 
-// FUNGSI NAVIGASI & DRAG
-window.tutupPicker = () => { const p = document.getElementById('view-picker'); p.style.transform = 'translateY(100%)'; setTimeout(() => p.classList.add('hidden'), 250); };
-window.switchView = (v) => { document.querySelectorAll('[id^="view-"]').forEach(el => el.classList.add('hidden')); document.getElementById(v).classList.remove('hidden'); };
-window.bukaPilihSatuanPengukuran = () => { window.switchView('view-multi-satuan'); renderKonversiList(); };
-window.tutupMultiSatuan = () => window.switchView('view-edit');
-window.batalEdit = () => window.switchView('view-list');
-window.bukaHalamanEdit = (id) => { currentEditId = id; multiUnits = []; window.switchView('view-edit'); };
-window.tambahSatuanSekunder = () => { multiUnits.push({ unit: '', ratio: '' }); renderKonversiList(); };
-window.hapusRowKonversi = (idx) => { multiUnits.splice(idx, 1); renderKonversiList(); };
-window.updateRatio = (idx, val) => multiUnits[idx].ratio = val;
-
 function initPickerDrag() {
-    const panel = document.getElementById('view-picker'), handle = document.getElementById('picker-drag-handle'), content = document.getElementById('picker-list');
+    const p = document.getElementById('view-picker'), h = document.getElementById('picker-drag-handle'), c = document.getElementById('picker-list');
     let sY = 0, cY = 0;
-    const start = (e) => { if (content.scrollTop > 0) { sY = 0; return; } sY = e.type === 'touchstart' ? e.touches[0].clientY : e.clientY; panel.style.transition = 'none'; };
-    const move = (e) => { if (!sY) return; cY = e.type === 'touchmove' ? e.touches[0].clientY : e.clientY; const dY = cY - sY; if (dY > 0 && content.scrollTop <= 0) { e.preventDefault(); panel.style.transform = `translateY(${dY}px)`; } else { sY = 0; panel.style.transform = `translateY(0)`; } };
-    const end = () => { if (!sY) return; const dY = cY - sY; panel.style.transition = 'transform 0.25s ease-out'; if (dY > 180) window.tutupPicker(); else panel.style.transform = `translateY(0)`; sY = 0; };
-    handle.addEventListener('touchstart', start, { passive: false });
-    handle.addEventListener('touchmove', move, { passive: false });
-    handle.addEventListener('touchend', end);
+    const start = (e) => { if (c.scrollTop > 0) { sY = 0; return; } sY = e.type === 'touchstart' ? e.touches[0].clientY : e.clientY; p.style.transition = 'none'; };
+    const move = (e) => { if (!sY) return; cY = e.type === 'touchmove' ? e.touches[0].clientY : e.clientY; const dY = cY - sY; if (dY > 0 && c.scrollTop <= 0) { e.preventDefault(); p.style.transform = `translateY(${dY}px)`; } else { sY = 0; p.style.transform = `translateY(0)`; } };
+    const end = () => { if (!sY) return; const dY = cY - sY; p.style.transition = 'transform 0.25s ease-out'; if (dY > 180) window.tutupPicker(); else p.style.transform = `translateY(0)`; sY = 0; };
+    h.addEventListener('touchstart', start, { passive: false });
+    h.addEventListener('touchmove', move, { passive: false });
+    h.addEventListener('touchend', end);
 }
 
-// FIREBASE & LIST (TETAP)
 window.loadFirebaseData = () => { 
     onValue(ref(db, 'products'), s => { databaseBarang = s.val() || {}; window.filterInventaris(); }); 
     onValue(ref(db, 'settings/categories'), s => { dataKategori = s.val() || {}; }); 
