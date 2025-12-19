@@ -341,12 +341,12 @@ export function renderInventaris() {
                         <i class="fa-solid fa-circle-plus text-base"></i> Tambah Satuan Lainnya
                     </button>
                 </div>
-<div class="p-3 bg-white border-t sticky bottom-0 z-20">
-    <div class="grid grid-cols-2 gap-3">
-        <button onclick="window.tutupMultiSatuan()" class="w-full py-3.5 font-bold text-gray-400 uppercase text-sm bg-gray-100 rounded-xl active:scale-95 transition-all">Batal</button>
-        <button onclick="window.konfirmasiSatuan()" class="w-full bg-emerald-500 text-white py-3.5 rounded-xl font-bold uppercase text-sm shadow-lg active:scale-95 transition-all">Simpan</button>
-    </div>
-</div>
+                <div class="p-3 bg-white border-t sticky bottom-0 z-20">
+                    <div class="grid grid-cols-2 gap-3">
+                        <button onclick="window.tutupMultiSatuan()" class="w-full py-3.5 font-bold text-gray-400 uppercase text-sm bg-gray-100 rounded-xl active:scale-95 transition-all">Batal</button>
+                        <button onclick="window.konfirmasiSatuan()" class="w-full bg-emerald-500 text-white py-3.5 rounded-xl font-bold uppercase text-sm shadow-lg active:scale-95 transition-all">Simpan</button>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -400,61 +400,62 @@ export function renderInventaris() {
     // ============================================================================
     // REGISTER ACTION BUTTONS FOR KEYBOARD HANDLING
     // ============================================================================
-setTimeout(() => {
-    console.log('🔧 Registering ACTION buttons...');
-    
-    // 1. Tombol SIMPAN di view-edit
-    const saveButton = document.querySelector('[onclick="window.simpanBarang()"]');
-    if (saveButton && !saveButton.closest('nav')) {
-        console.log('✅ Registering save-barang button');
-        saveButton.id = 'save-barang-button';
-        const wrapper = saveButton.parentElement;
-        wrapper.id = 'save-barang-wrapper';
-        wrapper.classList.add('mobile-keyboard-aware');
-        window.mobileKeyboardHandler.registerSaveButton('save-barang-button', 'save-barang-wrapper');
-    }
-    
-    // 2. Tombol di view-form-baru
-    const formSaveButtons = document.querySelectorAll('[onclick*="window.prosesSimpanData"]');
-    formSaveButtons.forEach((btn, idx) => {
-        if (btn && !btn.closest('nav')) {
-            console.log(`✅ Registering form-save-button-${idx}`);
-            btn.id = `form-save-button-${idx}`;
-            const wrapper = btn.parentElement;
-            if (wrapper) {
-                wrapper.classList.add('mobile-keyboard-aware');
-                window.mobileKeyboardHandler.registerSaveButton(btn.id);
-            }
-        }
-    });
-    
-    // 3. Tombol TAMBAH di view-picker (BARU!)
-    const pickerAddButton = document.getElementById('picker-btn-add');
-    if (pickerAddButton && !pickerAddButton.closest('nav')) {
-        console.log('✅ Registering picker-add button for keyboard handling');
-        const wrapper = pickerAddButton.parentElement;
-        if (wrapper) {
+    setTimeout(() => {
+        console.log('🔧 Registering ACTION buttons...');
+        
+        // 1. Tombol SIMPAN di view-edit
+        const saveButton = document.querySelector('[onclick="window.simpanBarang()"]');
+        if (saveButton && !saveButton.closest('nav')) {
+            console.log('✅ Registering save-barang button');
+            saveButton.id = 'save-barang-button';
+            const wrapper = saveButton.parentElement;
+            wrapper.id = 'save-barang-wrapper';
             wrapper.classList.add('mobile-keyboard-aware');
-            window.mobileKeyboardHandler.registerSaveButton('picker-btn-add');
+            window.mobileKeyboardHandler.registerSaveButton('save-barang-button', 'save-barang-wrapper');
         }
-    }
-    
-    // 4. Tombol di view-multi-satuan (jika ada)
-    const multiSatuanButtons = document.querySelectorAll('#view-multi-satuan button.bg-emerald-500');
-    multiSatuanButtons.forEach((btn, idx) => {
-        if (btn && !btn.closest('nav')) {
-            console.log(`✅ Registering multi-satuan-button-${idx}`);
-            btn.id = btn.id || `multi-satuan-btn-${idx}`;
-            const wrapper = btn.parentElement;
+        
+        // 2. Tombol di view-form-baru
+        const formSaveButtons = document.querySelectorAll('[onclick*="window.prosesSimpanData"]');
+        formSaveButtons.forEach((btn, idx) => {
+            if (btn && !btn.closest('nav')) {
+                console.log(`✅ Registering form-save-button-${idx}`);
+                btn.id = `form-save-button-${idx}`;
+                const wrapper = btn.parentElement;
+                if (wrapper) {
+                    wrapper.classList.add('mobile-keyboard-aware');
+                    window.mobileKeyboardHandler.registerSaveButton(btn.id);
+                }
+            }
+        });
+        
+        // 3. Tombol TAMBAH di view-picker (BARU!)
+        const pickerAddButton = document.getElementById('picker-btn-add');
+        if (pickerAddButton && !pickerAddButton.closest('nav')) {
+            console.log('✅ Registering picker-add button for keyboard handling');
+            const wrapper = pickerAddButton.parentElement;
             if (wrapper) {
                 wrapper.classList.add('mobile-keyboard-aware');
-                window.mobileKeyboardHandler.registerSaveButton(btn.id);
+                window.mobileKeyboardHandler.registerSaveButton('picker-btn-add');
             }
         }
-    });
-    
-    console.log('🔧 Total action buttons registered:', window.mobileKeyboardHandler.saveButtons.size);
-}, 500);
+        
+        // 4. Tombol di view-multi-satuan (jika ada)
+        const multiSatuanButtons = document.querySelectorAll('#view-multi-satuan button.bg-emerald-500');
+        multiSatuanButtons.forEach((btn, idx) => {
+            if (btn && !btn.closest('nav')) {
+                console.log(`✅ Registering multi-satuan-button-${idx}`);
+                btn.id = btn.id || `multi-satuan-btn-${idx}`;
+                const wrapper = btn.parentElement;
+                if (wrapper) {
+                    wrapper.classList.add('mobile-keyboard-aware');
+                    window.mobileKeyboardHandler.registerSaveButton(btn.id);
+                }
+            }
+        });
+        
+        console.log('🔧 Total action buttons registered:', window.mobileKeyboardHandler.saveButtons.size);
+    }, 500);
+}
 
 // ============================================================================
 // PICKER LOGIC
@@ -475,18 +476,11 @@ window.bukaPickerSelection = (type, origin, mode = null, index = null) => {
     renderPickerList(type);
     picker.classList.remove('hidden');
     
-    // HITUNG DAN TERAPKAN BATAS KOORDINAT
+    // AUTOFOCUS KE SEARCH INPUT (TIDAK PERLU BATAS KOORDINAT LAGI)
     setTimeout(() => {
-        const bounds = calculatePickerBounds(origin);
-        const pickerContent = picker.querySelector('.picker-content-container');
-        
-        if (pickerContent) {
-            // Set posisi awal berdasarkan batas minimal
-            pickerContent.style.top = `${bounds.minTop}px`;
-            pickerContent.style.height = `calc(100% - ${bounds.minTop}px)`;
-            pickerContent.style.transition = 'top 0.25s cubic-bezier(0.4, 0, 0.2, 1), height 0.25s cubic-bezier(0.4, 0, 0.2, 1)';
-        }
-    }, 10);
+        const searchInput = document.getElementById('picker-search');
+        if (searchInput) searchInput.focus();
+    }, 100);
 };
 
 function renderPickerList(type, filter = "") {
@@ -536,12 +530,12 @@ window.renderFormTambahBaru = (type, mode, index, id = "") => {
                 </div>
             ` : ''}
         </div>
-<div class="p-3 bg-white border-t sticky bottom-0 z-20 mt-8">
-    <div class="grid grid-cols-2 gap-3">
-        <button onclick="document.getElementById('view-form-baru').classList.add('hidden')" class="w-full py-3.5 font-bold text-gray-400 uppercase text-sm bg-gray-100 rounded-xl active:scale-95 transition-all">Batal</button>
-        <button onclick="window.prosesSimpanData('${type}', '${safeId}', '${mode}', ${index})" class="w-full bg-emerald-500 text-white py-3.5 rounded-xl font-bold uppercase text-sm shadow-lg active:scale-95 transition-all">Simpan</button>
-    </div>
-</div>
+        <div class="p-3 bg-white border-t sticky bottom-0 z-20 mt-8">
+            <div class="grid grid-cols-2 gap-3">
+                <button onclick="document.getElementById('view-form-baru').classList.add('hidden')" class="w-full py-3.5 font-bold text-gray-400 uppercase text-sm bg-gray-100 rounded-xl active:scale-95 transition-all">Batal</button>
+                <button onclick="window.prosesSimpanData('${type}', '${safeId}', '${mode}', ${index})" class="w-full bg-emerald-500 text-white py-3.5 rounded-xl font-bold uppercase text-sm shadow-lg active:scale-95 transition-all">Simpan</button>
+            </div>
+        </div>
     `;
     view.classList.remove('hidden');
 };
@@ -703,5 +697,5 @@ window.filterInventaris = () => {
 };
 
 // ============================================================================
-// END OF FILE - PASTIKAN SEMUA FUNGSI TERTUTUP
+// END OF FILE
 // ============================================================================
