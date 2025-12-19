@@ -84,12 +84,12 @@ function calculatePickerBounds(origin) {
 }
 
 // ============================================================================
-// MOBILE KEYBOARD HANDLER
+// MOBILE KEYBOARD HANDLER (VERSI DIPERBAIKI)
 // ============================================================================
 
 class MobileKeyboardHandler {
     constructor() {
-        this.saveButtons = new Map(); // Map button elements to their original positions
+        this.saveButtons = new Map();
         this.isKeyboardVisible = false;
         this.initialViewportHeight = window.innerHeight;
         this.activeInput = null;
@@ -99,14 +99,10 @@ class MobileKeyboardHandler {
     }
     
     init() {
-        // Deteksi keyboard via resize (cross-browser)
         window.addEventListener('resize', () => this.handleViewportChange());
-        
-        // Track input focus
         document.addEventListener('focusin', (e) => this.handleFocusIn(e));
         document.addEventListener('focusout', (e) => this.handleFocusOut(e));
         
-        // Juga pantau visual viewport jika available
         if (window.visualViewport) {
             window.visualViewport.addEventListener('resize', () => this.handleVisualViewportChange());
         }
@@ -116,7 +112,6 @@ class MobileKeyboardHandler {
         const button = document.getElementById(buttonId);
         if (!button) return;
         
-        // Buat wrapper jika belum ada
         let wrapper = button.parentElement;
         if (containerId) {
             wrapper = document.getElementById(containerId);
@@ -124,9 +119,8 @@ class MobileKeyboardHandler {
         
         if (!wrapper.classList.contains('keyboard-aware-button')) {
             wrapper.classList.add('keyboard-aware-button');
-            wrapper.dataset.originalBottom = '1rem'; // Default
+            wrapper.dataset.originalBottom = '1rem';
             
-            // Simpan posisi asli
             this.saveButtons.set(buttonId, {
                 element: wrapper,
                 originalPosition: 'fixed',
@@ -138,8 +132,6 @@ class MobileKeyboardHandler {
     handleViewportChange() {
         const newHeight = window.innerHeight;
         const heightDiff = this.initialViewportHeight - newHeight;
-        
-        // Keyboard muncul jika tinggi berkurang signifakan dan tinggi baru < threshold
         const isKeyboardOpen = heightDiff > 100 && newHeight < 500;
         
         if (isKeyboardOpen && !this.isKeyboardVisible) {
@@ -161,20 +153,16 @@ class MobileKeyboardHandler {
         const offsetTop = viewport.offsetTop;
         const viewportHeight = viewport.height;
         
-        // Jika ada offset (keyboard visible)
         if (offsetTop > 0) {
             this.isKeyboardVisible = true;
             this.keyboardHeight = window.innerHeight - viewportHeight;
             
-            // Adjust semua tombol yang terdaftar
             this.saveButtons.forEach((data, buttonId) => {
                 const button = data.element;
-                const buttonHeight = button.offsetHeight;
                 const padding = 10;
                 
-                // Posisikan tombol tepat di atas keyboard
                 button.style.bottom = `${this.keyboardHeight + padding}px`;
-                button.style.transition = 'bottom 0.25s cubic-bezier(0.4, 0, 0.2, 1)`;
+                button.style.transition = 'bottom 0.25s cubic-bezier(0.4, 0, 0.2, 1)';
             });
         }
     }
@@ -184,7 +172,6 @@ class MobileKeyboardHandler {
         if (target.matches('input, textarea, [contenteditable="true"]')) {
             this.activeInput = target;
             
-            // Jika keyboard terdeteksi, adjust tombol berdasarkan input position
             if (this.isKeyboardVisible) {
                 setTimeout(() => this.positionButtonNearInput(target), 150);
             }
@@ -200,13 +187,10 @@ class MobileKeyboardHandler {
         
         const inputRect = inputElement.getBoundingClientRect();
         const viewportHeight = window.innerHeight;
-        
-        // Hitung posisi optimal untuk tombol
-        const buttonHeight = 60; // Approx button height
+        const buttonHeight = 60;
         const margin = 15;
         const targetBottom = viewportHeight - inputRect.bottom + buttonHeight + margin;
         
-        // Apply ke semua tombol terdaftar
         this.saveButtons.forEach((data, buttonId) => {
             const button = data.element;
             button.style.bottom = `${Math.max(this.keyboardHeight + 10, targetBottom)}px`;
@@ -232,7 +216,6 @@ class MobileKeyboardHandler {
             const button = data.element;
             button.style.bottom = data.originalBottom;
             
-            // Reset untuk desktop
             if (window.innerWidth >= 768) {
                 button.style.position = 'relative';
                 button.style.bottom = 'auto';
