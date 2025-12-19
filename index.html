@@ -65,6 +65,43 @@
                 padding-bottom: max(0.5rem, env(safe-area-inset-bottom));
             }
         }
+
+/* ============================================================================
+STANDARD ACTION BUTTONS - SEMUA TOMBOL AKSI SAMA
+============================================================================ */
+
+/* Container untuk semua tombol aksi */
+.sticky.bottom-0.z-20 {
+    background: white;
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
+    backdrop-filter: blur(10px);
+}
+
+/* Tombol utama (hijau) */
+.bg-emerald-500.text-white {
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
+/* Tombol sekunder (gray) */
+.bg-gray-100 {
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+/* Hover effects */
+.bg-emerald-500.text-white:hover {
+    background-color: #059669 !important; /* emerald-600 */
+    transform: translateY(-1px);
+}
+
+.bg-gray-100:hover {
+    background-color: #f3f4f6 !important; /* gray-100 lebih gelap */
+}
+
+/* Active state */
+.active\:scale-95:active {
+    transform: scale(0.98);
+}
+
     </style>
 </head>
 <body class="bg-gray-50 text-gray-800 font-sans">

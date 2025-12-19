@@ -441,10 +441,12 @@ export function renderInventaris() {
                         <i class="fa-solid fa-circle-plus text-base"></i> Tambah Satuan Lainnya
                     </button>
                 </div>
-                <div class="p-3 border-t grid grid-cols-2 gap-2 bg-gray-50">
-                    <button onclick="window.tutupMultiSatuan()" class="py-3 font-bold text-gray-400 text-[10px] uppercase tracking-widest bg-white border rounded-xl">Batal</button>
-                    <button onclick="window.konfirmasiSatuan()" class="py-3 bg-emerald-500 text-white font-bold rounded-xl active:scale-95 uppercase text-sm">Simpan</button>
-                </div>
+<div class="p-3 bg-white border-t sticky bottom-0 z-20">
+    <div class="grid grid-cols-2 gap-3">
+        <button onclick="window.tutupMultiSatuan()" class="w-full py-3.5 font-bold text-gray-400 uppercase text-sm bg-gray-100 rounded-xl active:scale-95 transition-all">Batal</button>
+        <button onclick="window.konfirmasiSatuan()" class="w-full bg-emerald-500 text-white py-3.5 rounded-xl font-bold uppercase text-sm shadow-lg active:scale-95 transition-all">Simpan</button>
+    </div>
+</div>
             </div>
         </div>
 
@@ -473,14 +475,14 @@ export function renderInventaris() {
                     <!-- SCROLL AREA yang mencakup tombol -->
                     <div class="flex-1 min-h-0 overflow-hidden flex flex-col">
                         <div id="picker-list" class="flex-1 overflow-y-auto px-6 space-y-2 no-scrollbar"></div>
-                        <!-- TOMBOL STICKY DI DALAM SCROLL AREA -->
-                        <div class="sticky bottom-0 bg-white border-t p-4 mt-auto flex-shrink-0">
-                            <button id="picker-btn-add" 
-                                    class="w-full bg-emerald-500 text-white py-4 rounded-xl font-bold uppercase text-xs tracking-widest flex items-center justify-center gap-2 shadow-lg active:scale-95 transition-all">
-                                <i class="fa-solid fa-plus"></i> 
-                                <span id="picker-btn-text">Tambah Kategori Baru</span>
-                            </button>
-                        </div>
+<!-- TOMBOL AKSI STANDARD - SAMA SEPERTI view-edit -->
+<div class="p-3 bg-white border-t sticky bottom-0 z-20">
+    <button id="picker-btn-add" 
+            class="w-full bg-emerald-500 text-white py-3.5 rounded-xl font-bold uppercase text-sm shadow-lg active:scale-95 transition-all">
+        <i class="fa-solid fa-plus mr-2"></i> 
+        <span id="picker-btn-text">Tambah Kategori Baru</span>
+    </button>
+</div>
                     </div>
                 </div>
             </div>
@@ -625,10 +627,12 @@ window.renderFormTambahBaru = (type, mode, index, id = "") => {
                 </div>
             ` : ''}
         </div>
-        <div class="grid grid-cols-2 gap-3 mt-8">
-            <button onclick="document.getElementById('view-form-baru').classList.add('hidden')" class="py-4 font-bold text-gray-400 uppercase text-xs tracking-widest bg-gray-50 rounded-xl">Batal</button>
-            <button onclick="window.prosesSimpanData('${type}', '${safeId}', '${mode}', ${index})" class="py-4 bg-emerald-500 text-white rounded-xl font-bold shadow-lg uppercase text-xs tracking-widest">Simpan</button>
-        </div>
+<div class="p-3 bg-white border-t sticky bottom-0 z-20 mt-8">
+    <div class="grid grid-cols-2 gap-3">
+        <button onclick="document.getElementById('view-form-baru').classList.add('hidden')" class="w-full py-3.5 font-bold text-gray-400 uppercase text-sm bg-gray-100 rounded-xl active:scale-95 transition-all">Batal</button>
+        <button onclick="window.prosesSimpanData('${type}', '${safeId}', '${mode}', ${index})" class="w-full bg-emerald-500 text-white py-3.5 rounded-xl font-bold uppercase text-sm shadow-lg active:scale-95 transition-all">Simpan</button>
+    </div>
+</div>
     `;
     view.classList.remove('hidden');
 };
