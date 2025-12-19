@@ -141,22 +141,20 @@ class MobileKeyboardHandler {
         }
     }
     
-    applyDeviceStyle(wrapper) {
-        if (this.isMobile) {
-            wrapper.style.position = 'fixed';
-            wrapper.style.bottom = '1rem';
-            wrapper.style.left = '1rem';
-            wrapper.style.right = '1rem';
-            wrapper.style.zIndex = '1000';
-            wrapper.style.transition = 'bottom 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
-        } else {
-            wrapper.style.position = 'relative';
-            wrapper.style.bottom = 'auto';
-            wrapper.style.left = 'auto';
-            wrapper.style.right = 'auto';
-            wrapper.style.zIndex = 'auto';
+applyDeviceStyle(wrapper) {
+    if (this.isMobile) {
+        // Untuk integrated layout, kita butuh parent yang mengatur posisi
+        const parentModal = wrapper.closest('[class*="fixed inset-0"]');
+        if (parentModal) {
+            parentModal.style.display = 'flex';
+            parentModal.style.flexDirection = 'column';
+            wrapper.style.marginTop = 'auto'; // Push ke bawah
+            wrapper.style.transition = 'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
+            wrapper.style.transform = 'translateY(0)';
         }
     }
+    // Desktop tetap normal
+}
     
     handleViewportChange() {
         if (!this.isMobile) return;
@@ -215,19 +213,27 @@ class MobileKeyboardHandler {
         });
     }
     
-    raiseButtonsAboveKeyboard() {
-        this.saveButtons.forEach((data, buttonId) => {
-            const wrapper = data.element;
-            wrapper.style.bottom = `${this.keyboardHeight + 20}px`;
-        });
-    }
+raiseButtonsAboveKeyboard() {
+    this.saveButtons.forEach((data, buttonId) => {
+        const wrapper = data.element;
+        const parentModal = wrapper.closest('[class*="fixed inset-0"]');
+        
+        if (parentModal && this.isMobile) {
+            // Naikkan dengan transform
+            wrapper.style.transform = `translateY(-${this.keyboardHeight + 20}px)`;
+            wrapper.style.transition = 'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
+        }
+    });
+}
     
-    lowerButtonsToBottom() {
-        this.saveButtons.forEach((data, buttonId) => {
-            const wrapper = data.element;
-            wrapper.style.bottom = '1rem';
-        });
-    }
+lowerButtonsToBottom() {
+    this.saveButtons.forEach((data, buttonId) => {
+        const wrapper = data.element;
+        if (this.isMobile) {
+            wrapper.style.transform = 'translateY(0)';
+        }
+    });
+}
     
     resetAllButtons() {
         this.saveButtons.forEach((data, buttonId) => {
@@ -261,49 +267,58 @@ export function renderInventaris() {
             </button>
         </div>
 
-        <div id="view-edit" class="hidden fixed inset-0 bg-white z-[70] overflow-y-auto">
-            <div class="${desktopWidth} mx-auto min-h-screen bg-white flex flex-col">
-                <div class="flex items-center p-2 border-b sticky top-0 bg-white z-10" id="header-edit">
-                    <button onclick="window.batalEdit()" class="p-2 text-gray-600 mr-1"><i class="fa-solid fa-arrow-left text-xl"></i></button>
-                    <h3 id="edit-title" class="font-bold text-base text-gray-800 proper-case">Tambah Barang</h3>
+<div id="view-edit" class="hidden fixed inset-0 bg-white z-[70]">
+    <div class="${desktopWidth} mx-auto h-full bg-white flex flex-col">
+        <!-- HEADER - TINGGI TETAP -->
+        <div class="flex items-center p-4 border-b border-gray-100 flex-shrink-0" id="header-edit">
+            <button onclick="window.batalEdit()" class="mr-3 p-2 rounded-full hover:bg-gray-100">
+                <i class="fa-solid fa-arrow-left text-xl text-gray-600"></i>
+            </button>
+            <h3 id="edit-title" class="font-bold text-lg text-gray-800 proper-case">Tambah Barang</h3>
+        </div>
+        
+        <!-- CONTENT AREA - SCROLLABLE -->
+        <div class="flex-1 overflow-y-auto p-4 space-y-4">
+            <div class="relative border border-gray-200 rounded-xl std-input">
+                <label class="absolute -top-2.5 left-3 px-1 bg-white text-[9px] font-bold text-gray-400 proper-case tracking-widest">Nama Barang</label>
+                <input type="text" id="edit-nama" class="w-full h-full px-4 bg-transparent outline-none font-bold text-gray-700 proper-case text-sm">
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div onclick="window.bukaPickerSelection('kategori', 'view-edit')" class="relative border border-gray-200 rounded-xl flex justify-between items-center cursor-pointer std-input px-4">
+                    <label class="absolute -top-2.5 left-3 px-1 bg-white text-[9px] font-bold text-gray-400 proper-case tracking-widest">Kategori</label>
+                    <input type="text" id="edit-kategori" class="font-bold text-gray-700 pointer-events-none text-xs proper-case" readonly>
+                    <i class="fa-solid fa-chevron-right text-gray-300 text-[10px]"></i>
                 </div>
-                <div class="p-3 space-y-4 flex-1">
-                    <div class="relative border border-gray-200 rounded-xl std-input">
-                        <label class="absolute -top-2.5 left-3 px-1 bg-white text-[9px] font-bold text-gray-400 proper-case tracking-widest">Nama Barang</label>
-                        <input type="text" id="edit-nama" class="w-full h-full px-4 bg-transparent outline-none font-bold text-gray-700 proper-case text-sm">
-                    </div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div onclick="window.bukaPickerSelection('kategori', 'view-edit')" class="relative border border-gray-200 rounded-xl flex justify-between items-center cursor-pointer std-input px-4">
-                            <label class="absolute -top-2.5 left-3 px-1 bg-white text-[9px] font-bold text-gray-400 proper-case tracking-widest">Kategori</label>
-                            <input type="text" id="edit-kategori" class="font-bold text-gray-700 pointer-events-none text-xs proper-case" readonly>
-                            <i class="fa-solid fa-chevron-right text-gray-300 text-[10px]"></i>
-                        </div>
-                        <div onclick="window.bukaPilihSatuanPengukuran()" class="relative border border-gray-200 rounded-xl flex justify-between items-center cursor-pointer std-input px-4">
-                            <label class="absolute -top-2.5 left-3 px-1 bg-white text-[9px] font-bold text-gray-400 proper-case tracking-widest">Satuan</label>
-                            <input type="text" id="edit-satuan-display" class="w-full font-bold text-gray-700 pointer-events-none text-xs uppercase truncate" readonly>
-                            <i class="fa-solid fa-chevron-right text-gray-300 text-[10px] flex-shrink-0"></i>
-                        </div>
-                    </div>
-                    <div id="info-konversi" class="hidden flex items-start gap-2 text-[10px] text-emerald-600 font-bold bg-emerald-50 p-2 rounded-lg border border-emerald-100">
-                        <i class="fa-solid fa-link mt-0.5"></i><span id="text-konversi" class="uppercase"></span>
-                    </div>
-                    <div class="grid grid-cols-2 gap-3">
-                        <div class="relative border border-gray-200 rounded-xl std-input">
-                            <label class="absolute -top-2.5 left-3 px-1 bg-white text-[9px] font-bold text-gray-400 proper-case tracking-widest">Stok Awal</label>
-                            <input type="number" id="edit-stok" class="w-full h-full px-4 bg-transparent outline-none font-bold text-gray-700 text-sm">
-                        </div>
-                        <div class="relative border border-gray-200 rounded-xl flex items-center px-4 std-input">
-                            <label class="absolute -top-2.5 left-3 px-1 bg-white text-[9px] font-bold text-gray-400 proper-case tracking-widest">Harga Jual</label>
-                            <span class="text-gray-400 text-[10px] font-bold mr-1">RP</span>
-                            <input type="number" id="edit-jual" class="w-full h-full bg-transparent outline-none font-bold text-gray-700 text-sm">
-                        </div>
-                    </div>
+                <div onclick="window.bukaPilihSatuanPengukuran()" class="relative border border-gray-200 rounded-xl flex justify-between items-center cursor-pointer std-input px-4">
+                    <label class="absolute -top-2.5 left-3 px-1 bg-white text-[9px] font-bold text-gray-400 proper-case tracking-widest">Satuan</label>
+                    <input type="text" id="edit-satuan-display" class="w-full font-bold text-gray-700 pointer-events-none text-xs uppercase truncate" readonly>
+                    <i class="fa-solid fa-chevron-right text-gray-300 text-[10px] flex-shrink-0"></i>
                 </div>
-                <div class="p-3 bg-white border-t sticky bottom-0 z-20">
-                    <button onclick="window.simpanBarang()" class="w-full bg-emerald-500 text-white py-3.5 rounded-xl font-bold uppercase text-sm">Simpan</button>
+            </div>
+            <div id="info-konversi" class="hidden flex items-start gap-2 text-[10px] text-emerald-600 font-bold bg-emerald-50 p-2 rounded-lg border border-emerald-100">
+                <i class="fa-solid fa-link mt-0.5"></i><span id="text-konversi" class="uppercase"></span>
+            </div>
+            <div class="grid grid-cols-2 gap-3">
+                <div class="relative border border-gray-200 rounded-xl std-input">
+                    <label class="absolute -top-2.5 left-3 px-1 bg-white text-[9px] font-bold text-gray-400 proper-case tracking-widest">Stok Awal</label>
+                    <input type="number" id="edit-stok" class="w-full h-full px-4 bg-transparent outline-none font-bold text-gray-700 text-sm">
+                </div>
+                <div class="relative border border-gray-200 rounded-xl flex items-center px-4 std-input">
+                    <label class="absolute -top-2.5 left-3 px-1 bg-white text-[9px] font-bold text-gray-400 proper-case tracking-widest">Harga Jual</label>
+                    <span class="text-gray-400 text-[10px] font-bold mr-1">RP</span>
+                    <input type="number" id="edit-jual" class="w-full h-full bg-transparent outline-none font-bold text-gray-700 text-sm">
                 </div>
             </div>
         </div>
+        
+        <!-- ACTION BUTTONS - INTEGRATED BAGIAN DARI LAYOUT -->
+        <div class="p-4 bg-white border-t border-gray-100 flex-shrink-0">
+            <button onclick="window.simpanBarang()" class="w-full bg-emerald-500 text-white py-3.5 rounded-xl font-bold uppercase text-sm shadow-lg hover:bg-emerald-600 active:scale-95 transition-all duration-200">
+                Simpan Barang
+            </button>
+        </div>
+    </div>
+</div>
 
         <div id="view-pengaturan" class="hidden fixed inset-0 bg-gray-50 z-[100] overflow-y-auto">
              <div class="${desktopWidth} mx-auto min-h-screen bg-gray-50 flex flex-col shadow-2xl border-x">
@@ -341,51 +356,53 @@ export function renderInventaris() {
                         <i class="fa-solid fa-circle-plus text-base"></i> Tambah Satuan Lainnya
                     </button>
                 </div>
-                <div class="p-3 bg-white border-t sticky bottom-0 z-20">
-                    <div class="grid grid-cols-2 gap-3">
-                        <button onclick="window.tutupMultiSatuan()" class="w-full py-3.5 font-bold text-gray-400 uppercase text-sm bg-gray-100 rounded-xl active:scale-95 transition-all">Batal</button>
-                        <button onclick="window.konfirmasiSatuan()" class="w-full bg-emerald-500 text-white py-3.5 rounded-xl font-bold uppercase text-sm shadow-lg active:scale-95 transition-all">Simpan</button>
-                    </div>
-                </div>
+<div class="p-4 bg-white border-t border-gray-100 flex-shrink-0">
+    <div class="grid grid-cols-2 gap-3">
+        <button onclick="window.tutupMultiSatuan()" class="w-full py-3.5 font-bold text-gray-500 uppercase text-sm bg-gray-100 rounded-xl hover:bg-gray-200 active:scale-95 transition-all duration-200">
+            Batal
+        </button>
+        <button onclick="window.konfirmasiSatuan()" class="w-full bg-emerald-500 text-white py-3.5 rounded-xl font-bold uppercase text-sm shadow-lg hover:bg-emerald-600 active:scale-95 transition-all duration-200">
+            Simpan
+        </button>
+    </div>
+</div>
             </div>
         </div>
 
         <!-- PANEL PICKER - FULLSCREEN MODAL SEPERTI view-edit -->
-        <div id="view-picker" class="hidden fixed inset-0 bg-white z-[200] overflow-y-auto">
-            <div class="${desktopWidth} mx-auto min-h-screen bg-white flex flex-col">
-                
-                <!-- HEADER -->
-                <div class="flex items-center p-4 border-b sticky top-0 bg-white z-10">
-                    <button onclick="window.tutupPicker()" class="mr-3 p-2 rounded-full">
-                        <i class="fa-solid fa-arrow-left text-xl text-gray-600"></i>
-                    </button>
-                    <h3 id="picker-title" class="font-bold text-lg text-gray-800 proper-case">Pilih Kategori</h3>
-                </div>
-                
-                <!-- SEARCH -->
-                <div class="p-4">
-                    <div class="relative border border-gray-100 bg-gray-50 rounded-xl std-input px-4 flex items-center gap-3">
-                        <i class="fa-solid fa-magnifying-glass text-gray-300 text-sm"></i>
-                        <input type="text" id="picker-search" oninput="window.filterPickerList(this.value)" 
-                               class="w-full h-full bg-transparent outline-none font-medium text-gray-600 text-sm"
-                               placeholder="Cari kategori atau satuan...">
-                    </div>
-                </div>
-                
-                <!-- LIST AREA - SCROLLABLE -->
-                <div id="picker-list" class="flex-1 overflow-y-auto px-4 space-y-1 no-scrollbar"></div>
-                
-                <!-- TOMBOL AKSI - STICKY BOTTOM SEPERTI view-edit -->
-                <div class="p-3 bg-white border-t sticky bottom-0 z-20">
-                    <button id="picker-btn-add" 
-                            class="w-full bg-emerald-500 text-white py-3.5 rounded-xl font-bold uppercase text-sm shadow-lg active:scale-95 transition-all">
-                        <i class="fa-solid fa-plus mr-2"></i> 
-                        <span id="picker-btn-text">Tambah Kategori Baru</span>
-                    </button>
-                </div>
-                
+<div id="view-picker" class="hidden fixed inset-0 bg-white z-[200]">
+    <div class="${desktopWidth} mx-auto h-full bg-white flex flex-col">
+        <!-- HEADER - TINGGI TETAP -->
+        <div class="flex items-center p-4 border-b border-gray-100 flex-shrink-0">
+            <button onclick="window.tutupPicker()" class="mr-3 p-2 rounded-full hover:bg-gray-100">
+                <i class="fa-solid fa-arrow-left text-xl text-gray-600"></i>
+            </button>
+            <h3 id="picker-title" class="font-bold text-lg text-gray-800 proper-case">Pilih Kategori</h3>
+        </div>
+        
+        <!-- SEARCH - TINGGI TETAP -->
+        <div class="p-4 flex-shrink-0">
+            <div class="relative border border-gray-100 bg-gray-50 rounded-xl std-input px-4 flex items-center gap-3">
+                <i class="fa-solid fa-magnifying-glass text-gray-300 text-sm"></i>
+                <input type="text" id="picker-search" oninput="window.filterPickerList(this.value)" 
+                       class="w-full h-full bg-transparent outline-none font-medium text-gray-600 text-sm"
+                       placeholder="Cari kategori atau satuan...">
             </div>
         </div>
+        
+        <!-- LIST AREA - SCROLLABLE -->
+        <div id="picker-list" class="flex-1 overflow-y-auto px-4 space-y-1 no-scrollbar"></div>
+        
+        <!-- ACTION BUTTONS - INTEGRATED BAGIAN DARI LAYOUT -->
+        <div class="p-4 bg-white border-t border-gray-100 flex-shrink-0">
+            <button id="picker-btn-add" 
+                    class="w-full bg-emerald-500 text-white py-3.5 rounded-xl font-bold uppercase text-sm shadow-lg hover:bg-emerald-600 active:scale-95 transition-all duration-200">
+                <i class="fa-solid fa-plus mr-2"></i> 
+                <span id="picker-btn-text">Tambah Kategori Baru</span>
+            </button>
+        </div>
+    </div>
+</div>
 
         <div id="view-form-baru" class="hidden fixed inset-0 bg-black/60 z-[200] flex items-end justify-center overflow-hidden">
             <div class="bg-white w-full ${desktopWidth} rounded-t-[2rem] animate-slide-up relative flex flex-col max-h-[85vh]">
@@ -530,12 +547,16 @@ window.renderFormTambahBaru = (type, mode, index, id = "") => {
                 </div>
             ` : ''}
         </div>
-        <div class="p-3 bg-white border-t sticky bottom-0 z-20 mt-8">
-            <div class="grid grid-cols-2 gap-3">
-                <button onclick="document.getElementById('view-form-baru').classList.add('hidden')" class="w-full py-3.5 font-bold text-gray-400 uppercase text-sm bg-gray-100 rounded-xl active:scale-95 transition-all">Batal</button>
-                <button onclick="window.prosesSimpanData('${type}', '${safeId}', '${mode}', ${index})" class="w-full bg-emerald-500 text-white py-3.5 rounded-xl font-bold uppercase text-sm shadow-lg active:scale-95 transition-all">Simpan</button>
-            </div>
-        </div>
+<div class="p-4 bg-white border-t border-gray-100 flex-shrink-0">
+    <div class="grid grid-cols-2 gap-3">
+        <button onclick="document.getElementById('view-form-baru').classList.add('hidden')" class="w-full py-3.5 font-bold text-gray-500 uppercase text-sm bg-gray-100 rounded-xl hover:bg-gray-200 active:scale-95 transition-all duration-200">
+            Batal
+        </button>
+        <button onclick="window.prosesSimpanData('${type}', '${safeId}', '${mode}', ${index})" class="w-full bg-emerald-500 text-white py-3.5 rounded-xl font-bold uppercase text-sm shadow-lg hover:bg-emerald-600 active:scale-95 transition-all duration-200">
+            Simpan
+        </button>
+    </div>
+</div>
     `;
     view.classList.remove('hidden');
 };
