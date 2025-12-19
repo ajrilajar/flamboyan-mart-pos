@@ -809,5 +809,10 @@ window.filterInventaris = () => {
 };
 
 // ============================================================================
-// END OF FILE
+// END OF FILE - PASTIKAN SEMUA FUNGSI TERTUTUP
 // ============================================================================
+
+// Export fungsi utama
+export { renderInventaris };
+
+// Pastikan file berakhir dengan clean
