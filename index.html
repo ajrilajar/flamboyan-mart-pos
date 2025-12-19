@@ -51,49 +51,20 @@
             transition: all 0.2s;
         }
         .radio-active { border-color: #10b981; background: #10b981; box-shadow: inset 0 0 0 3px white; }
+        
+        /* ============================================================================
+           MOBILE KEYBOARD AWARE BUTTONS (MINIMAL VERSION)
+           ============================================================================ */
+        .mobile-keyboard-aware {
+            transition: bottom 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+        }
 
-/* ============================================================================
-   MOBILE KEYBOARD AWARE BUTTONS (MINIMAL VERSION)
-   ============================================================================ */
-
-/* Hanya transition base, styling di-handle JavaScript */
-.mobile-keyboard-aware {
-    transition: bottom 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
-}
-
-/* Safe area untuk iPhone */
-@supports (padding: max(0px)) {
-    .mobile-keyboard-aware {
-        padding-bottom: max(0.5rem, env(safe-area-inset-bottom));
-    }
-}
-
-/* ============================================================================
-   TOMBOL AKSI MOBILE (NAIK SAAT KEYBOARD)
-   ============================================================================ */
-
-.mobile-keyboard-aware {
-    transition: bottom 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
-}
-
-/* Untuk desktop - normal */
-@media (min-width: 768px) {
-    .mobile-keyboard-aware {
-        position: relative !important;
-        bottom: auto !important;
-        left: auto !important;
-        right: auto !important;
-        margin-top: 2rem !important;
-    }
-}
-
-/* Safe area untuk iPhone */
-@supports (padding: max(0px)) {
-    .mobile-keyboard-aware {
-        bottom: max(1rem, env(safe-area-inset-bottom)) !important;
-    }
-}
-
+        /* Safe area untuk iPhone */
+        @supports (padding: max(0px)) {
+            .mobile-keyboard-aware {
+                padding-bottom: max(0.5rem, env(safe-area-inset-bottom));
+            }
+        }
     </style>
 </head>
 <body class="bg-gray-50 text-gray-800 font-sans">
@@ -119,23 +90,29 @@
 
     <script type="module">
         import { renderInventaris } from "./modul-inventaris.js";
-window.switchTab = (tabName) => {
-    console.log('🔄 switchTab called:', tabName, 'event:', event?.type);
-    
-    const content = document.getElementById('main-content');
-    document.querySelectorAll('.nav-btn').forEach(btn => {
-        btn.classList.remove('text-emerald-600');
-        btn.classList.add('text-gray-400');
-    });
-    const activeBtn = document.getElementById(`btn-${tabName}`);
-    if(activeBtn) {
-        activeBtn.classList.remove('text-gray-400');
-        activeBtn.classList.add('text-emerald-600');
-    }
-    if (tabName === 'beranda') { renderBeranda(); } 
-    else if (tabName === 'inventori') { renderInventaris(); } 
-    else { content.innerHTML = `<div class="p-10 text-center text-gray-400 uppercase text-xs">Modul ${tabName} segera hadir.</div>`; }
-};
+        
+        window.switchTab = (tabName) => {
+            console.log('🔄 switchTab called:', tabName);
+            
+            const content = document.getElementById('main-content');
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('text-emerald-600');
+                btn.classList.add('text-gray-400');
+            });
+            const activeBtn = document.getElementById(`btn-${tabName}`);
+            if(activeBtn) {
+                activeBtn.classList.remove('text-gray-400');
+                activeBtn.classList.add('text-emerald-600');
+            }
+            if (tabName === 'beranda') { 
+                renderBeranda(); 
+            } else if (tabName === 'inventori') { 
+                renderInventaris(); 
+            } else { 
+                content.innerHTML = `<div class="p-10 text-center text-gray-400 uppercase text-xs">Modul ${tabName} segera hadir.</div>`; 
+            }
+        };
+        
         function renderBeranda() {
             document.getElementById('main-content').innerHTML = `
                 <header class="bg-white p-4 flex justify-between items-center shadow-sm mb-4">
@@ -158,7 +135,11 @@ window.switchTab = (tabName) => {
                 </div>
             `;
         }
-        window.onload = () => window.switchTab('beranda');
+        
+        window.onload = () => {
+            console.log('✅ App loaded');
+            window.switchTab('beranda');
+        };
     </script>
 </body>
 </html>

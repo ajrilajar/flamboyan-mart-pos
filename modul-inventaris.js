@@ -84,7 +84,7 @@ function calculatePickerBounds(origin) {
 }
 
 // ============================================================================
-// MOBILE KEYBOARD HANDLER (VERSI REVISI - TOMBOL NAIK SAAT KEYBOARD)
+// MOBILE KEYBOARD HANDLER (SIMPLIFIED)
 // ============================================================================
 
 class MobileKeyboardHandler {
@@ -100,48 +100,45 @@ class MobileKeyboardHandler {
     }
     
     init() {
+        // Deteksi mobile/desktop
         window.addEventListener('resize', () => {
             this.isMobile = window.innerWidth < 768;
             if (!this.isMobile) this.resetAllButtons();
         });
         
+        // Deteksi keyboard via viewport height
         window.addEventListener('resize', () => this.handleViewportChange());
+        
+        // Track input focus - TANPA MENGANGGU EVENT LAIN
         document.addEventListener('focusin', (e) => this.handleFocusIn(e));
         document.addEventListener('focusout', () => this.handleFocusOut());
-        
-        if (window.visualViewport) {
-            window.visualViewport.addEventListener('resize', () => this.handleVisualViewportChange());
-        }
     }
     
     registerSaveButton(buttonId, containerId = null) {
         const button = document.getElementById(buttonId);
         if (!button) return;
         
+        // JANGAN daftarkan tombol navigation
+        if (button.closest('nav')) {
+            console.log('❌ Skipping navigation button:', buttonId);
+            return;
+        }
+        
         let wrapper = button.parentElement;
         if (containerId) {
             wrapper = document.getElementById(containerId);
         }
         
-        // PASTIKAN INI BUKAN NAVIGATION
-        if (wrapper.closest('nav')) {
-            console.log('Skipping navigation button:', buttonId);
-            return; // JANGAN daftarkan tombol navigation!
+        if (wrapper && !wrapper.closest('nav')) {
+            wrapper.classList.add('mobile-keyboard-aware');
+            
+            this.saveButtons.set(buttonId, {
+                element: wrapper,
+                button: button
+            });
+            
+            this.applyDeviceStyle(wrapper);
         }
-        
-        wrapper.classList.add('mobile-keyboard-aware');
-        
-        const originalStyle = {
-            position: wrapper.style.position || 'relative',
-            bottom: wrapper.style.bottom || 'auto'
-        };
-        
-        this.saveButtons.set(buttonId, {
-            element: wrapper,
-            originalStyle: originalStyle
-        });
-        
-        this.applyDeviceStyle(wrapper);
     }
     
     applyDeviceStyle(wrapper) {
@@ -167,16 +164,16 @@ class MobileKeyboardHandler {
         const newHeight = window.innerHeight;
         const heightDiff = this.initialViewportHeight - newHeight;
         
-        // Keyboard muncul jika tinggi berkurang > 150px
+        // Keyboard muncul jika tinggi berkurang signifikan
         const isKeyboardOpen = heightDiff > 150;
         
         if (isKeyboardOpen && !this.isKeyboardVisible) {
-            console.log('📱 Keyboard OPEN - Tombol aksi naik');
+            console.log('📱 Keyboard OPEN');
             this.keyboardHeight = heightDiff;
             this.isKeyboardVisible = true;
             this.raiseButtonsAboveKeyboard();
         } else if (!isKeyboardOpen && this.isKeyboardVisible) {
-            console.log('📱 Keyboard CLOSED - Tombol aksi turun');
+            console.log('📱 Keyboard CLOSED');
             this.isKeyboardVisible = false;
             this.lowerButtonsToBottom();
         }
@@ -184,45 +181,22 @@ class MobileKeyboardHandler {
         this.initialViewportHeight = newHeight;
     }
     
-    handleVisualViewportChange() {
-        if (!window.visualViewport || !this.isMobile) return;
+    handleFocusIn(event) {
+        if (!this.isMobile) return;
         
-        const viewport = window.visualViewport;
-        const offsetTop = viewport.offsetTop;
-        
-        if (offsetTop > 0) {
-            this.isKeyboardVisible = true;
-            this.keyboardHeight = window.innerHeight - viewport.height;
+        const target = event.target;
+        // HANYA handle input/textarea, biarkan event lain normal
+        if (target.matches('input, textarea, [contenteditable="true"]')) {
+            this.activeInput = target;
             
-            this.saveButtons.forEach((data, buttonId) => {
-                const wrapper = data.element;
-                wrapper.style.bottom = `${this.keyboardHeight + 20}px`;
-            });
-        } else if (this.isKeyboardVisible) {
-            this.isKeyboardVisible = false;
-            this.lowerButtonsToBottom();
+            setTimeout(() => {
+                if (this.isKeyboardVisible) {
+                    this.positionButtonNearActiveInput();
+                }
+            }, 300);
         }
+        // JANGAN stopPropagation atau preventDefault!
     }
-    
-handleFocusIn(event) {
-    if (!this.isMobile) return;
-    
-    const target = event.target;
-    
-    // HANYA tangani input/textarea, biarkan event klik lain tetap bekerja
-    if (target.matches('input, textarea, [contenteditable="true"]')) {
-        this.activeInput = target;
-        
-        setTimeout(() => {
-            if (this.isKeyboardVisible) {
-                this.positionButtonNearActiveInput();
-            }
-        }, 300);
-    }
-    
-    // JANGAN stop propagation atau prevent default!
-    // Biarkan event klik pada navigation tetap bekerja normal
-}
     
     handleFocusOut() {
         this.activeInput = null;
@@ -266,9 +240,13 @@ handleFocusIn(event) {
     }
 }
 
+// Global instance
 window.mobileKeyboardHandler = new MobileKeyboardHandler();
 
-// Inisialisasi drag dengan batasan
+// ============================================================================
+// DRAG HANDLER FOR PICKER
+// ============================================================================
+
 function initPickerDrag() {
     const picker = document.getElementById('view-picker');
     const dragHandle = document.getElementById('picker-drag-handle');
@@ -303,13 +281,6 @@ function initPickerDrag() {
         // Update posisi
         pickerContent.style.top = `${newTop}px`;
         pickerContent.style.height = `calc(100% - ${newTop}px)`;
-        
-        // Adjust opacity backdrop berdasarkan posisi
-        const progress = (newTop - bounds.minTop) / (bounds.maxTop - bounds.minTop);
-        const backdrop = picker.querySelector('.absolute.inset-0');
-        if (backdrop) {
-            backdrop.style.backgroundColor = `rgba(0, 0, 0, ${0.6 - (progress * 0.3)})`;
-        }
     };
     
     const endDrag = () => {
@@ -325,13 +296,6 @@ function initPickerDrag() {
         const snapTop = currentTop > threshold ? bounds.maxTop : bounds.minTop;
         pickerContent.style.top = `${snapTop}px`;
         pickerContent.style.height = `calc(100% - ${snapTop}px)`;
-        
-        // Reset backdrop opacity
-        const backdrop = picker.querySelector('.absolute.inset-0');
-        if (backdrop) {
-            backdrop.style.backgroundColor = 'rgba(0, 0, 0, 0.6)';
-            backdrop.style.transition = 'background-color 0.25s';
-        }
     };
     
     // Event listeners
@@ -346,18 +310,20 @@ function initPickerDrag() {
     
     // Hentikan drag jika klik di backdrop
     const backdrop = picker.querySelector('.absolute.inset-0');
-    backdrop.addEventListener('touchstart', (e) => {
-        if (e.target === backdrop) {
-            endDrag();
-            window.tutupPicker();
-        }
-    });
-    backdrop.addEventListener('mousedown', (e) => {
-        if (e.target === backdrop) {
-            endDrag();
-            window.tutupPicker();
-        }
-    });
+    if (backdrop) {
+        backdrop.addEventListener('touchstart', (e) => {
+            if (e.target === backdrop) {
+                endDrag();
+                window.tutupPicker();
+            }
+        });
+        backdrop.addEventListener('mousedown', (e) => {
+            if (e.target === backdrop) {
+                endDrag();
+                window.tutupPicker();
+            }
+        });
+    }
 }
 
 // Update bounds saat window resize
@@ -376,6 +342,10 @@ window.addEventListener('resize', () => {
         }
     }
 });
+
+// ============================================================================
+// RENDER INVENTARIS
+// ============================================================================
 
 export function renderInventaris() {
     const content = document.getElementById('main-content');
@@ -523,60 +493,46 @@ export function renderInventaris() {
             </div>
         </div>
     `;
+    
     loadFirebaseData();
     
     // Inisialisasi drag setelah DOM selesai render
     setTimeout(() => initPickerDrag(), 100);
     
-// ============================================================================
-// REGISTER SAVE BUTTONS FOR KEYBOARD HANDLING
-// ============================================================================
-setTimeout(() => {
-    console.log('🔧 Registering ACTION buttons (excluding navigation)...');
-    
-    // DEBUG: Cek apakah ada navigation yang terpilih
-    const allButtons = document.querySelectorAll('button');
-    console.log('Total buttons found:', allButtons.length);
-    console.log('Navigation buttons:', document.querySelectorAll('nav button').length);
-    
-    // 1. Tombol SIMPAN di view-edit - PASTIKAN BUKAN NAVIGATION
-    const saveButton = document.querySelector('button[onclick="window.simpanBarang()"]');
-    if (saveButton) {
-        const isNavButton = saveButton.closest('nav') !== null;
-        console.log('Save button found, is navigation?', isNavButton);
+    // ============================================================================
+    // REGISTER ACTION BUTTONS FOR KEYBOARD HANDLING
+    // ============================================================================
+    setTimeout(() => {
+        console.log('🔧 Registering ACTION buttons...');
         
-        if (!isNavButton) {
+        // 1. Tombol SIMPAN di view-edit
+        const saveButton = document.querySelector('[onclick="window.simpanBarang()"]');
+        if (saveButton && !saveButton.closest('nav')) {
             console.log('✅ Registering save-barang button');
             saveButton.id = 'save-barang-button';
             const wrapper = saveButton.parentElement;
             wrapper.id = 'save-barang-wrapper';
             wrapper.classList.add('mobile-keyboard-aware');
             window.mobileKeyboardHandler.registerSaveButton('save-barang-button', 'save-barang-wrapper');
-        } else {
-            console.log('❌ Skipping navigation save button');
         }
-    }
-    
-    // 2. Tombol di form-baru - PASTIKAN BUKAN NAVIGATION
-    const formSaveButtons = document.querySelectorAll('[onclick*="window.prosesSimpanData"]');
-    formSaveButtons.forEach((btn, idx) => {
-        const isNavButton = btn.closest('nav') !== null;
-        if (!isNavButton) {
-            console.log(`✅ Registering form-save-button-${idx}`);
-            btn.id = `form-save-button-${idx}`;
-            const wrapper = btn.parentElement;
-            if (wrapper) {
-                wrapper.classList.add('mobile-keyboard-aware');
-                window.mobileKeyboardHandler.registerSaveButton(btn.id);
+        
+        // 2. Tombol di view-form-baru
+        const formSaveButtons = document.querySelectorAll('[onclick*="window.prosesSimpanData"]');
+        formSaveButtons.forEach((btn, idx) => {
+            if (btn && !btn.closest('nav')) {
+                console.log(`✅ Registering form-save-button-${idx}`);
+                btn.id = `form-save-button-${idx}`;
+                const wrapper = btn.parentElement;
+                if (wrapper) {
+                    wrapper.classList.add('mobile-keyboard-aware');
+                    window.mobileKeyboardHandler.registerSaveButton(btn.id);
+                }
             }
-        }
-    });
-    
-    // 3. Tombol TAMBAH di view-picker - PASTIKAN BUKAN NAVIGATION
-    const pickerAddButton = document.getElementById('picker-btn-add');
-    if (pickerAddButton) {
-        const isNavButton = pickerAddButton.closest('nav') !== null;
-        if (!isNavButton) {
+        });
+        
+        // 3. Tombol TAMBAH di view-picker
+        const pickerAddButton = document.getElementById('picker-btn-add');
+        if (pickerAddButton && !pickerAddButton.closest('nav')) {
             console.log('✅ Registering picker-add button');
             const wrapper = pickerAddButton.parentElement;
             if (wrapper) {
@@ -584,12 +540,15 @@ setTimeout(() => {
                 window.mobileKeyboardHandler.registerSaveButton('picker-btn-add');
             }
         }
-    }
-    
-    console.log('🔧 Total action buttons registered:', window.mobileKeyboardHandler?.saveButtons?.size || 0);
-}, 500);
+        
+        console.log('🔧 Total action buttons registered:', window.mobileKeyboardHandler.saveButtons.size);
+    }, 500);
+}
 
-// LOGIKA PICKER CERDAS
+// ============================================================================
+// PICKER LOGIC
+// ============================================================================
+
 window.bukaPickerSelection = (type, origin, mode = null, index = null) => {
     lastOrigin = origin;
     pickerTargetIndex = { mode, index };
@@ -728,31 +687,42 @@ window.tutupPicker = () => {
     }
 };
 
+// ============================================================================
 // NAVIGASI VIEW & UTILITY
+// ============================================================================
+
 window.switchView = (v) => { 
     document.querySelectorAll('[id^="view-"]').forEach(el => el.classList.add('hidden')); 
     document.getElementById(v).classList.remove('hidden'); 
 };
+
 window.bukaHalamanEdit = (id) => { 
     currentEditId = id; 
     multiUnits = []; 
     window.switchView('view-edit'); 
 };
+
 window.batalEdit = () => window.switchView('view-list');
+
 window.bukaPilihSatuanPengukuran = () => { 
     window.switchView('view-multi-satuan'); 
     renderKonversiList(); 
 };
+
 window.tutupMultiSatuan = () => window.switchView('view-edit');
+
 window.tambahSatuanSekunder = () => { 
     multiUnits.push({ unit: '', ratio: '' }); 
     renderKonversiList(); 
 };
+
 window.hapusRowKonversi = (idx) => { 
     multiUnits.splice(idx, 1); 
     renderKonversiList(); 
 };
+
 window.updateRatio = (idx, val) => multiUnits[idx].ratio = val;
+
 window.hapusSettingData = async (type, id) => { 
     type === 'kategori' ? await SetingInv.hapusKategori(id) : await SetingInv.hapusSatuanDasar(id); 
     const currentType = document.getElementById('picker-btn-text').innerText.includes('Kategori') ? 'kategori' : 'satuan';
@@ -800,6 +770,10 @@ function renderKonversiList() {
     `).join('');
 }
 
+// ============================================================================
+// FIREBASE DATA
+// ============================================================================
+
 window.loadFirebaseData = () => { 
     onValue(ref(db, 'products'), s => { 
         databaseBarang = s.val() || {}; 
@@ -835,30 +809,5 @@ window.filterInventaris = () => {
 };
 
 // ============================================================================
-// NAVIGATION FIX - Pastikan navigation bisa diklik
+// END OF FILE
 // ============================================================================
-
-window.fixNavigationClicks = () => {
-    const navButtons = document.querySelectorAll('nav button');
-    console.log('Navigation buttons found:', navButtons.length);
-    
-    navButtons.forEach(btn => {
-        btn.style.pointerEvents = 'auto';
-        btn.style.touchAction = 'auto';
-        btn.style.zIndex = '9999';
-    });
-};
-
-// Fix navigation setelah DOM siap
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => {
-        setTimeout(window.fixNavigationClicks, 500);
-    });
-} else {
-    setTimeout(window.fixNavigationClicks, 500);
-}
-
-// ============================================================================
-// END OF FILE - PASTIKAN TIDAK ADA KARAKTER TAMBAHAN
-// ============================================================================
-// File harus berakhir di sini tanpa karakter tambahan
