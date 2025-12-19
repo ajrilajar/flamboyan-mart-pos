@@ -1,4 +1,4 @@
-import { ref, onValue, push, set, remove, update } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js";
+import { ref, onValue } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js";
 import { db } from "./firebase-config.js";
 import * as SetingInv from "./modul-pengaturan-inventaris.js";
 
@@ -7,29 +7,35 @@ let currentEditId = null, multiUnits = [], lastOrigin = 'view-list', pickerTarge
 const desktopWidth = "max-w-4xl";
 
 // ============================================================================
-// RENDER INVENTARIS - SEMUA FULL SCREEN
+// RENDER INVENTARIS - FIXED VERSION
 // ============================================================================
 
 export function renderInventaris() {
     const content = document.getElementById('main-content');
+    
+    // CLEAR event listeners dulu
+    content.innerHTML = '';
+    
     content.innerHTML = `
         <!-- VIEW LIST: DAFTAR BARANG -->
-        <div id="view-list" class="flex flex-col gap-2 ${desktopWidth} mx-auto p-2 sm:p-4 animate-fadeIn">
+        <div id="view-list" class="flex flex-col gap-2 ${desktopWidth} mx-auto p-2 sm:p-4">
             <div class="flex justify-between items-center px-1">
                 <h2 class="text-xl font-bold text-gray-800 tracking-tight proper-case">Inventaris</h2>
                 <button onclick="window.switchView('view-pengaturan')" class="p-2 text-emerald-600">
                     <i class="fa-solid fa-gear text-lg"></i>
                 </button>
             </div>
-            <div id="list-barang" class="grid grid-cols-1 md:grid-cols-2 gap-4 px-1"></div>
-            <button onclick="window.bukaHalamanEdit(null)" 
+            <div id="list-barang" class="grid grid-cols-1 md:grid-cols-2 gap-4 px-1 mb-20"></div>
+            
+            <!-- TOMBOL TAMBAH BARANG - PASTIKAN ID UNIK -->
+            <button id="btn-tambah-barang" 
                     class="fixed bottom-24 right-4 md:right-[calc(50%-20rem)] bg-emerald-500 text-white px-4 py-2.5 rounded-full shadow-2xl flex items-center gap-2 font-bold z-40">
                 <i class="fa-solid fa-box-open text-sm"></i> 
                 <span class="uppercase text-[11px]">Tambah Barang</span>
             </button>
         </div>
 
-        <!-- VIEW EDIT: TAMBAH/EDIT BARANG - FULL SCREEN -->
+        <!-- VIEW EDIT: TAMBAH/EDIT BARANG -->
         <div id="view-edit" class="hidden fixed inset-0 bg-white z-[70] flex flex-col">
             <div class="${desktopWidth} mx-auto w-full h-full flex flex-col">
                 <div class="flex items-center p-4 border-b">
@@ -85,14 +91,14 @@ export function renderInventaris() {
                 <!-- TOMBOL SIMPAN -->
                 <div class="p-4 border-t bg-white">
                     <button onclick="window.simpanBarang()" 
-                            class="w-full bg-emerald-500 text-white py-3.5 rounded-xl font-bold uppercase text-sm shadow-lg active:scale-95 transition-all">
+                            class="w-full bg-emerald-500 text-white py-3.5 rounded-xl font-bold uppercase text-sm shadow-lg">
                         Simpan
                     </button>
                 </div>
             </div>
         </div>
 
-        <!-- VIEW PENGATURAN - FULL SCREEN -->
+        <!-- VIEW PENGATURAN -->
         <div id="view-pengaturan" class="hidden fixed inset-0 bg-gray-50 z-[100] flex flex-col">
             <div class="${desktopWidth} mx-auto w-full h-full flex flex-col">
                 <div class="flex items-center p-4 bg-white border-b">
@@ -126,7 +132,7 @@ export function renderInventaris() {
             </div>
         </div>
 
-        <!-- VIEW MULTI SATUAN - FULL SCREEN -->
+        <!-- VIEW MULTI SATUAN -->
         <div id="view-multi-satuan" class="hidden fixed inset-0 bg-white z-[120] flex flex-col">
             <div class="${desktopWidth} mx-auto w-full h-full flex flex-col">
                 <div class="flex items-center p-4 border-b">
@@ -159,11 +165,11 @@ export function renderInventaris() {
                 <div class="p-4 border-t bg-white">
                     <div class="grid grid-cols-2 gap-3">
                         <button onclick="window.tutupMultiSatuan()" 
-                                class="w-full py-3.5 font-bold text-gray-400 uppercase text-sm bg-gray-100 rounded-xl active:scale-95 transition-all">
+                                class="w-full py-3.5 font-bold text-gray-400 uppercase text-sm bg-gray-100 rounded-xl">
                             Batal
                         </button>
                         <button onclick="window.konfirmasiSatuan()" 
-                                class="w-full bg-emerald-500 text-white py-3.5 rounded-xl font-bold uppercase text-sm shadow-lg active:scale-95 transition-all">
+                                class="w-full bg-emerald-500 text-white py-3.5 rounded-xl font-bold uppercase text-sm shadow-lg">
                             Simpan
                         </button>
                     </div>
@@ -171,7 +177,7 @@ export function renderInventaris() {
             </div>
         </div>
 
-        <!-- VIEW PICKER (KATEGORI/SATUAN) - FULL SCREEN -->
+        <!-- VIEW PICKER -->
         <div id="view-picker" class="hidden fixed inset-0 bg-white z-[200] flex flex-col">
             <div class="${desktopWidth} mx-auto w-full h-full flex flex-col">
                 <div class="flex items-center p-4 border-b">
@@ -186,7 +192,7 @@ export function renderInventaris() {
                         <i class="fa-solid fa-magnifying-glass text-gray-300 text-sm"></i>
                         <input type="text" id="picker-search" oninput="window.filterPickerList(this.value)" 
                                class="w-full h-full bg-transparent outline-none font-medium text-gray-600 text-sm"
-                               placeholder="Cari kategori atau satuan...">
+                               placeholder="Cari...">
                     </div>
                 </div>
                 
@@ -195,7 +201,7 @@ export function renderInventaris() {
                 <!-- TOMBOL TAMBAH BARU -->
                 <div class="p-4 border-t bg-white">
                     <button id="picker-btn-add" 
-                            class="w-full bg-emerald-500 text-white py-3.5 rounded-xl font-bold uppercase text-sm shadow-lg active:scale-95 transition-all">
+                            class="w-full bg-emerald-500 text-white py-3.5 rounded-xl font-bold uppercase text-sm shadow-lg">
                         <i class="fa-solid fa-plus mr-2"></i> 
                         <span id="picker-btn-text">Tambah Kategori Baru</span>
                     </button>
@@ -203,7 +209,7 @@ export function renderInventaris() {
             </div>
         </div>
 
-        <!-- VIEW FORM BARU - FULL SCREEN (BUKAN BOTTOM SHEET) -->
+        <!-- VIEW FORM BARU -->
         <div id="view-form-baru" class="hidden fixed inset-0 bg-white z-[200] flex flex-col">
             <div class="${desktopWidth} mx-auto w-full h-full flex flex-col">
                 <div class="flex items-center p-4 border-b">
@@ -211,7 +217,7 @@ export function renderInventaris() {
                         <i class="fa-solid fa-arrow-left text-xl text-gray-600"></i>
                     </button>
                     <h3 id="form-baru-title" class="font-bold text-lg text-gray-800 proper-case">
-                        Tambah Kategori Baru
+                        Tambah Kategori
                     </h3>
                 </div>
                 
@@ -223,11 +229,11 @@ export function renderInventaris() {
                 <div class="p-4 border-t bg-white">
                     <div class="grid grid-cols-2 gap-3">
                         <button onclick="window.tutupFormBaru()" 
-                                class="w-full py-3.5 font-bold text-gray-400 uppercase text-sm bg-gray-100 rounded-xl active:scale-95 transition-all">
+                                class="w-full py-3.5 font-bold text-gray-400 uppercase text-sm bg-gray-100 rounded-xl">
                             Batal
                         </button>
                         <button onclick="window.prosesSimpanData()" 
-                                class="w-full bg-emerald-500 text-white py-3.5 rounded-xl font-bold uppercase text-sm shadow-lg active:scale-95 transition-all">
+                                class="w-full bg-emerald-500 text-white py-3.5 rounded-xl font-bold uppercase text-sm shadow-lg">
                             Simpan
                         </button>
                     </div>
@@ -236,47 +242,52 @@ export function renderInventaris() {
         </div>
     `;
     
-    loadFirebaseData();
+    // PASANG EVENT LISTENER SETELAH RENDER
+    setTimeout(() => {
+        const btnTambah = document.getElementById('btn-tambah-barang');
+        if (btnTambah) {
+            btnTambah.onclick = () => window.bukaHalamanEdit(null);
+        }
+        
+        loadFirebaseData();
+    }, 50);
 }
 
 // ============================================================================
-// PICKER LOGIC
+// PICKER LOGIC - SIMPLIFIED
 // ============================================================================
 
 window.bukaPickerSelection = (type, origin, mode = null, index = null) => {
     lastOrigin = origin;
     pickerTargetIndex = { mode, index };
     
-    document.getElementById('picker-title').innerText = type === 'kategori' 
-        ? 'Pilih Kategori Barang' 
-        : 'Pilih Satuan Dasar';
+    const title = document.getElementById('picker-title');
+    const btnText = document.getElementById('picker-btn-text');
     
-    document.getElementById('picker-btn-text').innerText = type === 'kategori' 
-        ? 'Tambah Kategori Baru' 
-        : 'Tambah Satuan Baru';
+    if (title) title.innerText = type === 'kategori' ? 'Pilih Kategori' : 'Pilih Satuan';
+    if (btnText) btnText.innerText = type === 'kategori' ? 'Tambah Kategori Baru' : 'Tambah Satuan Baru';
     
-    document.getElementById('picker-search').value = "";
+    const searchInput = document.getElementById('picker-search');
+    if (searchInput) searchInput.value = '';
     
-    document.getElementById('picker-btn-add').onclick = () => 
-        window.renderFormTambahBaru(type, mode, index, '');
+    const addBtn = document.getElementById('picker-btn-add');
+    if (addBtn) {
+        addBtn.onclick = () => window.renderFormTambahBaru(type, mode, index, '');
+    }
     
     renderPickerList(type);
     window.switchView('view-picker');
-    
-    // Autofocus ke search input
-    setTimeout(() => {
-        const searchInput = document.getElementById('picker-search');
-        if (searchInput) searchInput.focus();
-    }, 100);
 };
 
 function renderPickerList(type, filter = "") {
     const list = document.getElementById('picker-list');
+    if (!list) return;
+    
     const data = type === 'kategori' ? dataKategori : dataSatuan;
     const isManageMode = lastOrigin === 'view-pengaturan';
     
     list.innerHTML = Object.entries(data)
-        .filter(([id, item]) => item.nama.toLowerCase().includes(filter.toLowerCase()))
+        .filter(([id, item]) => !filter || item.nama.toLowerCase().includes(filter.toLowerCase()))
         .map(([id, item]) => {
             const val = type === 'satuan' ? item.pendek : item.nama;
             return `
@@ -288,13 +299,13 @@ function renderPickerList(type, filter = "") {
                         </span>
                     </div>
                     ${isManageMode ? `
-                        <div class="flex gap-4">
+                        <div class="flex gap-2">
                             <button onclick="window.renderFormTambahBaru('${type}', null, null, '${id}')" 
-                                    class="text-gray-300">
+                                    class="text-gray-400 px-2">
                                 <i class="fa-solid fa-pen text-sm"></i>
                             </button>
                             <button onclick="window.hapusSettingData('${type}', '${id}')" 
-                                    class="text-rose-200">
+                                    class="text-rose-400 px-2">
                                 <i class="fa-solid fa-trash-can text-sm"></i>
                             </button>
                         </div>
@@ -306,33 +317,143 @@ function renderPickerList(type, filter = "") {
         }).join('');
 }
 
+// ============================================================================
+// NAVIGASI VIEW & UTILITY - SIMPLIFIED
+// ============================================================================
+
+window.switchView = (v) => { 
+    document.querySelectorAll('[id^="view-"]').forEach(el => {
+        el.classList.add('hidden');
+        el.classList.remove('animate-fadeIn');
+    }); 
+    
+    const target = document.getElementById(v);
+    if (target) {
+        target.classList.remove('hidden');
+        setTimeout(() => target.classList.add('animate-fadeIn'), 10);
+    }
+};
+
+window.bukaHalamanEdit = (id) => { 
+    currentEditId = id; 
+    multiUnits = []; 
+    window.switchView('view-edit'); 
+};
+
+window.batalEdit = () => window.switchView('view-list');
+
+window.bukaPilihSatuanPengukuran = () => { 
+    window.switchView('view-multi-satuan'); 
+    renderKonversiList(); 
+};
+
+window.tutupMultiSatuan = () => window.switchView('view-edit');
+
+window.tutupPicker = () => {
+    if (lastOrigin === 'view-pengaturan') {
+        window.switchView('view-pengaturan');
+    } else if (lastOrigin === 'view-multi-satuan') {
+        window.switchView('view-multi-satuan');
+    } else {
+        window.switchView('view-edit');
+    }
+};
+
+window.tutupFormBaru = () => {
+    window.switchView('view-picker');
+};
+
+// ============================================================================
+// FIREBASE DATA - FIXED
+// ============================================================================
+
+window.loadFirebaseData = () => { 
+    // HANYA load jika elemen ada
+    if (!document.getElementById('list-barang')) return;
+    
+    onValue(ref(db, 'products'), s => { 
+        databaseBarang = s.val() || {}; 
+        window.filterInventaris(); 
+    }); 
+    
+    onValue(ref(db, 'settings/categories'), s => { 
+        dataKategori = s.val() || {}; 
+    }); 
+    
+    onValue(ref(db, 'settings/units'), s => { 
+        dataSatuan = s.val() || {}; 
+    }); 
+};
+
+window.filterInventaris = () => {
+    const list = document.getElementById('list-barang'); 
+    if(!list) return; 
+    
+    list.innerHTML = "";
+    
+    if (!databaseBarang || Object.keys(databaseBarang).length === 0) {
+        list.innerHTML = `
+            <div class="col-span-2 p-8 text-center text-gray-400">
+                <i class="fa-solid fa-box-open text-4xl mb-4"></i>
+                <p class="text-sm">Belum ada barang di inventaris</p>
+            </div>
+        `;
+        return;
+    }
+    
+    Object.entries(databaseBarang).forEach(([id, item]) => {
+        const inisial = item.nama ? item.nama.substring(0, 2).toUpperCase() : '??';
+        list.innerHTML += `
+            <div class="bg-white p-4 rounded-xl border border-gray-100 flex items-center gap-4 shadow-sm">
+                <div class="w-10 h-10 bg-gray-100 text-gray-400 rounded-lg flex items-center justify-center font-bold text-xs uppercase">
+                    ${inisial}
+                </div>
+                <div class="flex-1 overflow-hidden">
+                    <h4 class="font-bold text-gray-700 truncate proper-case">${item.nama || 'Tanpa Nama'}</h4>
+                    <p class="text-xs text-gray-400 font-medium proper-case">${item.kategori || 'Tanpa Kategori'}</p>
+                </div>
+                <div class="text-right">
+                    <p class="text-sm font-bold text-emerald-600">
+                        ${item.stok || 0} <span class="uppercase text-[10px]">${item.satuan || ''}</span>
+                    </p>
+                </div>
+            </div>
+        `;
+    });
+};
+
+// ============================================================================
+// FUNGSI LAINNYA (SAMA)
+// ============================================================================
+
 window.renderFormTambahBaru = (type, mode, index, id = "") => {
     const title = document.getElementById('form-baru-title');
     const content = document.getElementById('form-baru-content');
+    
+    if (!title || !content) return;
+    
     const safeId = (id === "null" || id === null || id === "") ? "" : id;
     const item = safeId ? (type === 'kategori' ? dataKategori[safeId] : dataSatuan[safeId]) : { nama: "", pendek: "" };
     
-    // Update judul
     title.innerText = `${safeId ? 'Ubah' : 'Tambah'} ${type === 'kategori' ? 'Kategori' : 'Satuan'}`;
     
-    // Isi konten
     content.innerHTML = `
-        <div class="space-y-6">
+        <div class="space-y-4">
             <div class="relative border-2 border-emerald-500 rounded-xl std-input">
                 <label class="absolute -top-2.5 left-3 px-1 bg-white text-[10px] font-bold text-emerald-500 proper-case">
                     Nama ${type === 'kategori' ? 'Kategori' : 'Satuan'}
                 </label>
-                <input type="text" id="new-name" value="${item.nama}" 
+                <input type="text" id="new-name" value="${item.nama || ''}" 
                        class="w-full h-full px-4 bg-transparent outline-none font-bold text-gray-700 proper-case"
-                       placeholder="Masukkan nama ${type === 'kategori' ? 'kategori' : 'satuan'}">
+                       placeholder="Masukkan nama">
             </div>
             
             ${type === 'satuan' ? `
-                <div class="relative border border-gray-200 rounded-xl bg-gray-50 std-input">
+                <div class="relative border border-gray-200 rounded-xl std-input">
                     <label class="absolute -top-2.5 left-3 px-1 bg-white text-[9px] font-bold text-gray-400 proper-case tracking-widest">
-                        Satuan Pendek (contoh: KG, PCS)
+                        Singkatan (contoh: KG, PCS)
                     </label>
-                    <input type="text" id="new-short" value="${item.pendek}" maxlength="5" 
+                    <input type="text" id="new-short" value="${item.pendek || ''}" maxlength="5" 
                            class="w-full h-full px-4 bg-transparent outline-none font-bold text-gray-700 uppercase"
                            placeholder="Singkatan">
                 </div>
@@ -340,26 +461,19 @@ window.renderFormTambahBaru = (type, mode, index, id = "") => {
         </div>
     `;
     
-    // Update tombol simpan dengan parameter yang benar
     const saveBtn = document.querySelector('#view-form-baru button[onclick="window.prosesSimpanData()"]');
-    saveBtn.onclick = () => window.prosesSimpanData(type, safeId, mode, index);
+    if (saveBtn) {
+        saveBtn.onclick = () => window.prosesSimpanData(type, safeId, mode, index);
+    }
     
-    // Tampilkan panel dengan switchView
     window.switchView('view-form-baru');
-    
-    // Autofocus ke input
-    setTimeout(() => {
-        const nameInput = document.getElementById('new-name');
-        if (nameInput) nameInput.focus();
-    }, 100);
-};
-
-window.tutupFormBaru = () => {
-    window.switchView('view-picker');
 };
 
 window.prosesSimpanData = async (type, id, mode, index) => {
-    const nama = document.getElementById('new-name').value.trim();
+    const nameInput = document.getElementById('new-name');
+    if (!nameInput) return;
+    
+    const nama = nameInput.value.trim();
     if (!nama) {
         alert("Nama harus diisi!");
         return;
@@ -375,7 +489,6 @@ window.prosesSimpanData = async (type, id, mode, index) => {
             await SetingInv.simpanSatuanDasar(nama, pendek, finalId); 
         }
         
-        // Kembali ke view picker setelah simpan
         window.switchView('view-picker');
         renderPickerList(type);
         
