@@ -51,7 +51,7 @@
             transition: all 0.2s;
         }
         .radio-active { border-color: #10b981; background: #10b981; box-shadow: inset 0 0 0 3px white; }
-        
+
 /* ============================================================================
    MOBILE KEYBOARD AWARE BUTTONS (MINIMAL VERSION)
    ============================================================================ */
@@ -119,21 +119,23 @@
 
     <script type="module">
         import { renderInventaris } from "./modul-inventaris.js";
-        window.switchTab = (tabName) => {
-            const content = document.getElementById('main-content');
-            document.querySelectorAll('.nav-btn').forEach(btn => {
-                btn.classList.remove('text-emerald-600');
-                btn.classList.add('text-gray-400');
-            });
-            const activeBtn = document.getElementById(`btn-${tabName}`);
-            if(activeBtn) {
-                activeBtn.classList.remove('text-gray-400');
-                activeBtn.classList.add('text-emerald-600');
-            }
-            if (tabName === 'beranda') { renderBeranda(); } 
-            else if (tabName === 'inventori') { renderInventaris(); } 
-            else { content.innerHTML = `<div class="p-10 text-center text-gray-400 uppercase text-xs">Modul ${tabName} segera hadir.</div>`; }
-        };
+window.switchTab = (tabName) => {
+    console.log('🔄 switchTab called:', tabName, 'event:', event?.type);
+    
+    const content = document.getElementById('main-content');
+    document.querySelectorAll('.nav-btn').forEach(btn => {
+        btn.classList.remove('text-emerald-600');
+        btn.classList.add('text-gray-400');
+    });
+    const activeBtn = document.getElementById(`btn-${tabName}`);
+    if(activeBtn) {
+        activeBtn.classList.remove('text-gray-400');
+        activeBtn.classList.add('text-emerald-600');
+    }
+    if (tabName === 'beranda') { renderBeranda(); } 
+    else if (tabName === 'inventori') { renderInventaris(); } 
+    else { content.innerHTML = `<div class="p-10 text-center text-gray-400 uppercase text-xs">Modul ${tabName} segera hadir.</div>`; }
+};
         function renderBeranda() {
             document.getElementById('main-content').innerHTML = `
                 <header class="bg-white p-4 flex justify-between items-center shadow-sm mb-4">

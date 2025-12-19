@@ -204,20 +204,25 @@ class MobileKeyboardHandler {
         }
     }
     
-    handleFocusIn(event) {
-        if (!this.isMobile) return;
+handleFocusIn(event) {
+    if (!this.isMobile) return;
+    
+    const target = event.target;
+    
+    // HANYA tangani input/textarea, biarkan event klik lain tetap bekerja
+    if (target.matches('input, textarea, [contenteditable="true"]')) {
+        this.activeInput = target;
         
-        const target = event.target;
-        if (target.matches('input, textarea')) {
-            this.activeInput = target;
-            
-            setTimeout(() => {
-                if (this.isKeyboardVisible) {
-                    this.positionButtonNearActiveInput();
-                }
-            }, 300);
-        }
+        setTimeout(() => {
+            if (this.isKeyboardVisible) {
+                this.positionButtonNearActiveInput();
+            }
+        }, 300);
     }
+    
+    // JANGAN stop propagation atau prevent default!
+    // Biarkan event klik pada navigation tetap bekerja normal
+}
     
     handleFocusOut() {
         this.activeInput = null;
@@ -527,45 +532,61 @@ export function renderInventaris() {
 // REGISTER SAVE BUTTONS FOR KEYBOARD HANDLING
 // ============================================================================
 setTimeout(() => {
-    console.log('🔧 Registering action buttons for keyboard handling...');
+    console.log('🔧 Registering ACTION buttons (excluding navigation)...');
     
-    // 1. Tombol SIMPAN di view-edit (tambah/edit barang)
-    const saveButton = document.querySelector('[onclick="window.simpanBarang()"]');
-    if (saveButton && !saveButton.closest('nav')) { // ← FILTER PENTING!
-        console.log('✅ Registering save-barang button');
-        saveButton.id = 'save-barang-button';
-        const wrapper = saveButton.parentElement;
-        wrapper.id = 'save-barang-wrapper';
-        wrapper.classList.add('mobile-keyboard-aware'); // ← GANTI CLASS!
-        window.mobileKeyboardHandler.registerSaveButton('save-barang-button', 'save-barang-wrapper');
+    // DEBUG: Cek apakah ada navigation yang terpilih
+    const allButtons = document.querySelectorAll('button');
+    console.log('Total buttons found:', allButtons.length);
+    console.log('Navigation buttons:', document.querySelectorAll('nav button').length);
+    
+    // 1. Tombol SIMPAN di view-edit - PASTIKAN BUKAN NAVIGATION
+    const saveButton = document.querySelector('button[onclick="window.simpanBarang()"]');
+    if (saveButton) {
+        const isNavButton = saveButton.closest('nav') !== null;
+        console.log('Save button found, is navigation?', isNavButton);
+        
+        if (!isNavButton) {
+            console.log('✅ Registering save-barang button');
+            saveButton.id = 'save-barang-button';
+            const wrapper = saveButton.parentElement;
+            wrapper.id = 'save-barang-wrapper';
+            wrapper.classList.add('mobile-keyboard-aware');
+            window.mobileKeyboardHandler.registerSaveButton('save-barang-button', 'save-barang-wrapper');
+        } else {
+            console.log('❌ Skipping navigation save button');
+        }
     }
     
-    // 2. Tombol di view-form-baru (tambah kategori/satuan)
+    // 2. Tombol di form-baru - PASTIKAN BUKAN NAVIGATION
     const formSaveButtons = document.querySelectorAll('[onclick*="window.prosesSimpanData"]');
     formSaveButtons.forEach((btn, idx) => {
-        if (btn && !btn.closest('nav')) { // ← FILTER PENTING!
+        const isNavButton = btn.closest('nav') !== null;
+        if (!isNavButton) {
             console.log(`✅ Registering form-save-button-${idx}`);
             btn.id = `form-save-button-${idx}`;
             const wrapper = btn.parentElement;
             if (wrapper) {
-                wrapper.classList.add('mobile-keyboard-aware'); // ← GANTI CLASS!
+                wrapper.classList.add('mobile-keyboard-aware');
                 window.mobileKeyboardHandler.registerSaveButton(btn.id);
             }
         }
     });
     
-    // 3. Tombol TAMBAH di view-picker
+    // 3. Tombol TAMBAH di view-picker - PASTIKAN BUKAN NAVIGATION
     const pickerAddButton = document.getElementById('picker-btn-add');
-    if (pickerAddButton && !pickerAddButton.closest('nav')) {
-        console.log('✅ Registering picker-add button');
-        const wrapper = pickerAddButton.parentElement;
-        if (wrapper) {
-            wrapper.classList.add('mobile-keyboard-aware'); // ← GANTI CLASS!
-            window.mobileKeyboardHandler.registerSaveButton('picker-btn-add');
+    if (pickerAddButton) {
+        const isNavButton = pickerAddButton.closest('nav') !== null;
+        if (!isNavButton) {
+            console.log('✅ Registering picker-add button');
+            const wrapper = pickerAddButton.parentElement;
+            if (wrapper) {
+                wrapper.classList.add('mobile-keyboard-aware');
+                window.mobileKeyboardHandler.registerSaveButton('picker-btn-add');
+            }
         }
     }
     
-    console.log('🔧 Total action buttons registered:', window.mobileKeyboardHandler.saveButtons.size);
+    console.log('🔧 Total action buttons registered:', window.mobileKeyboardHandler?.saveButtons?.size || 0);
 }, 500);
 
 // LOGIKA PICKER CERDAS
