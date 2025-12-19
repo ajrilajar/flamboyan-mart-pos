@@ -13,16 +13,26 @@
         .animate-fadeIn { animation: fadeIn 0.3s ease-in-out; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        /* Poin 1: Propercase */
+        /* Poin 1: Propercase Global */
         .proper-case { text-transform: capitalize; }
-
-        /* Poin 5: Drag to Close & Anti-Refresh */
-        body.modal-open { overflow: hidden; overscroll-behavior-y: contain; }
+        
+        /* Poin 4 & 5: Drag & Modal Layout Fixes */
+        body.modal-open { overflow: hidden; touch-action: none; }
+        
         #modal-panel { 
-            touch-action: pan-y; 
+            will-change: transform;
             transition: transform 0.1s ease-out;
             display: flex;
             flex-direction: column;
+            /* Pastikan modal tidak pernah melebihi layar agar flex-scroll berfungsi */
+            max-height: 90vh; 
+        }
+
+        /* Memastikan konten scrollable menangani overflow dengan benar */
+        .modal-scrollable-content {
+            overflow-y: auto;
+            overscroll-behavior-y: contain; /* Mencegah refresh saat scroll mentok atas */
+            flex: 1;
         }
     </style>
 </head>
