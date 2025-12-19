@@ -6,6 +6,30 @@ let databaseBarang = {}, dataKategori = {}, dataSatuan = {};
 let currentEditId = null, multiUnits = [], lastOrigin = 'view-list', pickerTargetIndex = null;
 const desktopWidth = "max-w-4xl";
 
+// ============================================================================
+// UTILITY: SCROLL TO INPUT WITH KEYBOARD AWARE
+// ============================================================================
+
+window.scrollToInputWithKeyboard = (inputId) => {
+    const input = document.getElementById(inputId);
+    if (!input) return;
+    
+    input.focus();
+    
+    // Untuk mobile, scroll ke input dengan offset untuk tombol
+    if (window.innerWidth < 768) {
+        setTimeout(() => {
+            const inputRect = input.getBoundingClientRect();
+            const offset = 100; // Offset untuk tombol simpan
+            
+            window.scrollTo({
+                top: window.scrollY + inputRect.top - offset,
+                behavior: 'smooth'
+            });
+        }, 100);
+    }
+};
+
 // Fungsi untuk mendapatkan posisi elemen relatif terhadap viewport
 function getElementPosition(elementId) {
     const el = document.getElementById(elementId);
@@ -58,6 +82,170 @@ function calculatePickerBounds(origin) {
     
     return { minTop, maxTop };
 }
+
+// ============================================================================
+// MOBILE KEYBOARD HANDLER
+// ============================================================================
+
+class MobileKeyboardHandler {
+    constructor() {
+        this.saveButtons = new Map(); // Map button elements to their original positions
+        this.isKeyboardVisible = false;
+        this.initialViewportHeight = window.innerHeight;
+        this.activeInput = null;
+        this.keyboardHeight = 0;
+        
+        this.init();
+    }
+    
+    init() {
+        // Deteksi keyboard via resize (cross-browser)
+        window.addEventListener('resize', () => this.handleViewportChange());
+        
+        // Track input focus
+        document.addEventListener('focusin', (e) => this.handleFocusIn(e));
+        document.addEventListener('focusout', (e) => this.handleFocusOut(e));
+        
+        // Juga pantau visual viewport jika available
+        if (window.visualViewport) {
+            window.visualViewport.addEventListener('resize', () => this.handleVisualViewportChange());
+        }
+    }
+    
+    registerSaveButton(buttonId, containerId = null) {
+        const button = document.getElementById(buttonId);
+        if (!button) return;
+        
+        // Buat wrapper jika belum ada
+        let wrapper = button.parentElement;
+        if (containerId) {
+            wrapper = document.getElementById(containerId);
+        }
+        
+        if (!wrapper.classList.contains('keyboard-aware-button')) {
+            wrapper.classList.add('keyboard-aware-button');
+            wrapper.dataset.originalBottom = '1rem'; // Default
+            
+            // Simpan posisi asli
+            this.saveButtons.set(buttonId, {
+                element: wrapper,
+                originalPosition: 'fixed',
+                originalBottom: '1rem'
+            });
+        }
+    }
+    
+    handleViewportChange() {
+        const newHeight = window.innerHeight;
+        const heightDiff = this.initialViewportHeight - newHeight;
+        
+        // Keyboard muncul jika tinggi berkurang signifakan dan tinggi baru < threshold
+        const isKeyboardOpen = heightDiff > 100 && newHeight < 500;
+        
+        if (isKeyboardOpen && !this.isKeyboardVisible) {
+            this.keyboardHeight = heightDiff;
+            this.isKeyboardVisible = true;
+            this.adjustButtonsForKeyboard();
+        } else if (!isKeyboardOpen && this.isKeyboardVisible) {
+            this.isKeyboardVisible = false;
+            this.resetButtonsPosition();
+        }
+        
+        this.initialViewportHeight = newHeight;
+    }
+    
+    handleVisualViewportChange() {
+        if (!window.visualViewport) return;
+        
+        const viewport = window.visualViewport;
+        const offsetTop = viewport.offsetTop;
+        const viewportHeight = viewport.height;
+        
+        // Jika ada offset (keyboard visible)
+        if (offsetTop > 0) {
+            this.isKeyboardVisible = true;
+            this.keyboardHeight = window.innerHeight - viewportHeight;
+            
+            // Adjust semua tombol yang terdaftar
+            this.saveButtons.forEach((data, buttonId) => {
+                const button = data.element;
+                const buttonHeight = button.offsetHeight;
+                const padding = 10;
+                
+                // Posisikan tombol tepat di atas keyboard
+                button.style.bottom = `${this.keyboardHeight + padding}px`;
+                button.style.transition = 'bottom 0.25s cubic-bezier(0.4, 0, 0.2, 1)`;
+            });
+        }
+    }
+    
+    handleFocusIn(event) {
+        const target = event.target;
+        if (target.matches('input, textarea, [contenteditable="true"]')) {
+            this.activeInput = target;
+            
+            // Jika keyboard terdeteksi, adjust tombol berdasarkan input position
+            if (this.isKeyboardVisible) {
+                setTimeout(() => this.positionButtonNearInput(target), 150);
+            }
+        }
+    }
+    
+    handleFocusOut() {
+        this.activeInput = null;
+    }
+    
+    positionButtonNearInput(inputElement) {
+        if (!inputElement || !this.isKeyboardVisible) return;
+        
+        const inputRect = inputElement.getBoundingClientRect();
+        const viewportHeight = window.innerHeight;
+        
+        // Hitung posisi optimal untuk tombol
+        const buttonHeight = 60; // Approx button height
+        const margin = 15;
+        const targetBottom = viewportHeight - inputRect.bottom + buttonHeight + margin;
+        
+        // Apply ke semua tombol terdaftar
+        this.saveButtons.forEach((data, buttonId) => {
+            const button = data.element;
+            button.style.bottom = `${Math.max(this.keyboardHeight + 10, targetBottom)}px`;
+        });
+    }
+    
+    adjustButtonsForKeyboard() {
+        this.saveButtons.forEach((data, buttonId) => {
+            const button = data.element;
+            const padding = 10;
+            
+            button.style.position = 'fixed';
+            button.style.bottom = `${this.keyboardHeight + padding}px`;
+            button.style.left = '1rem';
+            button.style.right = '1rem';
+            button.style.zIndex = '1000';
+            button.style.transition = 'bottom 0.25s cubic-bezier(0.4, 0, 0.2, 1)';
+        });
+    }
+    
+    resetButtonsPosition() {
+        this.saveButtons.forEach((data, buttonId) => {
+            const button = data.element;
+            button.style.bottom = data.originalBottom;
+            
+            // Reset untuk desktop
+            if (window.innerWidth >= 768) {
+                button.style.position = 'relative';
+                button.style.bottom = 'auto';
+                button.style.left = 'auto';
+                button.style.right = 'auto';
+                button.style.zIndex = 'auto';
+            }
+        });
+    }
+}
+
+// Global instance
+window.mobileKeyboardHandler = new MobileKeyboardHandler();
 
 // Inisialisasi drag dengan batasan
 function initPickerDrag() {
@@ -269,21 +457,21 @@ export function renderInventaris() {
             </div>
         </div>
 
-        <!-- Panel Picker dengan sistem batas koordinat -->
+        <!-- Panel Picker dengan sistem batas koordinat & tombol sticky -->
         <div id="view-picker" class="hidden fixed inset-0 z-[200] overflow-hidden">
             <div class="absolute inset-0 bg-black/60" onclick="window.tutupPicker()"></div>
             <div class="picker-content-container absolute left-0 right-0 bg-white ${desktopWidth} mx-auto rounded-t-[2rem] animate-slide-up"
                  style="will-change: transform;">
-                <div class="w-full flex flex-col" style="max-height: 70vh;">
+                <div class="w-full flex flex-col" style="height: 70vh; max-height: 70vh;">
                     <div class="w-12 h-1.5 bg-gray-200 rounded-full mx-auto my-4 cursor-grab active:cursor-grabbing touch-none"
                          id="picker-drag-handle"></div>
-                    <div class="px-6 mb-4 flex justify-between items-center">
+                    <div class="px-6 mb-4 flex justify-between items-center flex-shrink-0">
                         <h3 id="picker-title" class="font-bold text-lg text-gray-800 proper-case">Pilih Kategori</h3>
                         <button onclick="window.tutupPicker()" class="text-gray-400 p-2">
                             <i class="fa-solid fa-xmark text-xl"></i>
                         </button>
                     </div>
-                    <div class="px-6 mb-4">
+                    <div class="px-6 mb-4 flex-shrink-0">
                         <div class="relative border border-gray-100 bg-gray-50 rounded-xl std-input px-4 flex items-center gap-3">
                             <i class="fa-solid fa-magnifying-glass text-gray-300 text-sm"></i>
                             <input type="text" id="picker-search" oninput="window.filterPickerList(this.value)" 
@@ -291,13 +479,17 @@ export function renderInventaris() {
                                    placeholder="Cari...">
                         </div>
                     </div>
-                    <div id="picker-list" class="flex-1 overflow-y-auto px-6 space-y-2 no-scrollbar"></div>
-                    <div class="p-4 bg-white border-t mt-auto">
-                        <button id="picker-btn-add" 
-                                class="w-full bg-emerald-500 text-white py-4 rounded-xl font-bold uppercase text-xs tracking-widest flex items-center justify-center gap-2 shadow-lg active:scale-95 transition-all">
-                            <i class="fa-solid fa-plus"></i> 
-                            <span id="picker-btn-text">Tambah Kategori Baru</span>
-                        </button>
+                    <!-- SCROLL AREA yang mencakup tombol -->
+                    <div class="flex-1 min-h-0 overflow-hidden flex flex-col">
+                        <div id="picker-list" class="flex-1 overflow-y-auto px-6 space-y-2 no-scrollbar"></div>
+                        <!-- TOMBOL STICKY DI DALAM SCROLL AREA -->
+                        <div class="sticky bottom-0 bg-white border-t p-4 mt-auto flex-shrink-0">
+                            <button id="picker-btn-add" 
+                                    class="w-full bg-emerald-500 text-white py-4 rounded-xl font-bold uppercase text-xs tracking-widest flex items-center justify-center gap-2 shadow-lg active:scale-95 transition-all">
+                                <i class="fa-solid fa-plus"></i> 
+                                <span id="picker-btn-text">Tambah Kategori Baru</span>
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -311,8 +503,37 @@ export function renderInventaris() {
         </div>
     `;
     loadFirebaseData();
+    
     // Inisialisasi drag setelah DOM selesai render
     setTimeout(() => initPickerDrag(), 100);
+    
+    // ============================================================================
+    // REGISTER SAVE BUTTONS FOR KEYBOARD HANDLING
+    // ============================================================================
+    setTimeout(() => {
+        // Register tombol simpan di view-edit
+        const saveButton = document.querySelector('[onclick="window.simpanBarang()"]');
+        if (saveButton) {
+            saveButton.id = 'save-barang-button';
+            const wrapper = saveButton.parentElement;
+            wrapper.id = 'save-barang-wrapper';
+            wrapper.classList.add('save-button-container');
+            
+            // Register dengan keyboard handler
+            window.mobileKeyboardHandler.registerSaveButton('save-barang-button', 'save-barang-wrapper');
+        }
+        
+        // Register tombol di form-baru
+        const formSaveButtons = document.querySelectorAll('[onclick*="window.prosesSimpanData"]');
+        formSaveButtons.forEach((btn, idx) => {
+            btn.id = `form-save-button-${idx}`;
+            const wrapper = btn.parentElement;
+            if (wrapper) {
+                wrapper.classList.add('save-button-container');
+                window.mobileKeyboardHandler.registerSaveButton(btn.id);
+            }
+        });
+    }, 500);
 }
 
 // LOGIKA PICKER CERDAS
