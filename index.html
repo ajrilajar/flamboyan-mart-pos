@@ -3,199 +3,205 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Flamboyan Mart</title>
-    
+    <title>Flamboyan Mart - V4 Final Utuh & Stabil</title>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
-    
     <style>
-        :root {
-            --bg-gray: #f8f9fa;
-            --primary-green: #27ae60;
-            --white: #ffffff;
-            --border: #e0e0e0;
-        }
+        :root { --green: #27ae60; --bg: #f8f9fa; --gray: #868e96; --white: #fff; --border: #eee; --red: #e74c3c; }
+        body { margin: 0; font-family: 'Segoe UI', sans-serif; background: var(--bg); color: #333; overflow-x: hidden; }
+        
+        /* Layout Dasar SPA */
+        .page { display: flex; flex-direction: column; height: 100vh; width: 100%; background: var(--bg); position: fixed; top: 0; left: 0; z-index: 10; }
+        .hidden { display: none !important; }
+        header { background: var(--white); padding: 15px 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+        header h2 { margin: 0; font-size: 17px; font-weight: 600; }
 
-        body { 
-            margin: 0; 
-            font-family: 'Segoe UI', Roboto, sans-serif; 
-            background-color: var(--bg-gray); 
-        }
+        /* SEARCH AREA - Tinggi Seimbang 42px */
+        .search-area { background: var(--white); padding: 10px 15px; display: flex; gap: 10px; border-bottom: 1px solid var(--border); align-items: center; }
+        .search-wrap { position: relative; flex: 1; }
+        .search-wrap span { position: absolute; left: 10px; top: 11px; color: var(--gray); font-size: 20px; }
+        .search-wrap input { width: 100%; height: 42px; padding: 0 10px 0 38px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; outline: none; background: #fafafa; }
+        .filter-btn-box { height: 42px; width: 42px; border: 1px solid #ddd; border-radius: 8px; background: white; display: flex; align-items: center; justify-content: center; cursor: pointer; }
 
-        /* Header */
-        .header { 
-            background: var(--white); padding: 15px 20px; 
-            display: flex; justify-content: space-between; align-items: center;
-            position: sticky; top: 0; z-index: 100; border-bottom: 1px solid #eee;
-        }
-        .header h2 { margin: 0; font-size: 18px; font-weight: 600; }
-        .header .material-icons-outlined { color: var(--primary-green); }
+        /* LIST INVENTARIS */
+        .inventory-list { padding: 10px; padding-bottom: 150px; overflow-y: auto; flex: 1; }
+        .card { background: var(--white); border-radius: 12px; padding: 15px; margin-bottom: 10px; display: flex; align-items: center; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+        .initial { width: 45px; height: 45px; background: #f1f3f5; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 700; margin-right: 12px; }
+        .info { flex: 1; }
+        .price-row { display: flex; gap: 15px; font-size: 10px; color: var(--gray); margin-top: 4px; }
+        .price-row strong { display: block; color: #333; font-size: 12px; }
+        .status { text-align: right; }
+        .badge { background: #eceff1; color: #546e7a; font-size: 9px; padding: 2px 8px; border-radius: 4px; }
 
-        /* Search Section - Layout Sejajar (Pas) */
-        .search-section { 
-            background: var(--white); 
-            padding: 10px 15px; 
-            display: flex; 
-            align-items: center; 
-            gap: 10px;
-        }
+        /* MENU PENGATURAN LENGKAP */
+        .settings-content { background: var(--white); flex: 1; overflow-y: auto; padding-bottom: 20px; }
+        .section-title { padding: 15px 20px; font-size: 13px; color: var(--gray); font-weight: 600; background: var(--bg); text-transform: uppercase; }
+        .menu-item { padding: 15px 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; cursor: pointer; }
+        .menu-text { flex: 1; margin-left: 15px; }
+        .menu-text .title { font-size: 14px; font-weight: 500; }
+        .menu-text .sub { font-size: 11px; color: var(--gray); margin-top: 2px; }
+        .switch { position: relative; width: 40px; height: 20px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 20px; }
+        .slider:before { position: absolute; content: ""; height: 16px; width: 16px; left: 2px; bottom: 2px; background-color: white; transition: .4s; border-radius: 50%; }
+        input:checked + .slider { background-color: var(--green); }
+        input:checked + .slider:before { transform: translateX(20px); }
 
-        .search-bar-container { 
-            position: relative; 
-            flex-grow: 1; 
-            display: flex; 
-            align-items: center; 
-        }
+        /* FOOTER & BUTTONS */
+        .bottom-btn-container { position: fixed; bottom: 0; width: 100%; padding: 15px 20px; background: var(--bg); box-sizing: border-box; z-index: 110; border-top: 1px solid rgba(0,0,0,0.02); }
+        .btn-full { background: var(--green); color: white; border: none; width: 100%; padding: 14px; border-radius: 8px; font-weight: 600; font-size: 15px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: 0.3s; }
+        .btn-full:disabled { background: #f0f0f0; color: #ccc; cursor: not-allowed; }
+        .unit-item { padding: 15px 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; background: white; }
 
-        .search-bar-container .search-icon { 
-            position: absolute; 
-            left: 12px; 
-            color: #999; 
-            font-size: 20px; 
-            pointer-events: none; 
-        }
+        /* NAVIGASI */
+        nav { position: fixed; bottom: 0; width: 100%; background: var(--white); height: 65px; display: flex; justify-content: space-around; align-items: center; border-top: 1px solid var(--border); z-index: 50; }
+        .nav-item { display: flex; flex-direction: column; align-items: center; color: #999; font-size: 10px; cursor: pointer; }
+        .nav-item.active { color: var(--green); }
 
-        .search-input { 
-            width: 100%; 
-            padding: 10px 10px 10px 40px; 
-            border: 1px solid var(--border); 
-            border-radius: 8px; 
-            font-size: 14px; 
-            outline: none;
-        }
-
-        /* Tombol Filter Kotak */
-        .filter-btn { 
-            display: flex; align-items: center; justify-content: center;
-            padding: 8px; border: 1px solid var(--border); border-radius: 8px; 
-            background: white; min-width: 40px; height: 40px; box-sizing: border-box;
-        }
-
-        /* List Inventaris */
-        .inventory-list { padding: 10px; padding-bottom: 160px; }
-        .card-item {
-            background: var(--white); border-radius: 12px; padding: 15px;
-            margin-bottom: 10px; display: flex; align-items: center;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-        }
-        .col-initial {
-            width: 45px; height: 45px; background: #f1f3f5; border-radius: 8px;
-            display: flex; align-items: center; justify-content: center;
-            font-weight: 700; color: #444; margin-right: 12px;
-        }
-        .col-info { flex: 1; }
-        .product-name { font-weight: 700; font-size: 14px; margin-bottom: 4px; }
-        .price-group { display: flex; gap: 15px; }
-        .price-item { font-size: 10px; color: #888; }
-        .price-item strong { display: block; color: #333; font-size: 12px; margin-top: 1px; }
-
-        .col-status { text-align: right; }
-        .badge-category { background: #eceff1; color: #546e7a; font-size: 9px; padding: 2px 8px; border-radius: 4px; }
-        .stock-text { font-weight: 800; font-size: 13px; margin-top: 4px; }
-
-        /* Floating Button - Ikon Inventory 2 (Sesuai Permintaan) */
-        .fab-add {
-            position: fixed; bottom: 85px; right: 20px;
-            background: var(--primary-green); color: white; border: none;
-            padding: 12px 20px; border-radius: 30px; font-weight: 700;
-            display: flex; align-items: center; gap: 8px; box-shadow: 0 4px 12px rgba(39, 174, 96, 0.4);
-            cursor: pointer;
-        }
-
-        /* Bottom Nav */
-        .bottom-nav {
-            position: fixed; bottom: 0; left: 0; right: 0;
-            background: var(--white); height: 65px; display: flex;
-            justify-content: space-around; align-items: center; border-top: 1px solid #eee;
-        }
-        .nav-item { display: flex; flex-direction: column; align-items: center; color: #999; text-decoration: none; font-size: 10px; }
-        .nav-item.active { color: var(--primary-green); }
-        .nav-item .material-icons-outlined { font-size: 24px; margin-bottom: 2px; }
+        /* FORM */
+        .form-container { padding: 20px; background: white; flex: 1; }
+        .input-box { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; outline: none; font-size: 14px; margin-top: 5px; }
     </style>
 </head>
 <body>
 
-    <div class="header">
-        <h2>Inventaris</h2>
-        <span class="material-icons-outlined">settings</span>
+    <div id="page-inventaris" class="page">
+        <header><h2>Inventaris</h2><span class="material-icons-outlined" style="color:var(--green); cursor:pointer;" onclick="showPage('page-pengaturan')">settings</span></header>
+        <div class="search-area">
+            <div class="search-wrap"><span class="material-icons-outlined">search</span><input type="text" placeholder="Cari Barang..."></div>
+            <div class="filter-btn-box"><span class="material-icons-outlined">filter_list</span></div>
+        </div>
+        <div id="inventory-list" class="inventory-list"></div>
+        <nav><div class="nav-item"><span class="material-icons-outlined">home</span><span>Beranda</span></div><div class="nav-item"><span class="material-icons-outlined">receipt_long</span><span>Transaksi</span></div><div class="nav-item active"><span class="material-icons-outlined">inventory</span><span>Inventaris</span></div><div class="nav-item"><span class="material-icons-outlined">grid_view</span><span>Lainnya</span></div></nav>
     </div>
 
-    <div class="search-section">
-        <div class="search-bar-container">
-            <span class="material-icons-outlined search-icon">search</span>
-            <input type="text" class="search-input" placeholder="Cari Barang...">
+    <div id="page-pengaturan" class="page hidden">
+        <header><div style="display:flex; align-items:center;"><span class="material-icons-outlined" onclick="showPage('page-inventaris')" style="margin-right:15px; cursor:pointer;">arrow_back</span><h2>Pengaturan Barang</h2></div></header>
+        <div class="settings-content">
+            <div class="section-title">Umum</div>
+            <div class="menu-item"><span class="material-icons-outlined">category</span><div class="menu-text"><div class="title">Kelola Kategori Barang</div><div class="sub">Kategori Item membantu mengelola item secara efektif.</div></div><span class="material-icons-outlined" style="color:#ccc">chevron_right</span></div>
+            <div class="menu-item" onclick="showPage('page-satuan')"><span class="material-icons-outlined">straighten</span><div class="menu-text"><div class="title">Kelola Satuan Ukur</div><div class="sub">Kelola Satuan Ukur</div></div><span class="material-icons-outlined" style="color:#ccc">chevron_right</span></div>
+            <div class="menu-item"><span class="material-icons-outlined">image</span><div class="menu-text"><div class="title">Unggah Gambar Barang</div></div><label class="switch"><input type="checkbox" checked><span class="slider"></span></label></div>
+            
+            <div class="section-title">Manajemen Harga & Inventaris</div>
+            <div class="menu-item"><span class="material-icons-outlined">receipt</span><div class="menu-text"><div class="title">Harga Grosir</div></div><label class="switch"><input type="checkbox" checked><span class="slider"></span></label></div>
+            <div class="menu-item"><span class="material-icons-outlined">sell</span><div class="menu-text"><div class="title">Harga Eceran</div></div><label class="switch"><input type="checkbox" checked><span class="slider"></span></label></div>
+            <div class="menu-item"><span class="material-icons-outlined">location_on</span><div class="menu-text"><div class="title">Lokasi Barang</div></div><label class="switch"><input type="checkbox"><span class="slider"></span></label></div>
+            <div class="menu-item"><span class="material-icons-outlined">straighten</span><div class="menu-text"><div class="title">Satuan Default</div></div><label class="switch"><input type="checkbox"><span class="slider"></span></label></div>
+            <div class="menu-item"><span class="material-icons-outlined">person_add</span><div class="menu-text"><div class="title">Harga Barang Per Pihak</div></div><label class="switch"><input type="checkbox" checked><span class="slider"></span></label></div>
+            <div class="menu-item"><span class="material-icons-outlined">report_problem</span><div class="menu-text"><div class="title">Dialog Peringatan Stok Rendah</div></div><label class="switch"><input type="checkbox" checked><span class="slider"></span></label></div>
         </div>
-        <button class="filter-btn">
-            <span class="material-icons-outlined">filter_list</span>
-        </button>
     </div>
 
-    <div id="inventory-container" class="inventory-list">
-        </div>
+    <div id="page-satuan" class="page hidden">
+        <header><div style="display:flex; align-items:center;"><span class="material-icons-outlined" onclick="showPage('page-pengaturan')" style="margin-right:15px; cursor:pointer;">arrow_back</span><h2>Kelola Satuan Ukur</h2></div></header>
+        <div id="unit-list-display" style="flex:1; overflow-y:auto; background:white; padding-bottom:80px;"></div>
+        <div class="bottom-btn-container"><button class="btn-full" onclick="openAddUnit()">+ Tambahkan Satuan Baru</button></div>
+    </div>
 
-    <button class="fab-add">
-        <span class="material-icons-outlined">inventory_2</span>
-        <span>Tambah Barang</span>
-    </button>
-
-    <nav class="bottom-nav">
-        <div class="nav-item">
-            <span class="material-icons-outlined">home</span>
-            <span>Beranda</span>
+    <div id="page-form-unit" class="page hidden">
+        <header><div style="display:flex; align-items:center;"><span class="material-icons-outlined" onclick="showPage('page-satuan')" style="margin-right:15px; cursor:pointer;">arrow_back</span><h2 id="formUnitTitle">Tambahkan Satuan Baru</h2></div></header>
+        <div class="form-container">
+            <div style="margin-bottom:20px;"><label style="font-size:13px; font-weight:600; color:var(--green)">Nama Satuan</label><input type="text" id="unitName" class="input-box" placeholder="Contoh: Kotak/Dus" style="border:1px solid var(--green)"></div>
+            <div style="margin-bottom:20px;"><label style="font-size:13px; font-weight:600; color:var(--gray)">Nama Satuan Pendek (Maks 5)</label><input type="text" id="unitShort" class="input-box" placeholder="KOTK" maxlength="5"></div>
         </div>
-        <div class="nav-item">
-            <span class="material-icons-outlined">receipt_long</span>
-            <span>Transaksi</span>
-        </div>
-        <div class="nav-item">
-            <span class="material-icons-outlined">groups</span>
-            <span>Pihak</span>
-        </div>
-        <div class="nav-item active">
-            <span class="material-icons-outlined">inventory</span>
-            <span>Inventaris</span>
-        </div>
-        <div class="nav-item">
-            <span class="material-icons-outlined">grid_view</span>
-            <span>Lainnya</span>
-        </div>
-    </nav>
+        <div class="bottom-btn-container"><button id="btnActionUnit" class="btn-full" onclick="handleUnitAction()" disabled>Simpan</button></div>
+    </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
-        import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js";
+        import { getDatabase, ref, onValue, push, update } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyDL9F1DOnjrCCtDZ13aXL-yX4oAyQfUu9Y",
             databaseURL: "https://gen-lang-client-0116140691-default-rtdb.asia-southeast1.firebasedatabase.app",
             projectId: "gen-lang-client-0116140691",
         };
-
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
-        const listDiv = document.getElementById('inventory-container');
 
-        onValue(ref(db, 'products'), (snapshot) => {
-            const data = snapshot.val();
-            listDiv.innerHTML = "";
+        let currentEditId = null; 
+
+        window.showPage = (id) => {
+            document.querySelectorAll('.page').forEach(p => p.classList.add('hidden'));
+            document.getElementById(id).classList.remove('hidden');
+        };
+
+        // Render Inventaris
+        onValue(ref(db, 'products'), (snap) => {
+            const list = document.getElementById('inventory-list');
+            list.innerHTML = "";
+            const data = snap.val();
             for (let id in data) {
-                const item = data[id];
-                listDiv.innerHTML += `
-                    <div class="card-item">
-                        <div class="col-initial">${item.nama.substring(0,2).toUpperCase()}</div>
-                        <div class="col-info">
-                            <div class="product-name">${item.nama}</div>
-                            <div class="price-group">
-                                <div class="price-item">Penjualan<strong>Rp ${Number(item.hargaJual).toLocaleString('id-ID')}</strong></div>
-                                <div class="price-item">Pembelian<strong>Rp ${Number(item.hargaBeli).toLocaleString('id-ID')}</strong></div>
-                            </div>
-                        </div>
-                        <div class="col-status">
-                            <span class="badge-category">${item.kategori}</span>
-                            <div class="stock-text">${item.stok} ${item.satuan || 'PCS'}</div>
-                        </div>
-                    </div>`;
+                const p = data[id];
+                list.innerHTML += `<div class="card"><div class="initial">${p.nama.substring(0,2).toUpperCase()}</div><div class="info"><div class="name"><b>${p.nama}</b></div><div class="price-row"><div>Penjualan<strong>Rp ${Number(p.hargaJual).toLocaleString('id-ID')}</strong></div><div>Pembelian<strong>Rp ${Number(p.hargaBeli).toLocaleString('id-ID')}</strong></div></div></div><div class="status"><span class="badge">${p.kategori}</span><div style="font-weight:800; margin-top:5px;">${p.stok} ${p.satuan || 'PCS'}</div></div></div>`;
             }
         });
+
+        // Render Satuan & Logika Edit
+        onValue(ref(db, 'units'), (snap) => {
+            const display = document.getElementById('unit-list-display');
+            display.innerHTML = "";
+            const data = snap.val();
+            for (let id in data) {
+                const u = data[id];
+                const item = document.createElement('div');
+                item.className = 'unit-item';
+                item.innerHTML = `<div class="unit-info"><b>${u.nama}</b><div style="color:gray;font-size:12px">${u.kode}</div></div>
+                                  <div class="unit-actions">
+                                      <span class="material-icons-outlined edit-trigger" style="cursor:pointer">edit</span>
+                                      <span class="material-icons-outlined" style="color:var(--red); cursor:pointer">delete</span>
+                                  </div>`;
+                item.querySelector('.edit-trigger').onclick = () => openEditUnit(id, u.nama, u.kode);
+                display.appendChild(item);
+            }
+        });
+
+        window.openAddUnit = () => {
+            currentEditId = null;
+            document.getElementById('formUnitTitle').innerText = "Tambahkan Satuan Baru";
+            document.getElementById('btnActionUnit').innerText = "Simpan";
+            document.getElementById('unitName').value = "";
+            document.getElementById('unitShort').value = "";
+            showPage('page-form-unit');
+            validateBtn();
+        };
+
+        window.openEditUnit = (id, name, code) => {
+            currentEditId = id;
+            document.getElementById('formUnitTitle').innerText = "Edit Satuan";
+            document.getElementById('btnActionUnit').innerText = "Perbarui";
+            document.getElementById('unitName').value = name;
+            document.getElementById('unitShort').value = code;
+            showPage('page-form-unit');
+            validateBtn();
+        };
+
+        window.handleUnitAction = function() {
+            const n = document.getElementById('unitName').value;
+            const s = document.getElementById('unitShort').value;
+            const properName = n.toLowerCase().replace(/\b\w/g, c => c.toUpperCase());
+            const data = { nama: properName, kode: s.toUpperCase() };
+
+            if (currentEditId) {
+                update(ref(db, `units/${currentEditId}`), data).then(() => showPage('page-satuan'));
+            } else {
+                push(ref(db, 'units'), data).then(() => showPage('page-satuan'));
+            }
+        };
+
+        document.getElementById('unitShort').addEventListener('input', function() {
+            if (this.value.length > 5) this.value = this.value.slice(0, 5);
+            this.value = this.value.toUpperCase();
+        });
+
+        const validateBtn = () => {
+            const n = document.getElementById('unitName').value;
+            const s = document.getElementById('unitShort').value;
+            const btn = document.getElementById('btnActionUnit');
+            btn.disabled = !(n && s);
+        };
+
+        document.addEventListener('input', validateBtn);
     </script>
 </body>
 </html>
