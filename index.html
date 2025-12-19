@@ -10,20 +10,13 @@
         /* ================================================================
            BASE ANIMATIONS
            ================================================================ */
-        @keyframes slideUp { 
-            from { transform: translateY(100%); } 
-            to { transform: translateY(0); } 
-        }
         @keyframes fadeIn { 
             from { opacity: 0; } 
             to { opacity: 1; } 
         }
         
-        .animate-slide-up { 
-            animation: slideUp 0.3s ease-out; 
-        }
         .animate-fadeIn { 
-            animation: fadeIn 0.3s ease-in-out; 
+            animation: fadeIn 0.2s ease-in-out; 
         }
 
         /* ================================================================
@@ -35,31 +28,7 @@
         .no-scrollbar::-webkit-scrollbar { 
             display: none; 
         }
-        body.modal-open { 
-            overflow: hidden; 
-            touch-action: none; 
-        }
-
-        /* ================================================================
-           MODAL BACKDROP & ANIMATIONS
-           ================================================================ */
-        .fixed.inset-0.bg-black\/60 {
-            background-color: rgba(0, 0, 0, 0.6) !important;
-            backdrop-filter: blur(2px);
-        }
-
-        @keyframes slideUp {
-            from { transform: translateY(100%); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
-        }
-
-        .animate-slide-up {
-            animation: slideUp 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        /* ================================================================
-           FORM CONTROLS
-           ================================================================ */
+        
         .std-input {
             height: 3.5rem;
             display: flex;
@@ -85,114 +54,36 @@
         }
 
         /* ================================================================
-           UNIFORM TAB NAVIGATION STYLES - SEMUA TOMBOL SEPERTI TAB NAV
+           FULL SCREEN VIEW STYLES
            ================================================================ */
-        
-        /* SEMUA TOMBOL AKSI SEPERTI TAB NAV - TIDAK NAIK SAAT KEYBOARD */
-        .action-button-container {
-            /* SAMA SEPERTI NAVIGATION TAB */
-            position: relative !important;
-            bottom: auto !important;
-            left: auto !important;
-            right: auto !important;
-            z-index: auto !important;
-            background: transparent !important;
-            box-shadow: none !important;
-            transition: none !important;
+        [id^="view-"]:not(#view-list) {
+            position: fixed !important;
+            inset: 0 !important;
+            background: white !important;
+            z-index: 100 !important;
+            display: flex !important;
+            flex-direction: column !important;
         }
 
-        /* TOMBOL DI DALAM FORM - STICKY BOTTOM TAPI DI DALAM CONTAINER */
-        .form-actions-container {
-            position: sticky;
-            bottom: 0;
-            background: white;
-            border-top: 1px solid #e5e7eb;
-            z-index: 20;
-            padding: 1rem;
-            margin-top: auto;
-        }
-
-        /* ================================================================
-           NAVIGATION BAR - BASE STYLE (UNTUK SEMUA TOMBOL)
-           ================================================================ */
+        /* Navigation bar tetap di bawah */
         nav.fixed.bottom-0 {
             z-index: 50;
-            transition: none;
-        }
-
-        .nav-btn {
-            /* STYLE UNTUK SEMUA TOMBOL (TAB NAV & ACTION BUTTONS) */
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 0.25rem;
-            padding: 0.5rem;
-            border-radius: 0.5rem;
-            transition: all 0.2s;
-            background: transparent;
-            border: none;
-            cursor: pointer;
-        }
-
-        .nav-btn:active {
-            transform: scale(0.95);
-        }
-
-        .nav-btn i {
-            font-size: 1.25rem;
-        }
-
-        .nav-btn span {
-            font-size: 0.625rem;
-            font-weight: 500;
         }
 
         /* ================================================================
-           MOBILE OPTIMIZATION (TANPA KEYBOARD HANDLING)
+           MOBILE OPTIMIZATION
            ================================================================ */
         @media (max-width: 767px) {
-            /* Form containers dengan padding untuk tombol sticky */
-            #view-edit .flex-1,
-            #view-multi-satuan .flex-1 {
-                padding-bottom: 5rem !important;
-            }
-            
-            /* Picker modal full height */
-            #view-picker {
-                padding-bottom: 4rem !important;
-            }
-            
             /* Touch-friendly buttons */
             .btn-touch {
                 min-height: 44px;
                 min-width: 44px;
             }
-        }
-
-        /* ================================================================
-           DESKTOP OPTIMIZATION
-           ================================================================ */
-        @media (min-width: 768px) {
-            .form-actions-container {
-                position: relative;
-                border-top: none;
-                padding-top: 1.5rem;
-                margin-top: 2rem;
-            }
             
-            #view-edit .flex-1,
-            #view-multi-satuan .flex-1 {
-                padding-bottom: 0 !important;
+            /* Better scrolling on iOS */
+            .ios-scroll {
+                -webkit-overflow-scrolling: touch;
             }
-        }
-
-        /* ================================================================
-           SCROLL CONTAINERS
-           ================================================================ */
-        .scroll-container {
-            flex: 1;
-            overflow-y: auto;
-            -webkit-overflow-scrolling: touch;
         }
 
         /* ================================================================
@@ -202,18 +93,23 @@
             nav.fixed.bottom-0 {
                 padding-bottom: max(0.5rem, env(safe-area-inset-bottom));
             }
-            
-            .form-actions-container {
-                padding-bottom: max(1rem, env(safe-area-inset-bottom));
-            }
+        }
+
+        /* ================================================================
+           CUSTOM UTILITIES
+           ================================================================ */
+        .no-select {
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            user-select: none;
         }
     </style>
 </head>
 <body class="bg-gray-50 text-gray-800 font-sans">
     <!-- MAIN CONTENT AREA -->
-    <main id="main-content" class="pb-28 scroll-container"></main>
+    <main id="main-content" class="pb-28"></main>
 
-    <!-- BOTTOM NAVIGATION (FIXED POSITION - SEPERTI SEMUA TOMBOL LAIN) -->
+    <!-- BOTTOM NAVIGATION -->
     <nav class="fixed bottom-0 left-0 right-0 bg-white border-t flex justify-around p-3 shadow-lg z-50">
         <button onclick="switchTab('beranda')" class="nav-btn flex flex-col items-center gap-1 text-emerald-600" id="btn-beranda">
             <i class="fa-solid fa-house text-xl"></i>
@@ -243,7 +139,7 @@
         window.switchTab = (tabName) => {
             const content = document.getElementById('main-content');
             
-            // Update active tab styling (SAMA SEPERTI TOMBOL LAIN)
+            // Update active tab styling
             document.querySelectorAll('.nav-btn').forEach(btn => {
                 btn.classList.remove('text-emerald-600');
                 btn.classList.add('text-gray-400');
@@ -265,12 +161,6 @@
                     <div class="flex flex-col h-full">
                         <div class="flex-1 p-10 text-center text-gray-400 uppercase text-xs flex items-center justify-center">
                             Modul ${tabName} segera hadir.
-                        </div>
-                        <!-- TOMBOL AKSI DI BAWAH (SEPERTI TAB NAV) -->
-                        <div class="form-actions-container">
-                            <button class="w-full bg-gray-100 text-gray-600 py-3.5 rounded-xl font-bold uppercase text-sm">
-                                Aksi ${tabName}
-                            </button>
                         </div>
                     </div>
                 `; 
@@ -298,13 +188,6 @@
                                 <p class="text-[10px] text-rose-600 font-bold uppercase tracking-widest">Bayar Hutang</p>
                             </div>
                         </div>
-                    </div>
-                    
-                    <!-- TOMBOL AKSI DI BAWAH (SEPERTI TAB NAV) -->
-                    <div class="form-actions-container">
-                        <button class="w-full bg-emerald-500 text-white py-3.5 rounded-xl font-bold uppercase text-sm shadow-lg">
-                            Aksi Beranda
-                        </button>
                     </div>
                 </div>
             `;

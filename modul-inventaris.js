@@ -7,224 +7,229 @@ let currentEditId = null, multiUnits = [], lastOrigin = 'view-list', pickerTarge
 const desktopWidth = "max-w-4xl";
 
 // ============================================================================
-// RENDER INVENTARIS
+// RENDER INVENTARIS - SEMUA FULL SCREEN
 // ============================================================================
 
 export function renderInventaris() {
     const content = document.getElementById('main-content');
     content.innerHTML = `
-        <div class="flex flex-col h-full">
-            <!-- VIEW LIST: DAFTAR BARANG -->
-            <div id="view-list" class="flex flex-col gap-2 ${desktopWidth} mx-auto p-2 sm:p-4 animate-fadeIn flex-1">
-                <div class="flex justify-between items-center px-1">
-                    <h2 class="text-xl font-bold text-gray-800 tracking-tight proper-case">Inventaris</h2>
-                    <button onclick="window.switchView('view-pengaturan')" class="p-2 text-emerald-600">
-                        <i class="fa-solid fa-gear text-lg"></i>
-                    </button>
-                </div>
-                <div id="list-barang" class="grid grid-cols-1 md:grid-cols-2 gap-4 px-1"></div>
-                <button onclick="window.bukaHalamanEdit(null)" 
-                        class="fixed bottom-24 right-4 md:right-[calc(50%-20rem)] bg-emerald-500 text-white px-4 py-2.5 rounded-full shadow-2xl flex items-center gap-2 font-bold z-40">
-                    <i class="fa-solid fa-box-open text-sm"></i> 
-                    <span class="uppercase text-[11px]">Tambah Barang</span>
+        <!-- VIEW LIST: DAFTAR BARANG -->
+        <div id="view-list" class="flex flex-col gap-2 ${desktopWidth} mx-auto p-2 sm:p-4 animate-fadeIn">
+            <div class="flex justify-between items-center px-1">
+                <h2 class="text-xl font-bold text-gray-800 tracking-tight proper-case">Inventaris</h2>
+                <button onclick="window.switchView('view-pengaturan')" class="p-2 text-emerald-600">
+                    <i class="fa-solid fa-gear text-lg"></i>
                 </button>
             </div>
+            <div id="list-barang" class="grid grid-cols-1 md:grid-cols-2 gap-4 px-1"></div>
+            <button onclick="window.bukaHalamanEdit(null)" 
+                    class="fixed bottom-24 right-4 md:right-[calc(50%-20rem)] bg-emerald-500 text-white px-4 py-2.5 rounded-full shadow-2xl flex items-center gap-2 font-bold z-40">
+                <i class="fa-solid fa-box-open text-sm"></i> 
+                <span class="uppercase text-[11px]">Tambah Barang</span>
+            </button>
+        </div>
 
-            <!-- VIEW EDIT: TAMBAH/EDIT BARANG -->
-            <div id="view-edit" class="hidden fixed inset-0 bg-white z-[70] flex flex-col">
-                <div class="${desktopWidth} mx-auto w-full h-full flex flex-col">
-                    <div class="flex items-center p-4 border-b">
-                        <button onclick="window.batalEdit()" class="p-2 text-gray-600 mr-1">
-                            <i class="fa-solid fa-arrow-left text-xl"></i>
-                        </button>
-                        <h3 class="font-bold text-base text-gray-800 proper-case">Tambah Barang</h3>
-                    </div>
-                    
-                    <div class="flex-1 overflow-y-auto p-4">
-                        <div class="space-y-4">
+        <!-- VIEW EDIT: TAMBAH/EDIT BARANG - FULL SCREEN -->
+        <div id="view-edit" class="hidden fixed inset-0 bg-white z-[70] flex flex-col">
+            <div class="${desktopWidth} mx-auto w-full h-full flex flex-col">
+                <div class="flex items-center p-4 border-b">
+                    <button onclick="window.batalEdit()" class="p-2 text-gray-600 mr-1">
+                        <i class="fa-solid fa-arrow-left text-xl"></i>
+                    </button>
+                    <h3 class="font-bold text-base text-gray-800 proper-case">Tambah Barang</h3>
+                </div>
+                
+                <div class="flex-1 overflow-y-auto p-4">
+                    <div class="space-y-4">
+                        <div class="relative border border-gray-200 rounded-xl std-input">
+                            <label class="absolute -top-2.5 left-3 px-1 bg-white text-[9px] font-bold text-gray-400 proper-case tracking-widest">Nama Barang</label>
+                            <input type="text" id="edit-nama" class="w-full h-full px-4 bg-transparent outline-none font-bold text-gray-700 proper-case text-sm">
+                        </div>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div onclick="window.bukaPickerSelection('kategori', 'view-edit')" 
+                                 class="relative border border-gray-200 rounded-xl flex justify-between items-center cursor-pointer std-input px-4">
+                                <label class="absolute -top-2.5 left-3 px-1 bg-white text-[9px] font-bold text-gray-400 proper-case tracking-widest">Kategori</label>
+                                <input type="text" id="edit-kategori" class="font-bold text-gray-700 pointer-events-none text-xs proper-case" readonly>
+                                <i class="fa-solid fa-chevron-right text-gray-300 text-[10px]"></i>
+                            </div>
+                            
+                            <div onclick="window.bukaPilihSatuanPengukuran()" 
+                                 class="relative border border-gray-200 rounded-xl flex justify-between items-center cursor-pointer std-input px-4">
+                                <label class="absolute -top-2.5 left-3 px-1 bg-white text-[9px] font-bold text-gray-400 proper-case tracking-widest">Satuan</label>
+                                <input type="text" id="edit-satuan-display" class="w-full font-bold text-gray-700 pointer-events-none text-xs uppercase truncate" readonly>
+                                <i class="fa-solid fa-chevron-right text-gray-300 text-[10px] flex-shrink-0"></i>
+                            </div>
+                        </div>
+                        
+                        <div id="info-konversi" class="hidden flex items-start gap-2 text-[10px] text-emerald-600 font-bold bg-emerald-50 p-2 rounded-lg border border-emerald-100">
+                            <i class="fa-solid fa-link mt-0.5"></i>
+                            <span id="text-konversi" class="uppercase"></span>
+                        </div>
+                        
+                        <div class="grid grid-cols-2 gap-3">
                             <div class="relative border border-gray-200 rounded-xl std-input">
-                                <label class="absolute -top-2.5 left-3 px-1 bg-white text-[9px] font-bold text-gray-400 proper-case tracking-widest">Nama Barang</label>
-                                <input type="text" id="edit-nama" class="w-full h-full px-4 bg-transparent outline-none font-bold text-gray-700 proper-case text-sm">
+                                <label class="absolute -top-2.5 left-3 px-1 bg-white text-[9px] font-bold text-gray-400 proper-case tracking-widest">Stok Awal</label>
+                                <input type="number" id="edit-stok" class="w-full h-full px-4 bg-transparent outline-none font-bold text-gray-700 text-sm">
                             </div>
                             
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div onclick="window.bukaPickerSelection('kategori', 'view-edit')" 
-                                     class="relative border border-gray-200 rounded-xl flex justify-between items-center cursor-pointer std-input px-4">
-                                    <label class="absolute -top-2.5 left-3 px-1 bg-white text-[9px] font-bold text-gray-400 proper-case tracking-widest">Kategori</label>
-                                    <input type="text" id="edit-kategori" class="font-bold text-gray-700 pointer-events-none text-xs proper-case" readonly>
-                                    <i class="fa-solid fa-chevron-right text-gray-300 text-[10px]"></i>
-                                </div>
-                                
-                                <div onclick="window.bukaPilihSatuanPengukuran()" 
-                                     class="relative border border-gray-200 rounded-xl flex justify-between items-center cursor-pointer std-input px-4">
-                                    <label class="absolute -top-2.5 left-3 px-1 bg-white text-[9px] font-bold text-gray-400 proper-case tracking-widest">Satuan</label>
-                                    <input type="text" id="edit-satuan-display" class="w-full font-bold text-gray-700 pointer-events-none text-xs uppercase truncate" readonly>
-                                    <i class="fa-solid fa-chevron-right text-gray-300 text-[10px] flex-shrink-0"></i>
-                                </div>
-                            </div>
-                            
-                            <div id="info-konversi" class="hidden flex items-start gap-2 text-[10px] text-emerald-600 font-bold bg-emerald-50 p-2 rounded-lg border border-emerald-100">
-                                <i class="fa-solid fa-link mt-0.5"></i>
-                                <span id="text-konversi" class="uppercase"></span>
-                            </div>
-                            
-                            <div class="grid grid-cols-2 gap-3">
-                                <div class="relative border border-gray-200 rounded-xl std-input">
-                                    <label class="absolute -top-2.5 left-3 px-1 bg-white text-[9px] font-bold text-gray-400 proper-case tracking-widest">Stok Awal</label>
-                                    <input type="number" id="edit-stok" class="w-full h-full px-4 bg-transparent outline-none font-bold text-gray-700 text-sm">
-                                </div>
-                                
-                                <div class="relative border border-gray-200 rounded-xl flex items-center px-4 std-input">
-                                    <label class="absolute -top-2.5 left-3 px-1 bg-white text-[9px] font-bold text-gray-400 proper-case tracking-widest">Harga Jual</label>
-                                    <span class="text-gray-400 text-[10px] font-bold mr-1">RP</span>
-                                    <input type="number" id="edit-jual" class="w-full h-full bg-transparent outline-none font-bold text-gray-700 text-sm">
-                                </div>
+                            <div class="relative border border-gray-200 rounded-xl flex items-center px-4 std-input">
+                                <label class="absolute -top-2.5 left-3 px-1 bg-white text-[9px] font-bold text-gray-400 proper-case tracking-widest">Harga Jual</label>
+                                <span class="text-gray-400 text-[10px] font-bold mr-1">RP</span>
+                                <input type="number" id="edit-jual" class="w-full h-full bg-transparent outline-none font-bold text-gray-700 text-sm">
                             </div>
                         </div>
                     </div>
-                    
-                    <!-- TOMBOL SIMPAN (SEPERTI TAB NAV) -->
-                    <div class="form-actions-container">
-                        <button onclick="window.simpanBarang()" 
+                </div>
+                
+                <!-- TOMBOL SIMPAN -->
+                <div class="p-4 border-t bg-white">
+                    <button onclick="window.simpanBarang()" 
+                            class="w-full bg-emerald-500 text-white py-3.5 rounded-xl font-bold uppercase text-sm shadow-lg active:scale-95 transition-all">
+                        Simpan
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- VIEW PENGATURAN - FULL SCREEN -->
+        <div id="view-pengaturan" class="hidden fixed inset-0 bg-gray-50 z-[100] flex flex-col">
+            <div class="${desktopWidth} mx-auto w-full h-full flex flex-col">
+                <div class="flex items-center p-4 bg-white border-b">
+                    <button onclick="window.switchView('view-list')" class="mr-4 p-2 rounded-full">
+                        <i class="fa-solid fa-arrow-left text-xl text-gray-600"></i>
+                    </button>
+                    <h3 class="font-bold text-lg text-gray-800 proper-case">Pengaturan Inventaris</h3>
+                </div>
+                
+                <div class="flex-1 overflow-y-auto p-4">
+                    <div class="space-y-2">
+                        <div onclick="window.bukaPickerSelection('kategori', 'view-pengaturan')" 
+                             class="bg-white p-4 rounded-xl flex justify-between items-center border border-gray-100 active:bg-gray-50 cursor-pointer">
+                            <div class="flex items-center gap-4">
+                                <i class="fa-solid fa-boxes-stacked text-emerald-500"></i>
+                                <span class="font-bold text-gray-700 proper-case text-sm">Kelola Kategori</span>
+                            </div>
+                            <i class="fa-solid fa-chevron-right text-gray-300 text-xs"></i>
+                        </div>
+                        
+                        <div onclick="window.bukaPickerSelection('satuan', 'view-pengaturan')" 
+                             class="bg-white p-4 rounded-xl flex justify-between items-center border border-gray-100 active:bg-gray-50 cursor-pointer">
+                            <div class="flex items-center gap-4">
+                                <i class="fa-solid fa-scale-balanced text-emerald-500"></i>
+                                <span class="font-bold text-gray-700 proper-case text-sm">Kelola Satuan Ukur</span>
+                            </div>
+                            <i class="fa-solid fa-chevron-right text-gray-300 text-xs"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- VIEW MULTI SATUAN - FULL SCREEN -->
+        <div id="view-multi-satuan" class="hidden fixed inset-0 bg-white z-[120] flex flex-col">
+            <div class="${desktopWidth} mx-auto w-full h-full flex flex-col">
+                <div class="flex items-center p-4 border-b">
+                    <button onclick="window.tutupMultiSatuan()" class="mr-3 p-2 rounded-full">
+                        <i class="fa-solid fa-arrow-left text-xl text-gray-600"></i>
+                    </button>
+                    <h3 class="font-bold text-lg text-gray-800 proper-case tracking-tight">Satuan Pengukuran</h3>
+                </div>
+                
+                <div class="flex-1 overflow-y-auto p-4">
+                    <div class="space-y-6">
+                        <div onclick="window.bukaPickerSelection('satuan', 'view-multi-satuan', 'utama')" 
+                             class="relative border border-gray-200 rounded-xl flex justify-between items-center cursor-pointer px-4 std-input">
+                            <label class="absolute -top-2.5 left-3 px-1 bg-white text-[9px] font-bold text-gray-400 proper-case tracking-widest">Satuan Utama</label>
+                            <input type="text" id="val-satuan-utama" class="font-bold text-gray-700 outline-none pointer-events-none uppercase" readonly>
+                            <i class="fa-solid fa-chevron-right text-gray-300 text-xs"></i>
+                        </div>
+                        
+                        <div id="dynamic-secondary-units" class="space-y-6"></div>
+                        
+                        <button onclick="window.tambahSatuanSekunder()" 
+                                class="text-emerald-600 font-bold text-[10px] flex items-center gap-2 py-2 uppercase tracking-widest">
+                            <i class="fa-solid fa-circle-plus text-base"></i> 
+                            Tambah Satuan Lainnya
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- TOMBOL SIMPAN/BATAL -->
+                <div class="p-4 border-t bg-white">
+                    <div class="grid grid-cols-2 gap-3">
+                        <button onclick="window.tutupMultiSatuan()" 
+                                class="w-full py-3.5 font-bold text-gray-400 uppercase text-sm bg-gray-100 rounded-xl active:scale-95 transition-all">
+                            Batal
+                        </button>
+                        <button onclick="window.konfirmasiSatuan()" 
                                 class="w-full bg-emerald-500 text-white py-3.5 rounded-xl font-bold uppercase text-sm shadow-lg active:scale-95 transition-all">
                             Simpan
                         </button>
                     </div>
                 </div>
             </div>
+        </div>
 
-            <!-- VIEW PENGATURAN -->
-            <div id="view-pengaturan" class="hidden fixed inset-0 bg-gray-50 z-[100] flex flex-col">
-                <div class="${desktopWidth} mx-auto w-full h-full flex flex-col">
-                    <div class="flex items-center p-4 bg-white border-b">
-                        <button onclick="window.switchView('view-list')" class="mr-4 p-2 rounded-full">
-                            <i class="fa-solid fa-arrow-left text-xl text-gray-600"></i>
-                        </button>
-                        <h3 class="font-bold text-lg text-gray-800 proper-case">Pengaturan Inventaris</h3>
-                    </div>
-                    
-                    <div class="flex-1 overflow-y-auto p-4">
-                        <div class="space-y-2">
-                            <div onclick="window.bukaPickerSelection('kategori', 'view-pengaturan')" 
-                                 class="bg-white p-4 rounded-xl flex justify-between items-center border border-gray-100 active:bg-gray-50 cursor-pointer">
-                                <div class="flex items-center gap-4">
-                                    <i class="fa-solid fa-boxes-stacked text-emerald-500"></i>
-                                    <span class="font-bold text-gray-700 proper-case text-sm">Kelola Kategori</span>
-                                </div>
-                                <i class="fa-solid fa-chevron-right text-gray-300 text-xs"></i>
-                            </div>
-                            
-                            <div onclick="window.bukaPickerSelection('satuan', 'view-pengaturan')" 
-                                 class="bg-white p-4 rounded-xl flex justify-between items-center border border-gray-100 active:bg-gray-50 cursor-pointer">
-                                <div class="flex items-center gap-4">
-                                    <i class="fa-solid fa-scale-balanced text-emerald-500"></i>
-                                    <span class="font-bold text-gray-700 proper-case text-sm">Kelola Satuan Ukur</span>
-                                </div>
-                                <i class="fa-solid fa-chevron-right text-gray-300 text-xs"></i>
-                            </div>
-                        </div>
+        <!-- VIEW PICKER (KATEGORI/SATUAN) - FULL SCREEN -->
+        <div id="view-picker" class="hidden fixed inset-0 bg-white z-[200] flex flex-col">
+            <div class="${desktopWidth} mx-auto w-full h-full flex flex-col">
+                <div class="flex items-center p-4 border-b">
+                    <button onclick="window.tutupPicker()" class="mr-3 p-2 rounded-full">
+                        <i class="fa-solid fa-arrow-left text-xl text-gray-600"></i>
+                    </button>
+                    <h3 id="picker-title" class="font-bold text-lg text-gray-800 proper-case">Pilih Kategori</h3>
+                </div>
+                
+                <div class="p-4">
+                    <div class="relative border border-gray-100 bg-gray-50 rounded-xl std-input px-4 flex items-center gap-3">
+                        <i class="fa-solid fa-magnifying-glass text-gray-300 text-sm"></i>
+                        <input type="text" id="picker-search" oninput="window.filterPickerList(this.value)" 
+                               class="w-full h-full bg-transparent outline-none font-medium text-gray-600 text-sm"
+                               placeholder="Cari kategori atau satuan...">
                     </div>
                 </div>
-            </div>
-
-            <!-- VIEW MULTI SATUAN -->
-            <div id="view-multi-satuan" class="hidden fixed inset-0 bg-white z-[120] flex flex-col">
-                <div class="${desktopWidth} mx-auto w-full h-full flex flex-col">
-                    <div class="flex items-center p-4 border-b">
-                        <button onclick="window.tutupMultiSatuan()" class="mr-3 p-2 rounded-full">
-                            <i class="fa-solid fa-arrow-left text-xl text-gray-600"></i>
-                        </button>
-                        <h3 class="font-bold text-lg text-gray-800 proper-case tracking-tight">Satuan Pengukuran</h3>
-                    </div>
-                    
-                    <div class="flex-1 overflow-y-auto p-4">
-                        <div class="space-y-6">
-                            <div onclick="window.bukaPickerSelection('satuan', 'view-multi-satuan', 'utama')" 
-                                 class="relative border border-gray-200 rounded-xl flex justify-between items-center cursor-pointer px-4 std-input">
-                                <label class="absolute -top-2.5 left-3 px-1 bg-white text-[9px] font-bold text-gray-400 proper-case tracking-widest">Satuan Utama</label>
-                                <input type="text" id="val-satuan-utama" class="font-bold text-gray-700 outline-none pointer-events-none uppercase" readonly>
-                                <i class="fa-solid fa-chevron-right text-gray-300 text-xs"></i>
-                            </div>
-                            
-                            <div id="dynamic-secondary-units" class="space-y-6"></div>
-                            
-                            <button onclick="window.tambahSatuanSekunder()" 
-                                    class="text-emerald-600 font-bold text-[10px] flex items-center gap-2 py-2 uppercase tracking-widest">
-                                <i class="fa-solid fa-circle-plus text-base"></i> 
-                                Tambah Satuan Lainnya
-                            </button>
-                        </div>
-                    </div>
-                    
-                    <!-- TOMBOL SIMPAN/BATAL (SEPERTI TAB NAV) -->
-                    <div class="form-actions-container">
-                        <div class="grid grid-cols-2 gap-3">
-                            <button onclick="window.tutupMultiSatuan()" 
-                                    class="w-full py-3.5 font-bold text-gray-400 uppercase text-sm bg-gray-100 rounded-xl active:scale-95 transition-all">
-                                Batal
-                            </button>
-                            <button onclick="window.konfirmasiSatuan()" 
-                                    class="w-full bg-emerald-500 text-white py-3.5 rounded-xl font-bold uppercase text-sm shadow-lg active:scale-95 transition-all">
-                                Simpan
-                            </button>
-                        </div>
-                    </div>
+                
+                <div id="picker-list" class="flex-1 overflow-y-auto px-4 space-y-1 no-scrollbar"></div>
+                
+                <!-- TOMBOL TAMBAH BARU -->
+                <div class="p-4 border-t bg-white">
+                    <button id="picker-btn-add" 
+                            class="w-full bg-emerald-500 text-white py-3.5 rounded-xl font-bold uppercase text-sm shadow-lg active:scale-95 transition-all">
+                        <i class="fa-solid fa-plus mr-2"></i> 
+                        <span id="picker-btn-text">Tambah Kategori Baru</span>
+                    </button>
                 </div>
             </div>
+        </div>
 
-            <!-- VIEW PICKER (KATEGORI/SATUAN) -->
-            <div id="view-picker" class="hidden fixed inset-0 bg-white z-[200] flex flex-col">
-                <div class="${desktopWidth} mx-auto w-full h-full flex flex-col">
-                    <div class="flex items-center p-4 border-b">
-                        <button onclick="window.tutupPicker()" class="mr-3 p-2 rounded-full">
-                            <i class="fa-solid fa-arrow-left text-xl text-gray-600"></i>
+        <!-- VIEW FORM BARU - FULL SCREEN (BUKAN BOTTOM SHEET) -->
+        <div id="view-form-baru" class="hidden fixed inset-0 bg-white z-[200] flex flex-col">
+            <div class="${desktopWidth} mx-auto w-full h-full flex flex-col">
+                <div class="flex items-center p-4 border-b">
+                    <button onclick="window.tutupFormBaru()" class="mr-3 p-2 rounded-full">
+                        <i class="fa-solid fa-arrow-left text-xl text-gray-600"></i>
+                    </button>
+                    <h3 id="form-baru-title" class="font-bold text-lg text-gray-800 proper-case">
+                        Tambah Kategori Baru
+                    </h3>
+                </div>
+                
+                <div id="form-baru-content" class="flex-1 overflow-y-auto p-4">
+                    <!-- Content akan diisi dinamis -->
+                </div>
+                
+                <!-- TOMBOL SIMPAN/BATAL -->
+                <div class="p-4 border-t bg-white">
+                    <div class="grid grid-cols-2 gap-3">
+                        <button onclick="window.tutupFormBaru()" 
+                                class="w-full py-3.5 font-bold text-gray-400 uppercase text-sm bg-gray-100 rounded-xl active:scale-95 transition-all">
+                            Batal
                         </button>
-                        <h3 id="picker-title" class="font-bold text-lg text-gray-800 proper-case">Pilih Kategori</h3>
-                    </div>
-                    
-                    <div class="p-4">
-                        <div class="relative border border-gray-100 bg-gray-50 rounded-xl std-input px-4 flex items-center gap-3">
-                            <i class="fa-solid fa-magnifying-glass text-gray-300 text-sm"></i>
-                            <input type="text" id="picker-search" oninput="window.filterPickerList(this.value)" 
-                                   class="w-full h-full bg-transparent outline-none font-medium text-gray-600 text-sm"
-                                   placeholder="Cari kategori atau satuan...">
-                        </div>
-                    </div>
-                    
-                    <div id="picker-list" class="flex-1 overflow-y-auto px-4 space-y-1 no-scrollbar"></div>
-                    
-                    <!-- TOMBOL TAMBAH BARU (SEPERTI TAB NAV) -->
-                    <div class="form-actions-container">
-                        <button id="picker-btn-add" 
+                        <button onclick="window.prosesSimpanData()" 
                                 class="w-full bg-emerald-500 text-white py-3.5 rounded-xl font-bold uppercase text-sm shadow-lg active:scale-95 transition-all">
-                            <i class="fa-solid fa-plus mr-2"></i> 
-                            <span id="picker-btn-text">Tambah Kategori Baru</span>
+                            Simpan
                         </button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- VIEW FORM BARU (MODAL BOTTOM SHEET) -->
-            <div id="view-form-baru" class="hidden fixed inset-0 bg-black/60 z-[200] flex items-end justify-center">
-                <div class="bg-white w-full ${desktopWidth} rounded-t-[2rem] animate-slide-up relative flex flex-col max-h-[85vh]">
-                    <div class="w-12 h-1.5 bg-gray-200 rounded-full mx-auto my-4"></div>
-                    
-                    <div id="form-baru-content" class="flex flex-col p-6 pb-10 flex-1 overflow-y-auto">
-                        <!-- Content akan diisi dinamis -->
-                    </div>
-                    
-                    <!-- TOMBOL SIMPAN/BATAL (SEPERTI TAB NAV) -->
-                    <div class="form-actions-container">
-                        <div class="grid grid-cols-2 gap-3">
-                            <button onclick="document.getElementById('view-form-baru').classList.add('hidden')" 
-                                    class="w-full py-3.5 font-bold text-gray-400 uppercase text-sm bg-gray-100 rounded-xl active:scale-95 transition-all">
-                                Batal
-                            </button>
-                            <button onclick="window.prosesSimpanData()" 
-                                    class="w-full bg-emerald-500 text-white py-3.5 rounded-xl font-bold uppercase text-sm shadow-lg active:scale-95 transition-all">
-                                Simpan
-                            </button>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -241,14 +246,19 @@ export function renderInventaris() {
 window.bukaPickerSelection = (type, origin, mode = null, index = null) => {
     lastOrigin = origin;
     pickerTargetIndex = { mode, index };
-    const picker = document.getElementById('view-picker');
-    const isKategori = type === 'kategori';
     
-    document.getElementById('picker-title').innerText = isKategori ? 'Pilih Kategori Barang' : 'Pilih Satuan Dasar';
-    document.getElementById('picker-btn-text').innerText = isKategori ? 'Tambah Kategori Baru' : 'Tambah Satuan Baru';
+    document.getElementById('picker-title').innerText = type === 'kategori' 
+        ? 'Pilih Kategori Barang' 
+        : 'Pilih Satuan Dasar';
+    
+    document.getElementById('picker-btn-text').innerText = type === 'kategori' 
+        ? 'Tambah Kategori Baru' 
+        : 'Tambah Satuan Baru';
+    
     document.getElementById('picker-search').value = "";
     
-    document.getElementById('picker-btn-add').onclick = () => window.renderFormTambahBaru(type, mode, index, '');
+    document.getElementById('picker-btn-add').onclick = () => 
+        window.renderFormTambahBaru(type, mode, index, '');
     
     renderPickerList(type);
     window.switchView('view-picker');
@@ -297,57 +307,81 @@ function renderPickerList(type, filter = "") {
 }
 
 window.renderFormTambahBaru = (type, mode, index, id = "") => {
-    const view = document.getElementById('view-form-baru');
+    const title = document.getElementById('form-baru-title');
     const content = document.getElementById('form-baru-content');
     const safeId = (id === "null" || id === null || id === "") ? "" : id;
     const item = safeId ? (type === 'kategori' ? dataKategori[safeId] : dataSatuan[safeId]) : { nama: "", pendek: "" };
     
+    // Update judul
+    title.innerText = `${safeId ? 'Ubah' : 'Tambah'} ${type === 'kategori' ? 'Kategori' : 'Satuan'}`;
+    
+    // Isi konten
     content.innerHTML = `
-        <h3 class="font-bold text-lg text-gray-800 proper-case mb-6">
-            ${safeId ? 'Ubah' : 'Buat'} ${type} Baru
-        </h3>
         <div class="space-y-6">
             <div class="relative border-2 border-emerald-500 rounded-xl std-input">
                 <label class="absolute -top-2.5 left-3 px-1 bg-white text-[10px] font-bold text-emerald-500 proper-case">
-                    Nama ${type}
+                    Nama ${type === 'kategori' ? 'Kategori' : 'Satuan'}
                 </label>
                 <input type="text" id="new-name" value="${item.nama}" 
-                       class="w-full h-full px-4 bg-transparent outline-none font-bold text-gray-700 proper-case">
+                       class="w-full h-full px-4 bg-transparent outline-none font-bold text-gray-700 proper-case"
+                       placeholder="Masukkan nama ${type === 'kategori' ? 'kategori' : 'satuan'}">
             </div>
+            
             ${type === 'satuan' ? `
                 <div class="relative border border-gray-200 rounded-xl bg-gray-50 std-input">
                     <label class="absolute -top-2.5 left-3 px-1 bg-white text-[9px] font-bold text-gray-400 proper-case tracking-widest">
-                        Satuan Pendek
+                        Satuan Pendek (contoh: KG, PCS)
                     </label>
                     <input type="text" id="new-short" value="${item.pendek}" maxlength="5" 
-                           class="w-full h-full px-4 bg-transparent outline-none font-bold text-gray-700 uppercase">
+                           class="w-full h-full px-4 bg-transparent outline-none font-bold text-gray-700 uppercase"
+                           placeholder="Singkatan">
                 </div>
             ` : ''}
         </div>
     `;
     
     // Update tombol simpan dengan parameter yang benar
-    const saveBtn = view.querySelector('[onclick="window.prosesSimpanData()"]');
+    const saveBtn = document.querySelector('#view-form-baru button[onclick="window.prosesSimpanData()"]');
     saveBtn.onclick = () => window.prosesSimpanData(type, safeId, mode, index);
     
-    view.classList.remove('hidden');
+    // Tampilkan panel dengan switchView
+    window.switchView('view-form-baru');
+    
+    // Autofocus ke input
+    setTimeout(() => {
+        const nameInput = document.getElementById('new-name');
+        if (nameInput) nameInput.focus();
+    }, 100);
+};
+
+window.tutupFormBaru = () => {
+    window.switchView('view-picker');
 };
 
 window.prosesSimpanData = async (type, id, mode, index) => {
     const nama = document.getElementById('new-name').value.trim();
-    if (!nama) return;
+    if (!nama) {
+        alert("Nama harus diisi!");
+        return;
+    }
     
     const finalId = (id === "" || id === null) ? null : id;
     
-    if (type === 'kategori') { 
-        await SetingInv.simpanKategori(nama, finalId); 
-    } else { 
-        const pendek = document.getElementById('new-short').value; 
-        await SetingInv.simpanSatuanDasar(nama, pendek, finalId); 
+    try {
+        if (type === 'kategori') { 
+            await SetingInv.simpanKategori(nama, finalId); 
+        } else { 
+            const pendek = document.getElementById('new-short')?.value || ""; 
+            await SetingInv.simpanSatuanDasar(nama, pendek, finalId); 
+        }
+        
+        // Kembali ke view picker setelah simpan
+        window.switchView('view-picker');
+        renderPickerList(type);
+        
+    } catch (error) {
+        alert("Gagal menyimpan: " + error.message);
     }
-    
-    document.getElementById('view-form-baru').classList.add('hidden');
-    renderPickerList(type);
 };
 
 window.filterPickerList = (val) => {
@@ -370,16 +404,26 @@ window.selectAndClose = (type, val) => {
 };
 
 window.tutupPicker = () => {
-    window.switchView(lastOrigin === 'view-pengaturan' ? 'view-pengaturan' : 'view-edit');
+    if (lastOrigin === 'view-pengaturan') {
+        window.switchView('view-pengaturan');
+    } else if (lastOrigin === 'view-multi-satuan') {
+        window.switchView('view-multi-satuan');
+    } else {
+        window.switchView('view-edit');
+    }
 };
 
 // ============================================================================
-// NAVIGASI VIEW & UTILITY
+// NAVIGASI VIEW & UTILITY - SEMUA FULL SCREEN
 // ============================================================================
 
 window.switchView = (v) => { 
     document.querySelectorAll('[id^="view-"]').forEach(el => el.classList.add('hidden')); 
-    document.getElementById(v).classList.remove('hidden'); 
+    const target = document.getElementById(v);
+    if (target) {
+        target.classList.remove('hidden');
+        target.classList.add('animate-fadeIn');
+    }
 };
 
 window.bukaHalamanEdit = (id) => { 
@@ -517,7 +561,7 @@ window.filterInventaris = () => {
 };
 
 // ============================================================================
-// SIMPAN BARANG (CONTOH - PERLU DIIMPLEMENTASI)
+// SIMPAN BARANG
 // ============================================================================
 
 window.simpanBarang = async () => {
