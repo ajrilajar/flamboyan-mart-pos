@@ -17,8 +17,8 @@
         
         body.modal-open { overflow: hidden; touch-action: none; }
         
-        /* Parent View Picker Style */
-        #view-picker {
+        /* Fix: Gunakan class flex agar hidden bisa bekerja */
+        .picker-container {
             position: fixed;
             inset: 0;
             background: white;
@@ -35,7 +35,6 @@
             width: 100%;
         }
 
-        /* Custom Radio Style */
         .radio-custom {
             width: 1.25rem;
             height: 1.25rem;
@@ -72,7 +71,6 @@
 
     <script type="module">
         import { renderInventaris } from "./modul-inventaris.js";
-        // Import lainnya tetap
         window.switchTab = (tabName) => {
             const content = document.getElementById('main-content');
             document.querySelectorAll('.nav-btn').forEach(btn => {
@@ -84,21 +82,19 @@
                 activeBtn.classList.remove('text-gray-400');
                 activeBtn.classList.add('text-emerald-600');
             }
-
             if (tabName === 'beranda') { renderBeranda(); } 
             else if (tabName === 'inventori') { renderInventaris(); } 
             else { content.innerHTML = `<div class="p-10 text-center text-gray-400 uppercase text-xs">Modul ${tabName} segera hadir.</div>`; }
         };
-
         function renderBeranda() {
             document.getElementById('main-content').innerHTML = `
-                <header class="bg-white p-4 flex justify-between items-center shadow-sm mb-4 animate-fadeIn">
+                <header class="bg-white p-4 flex justify-between items-center shadow-sm mb-4">
                     <div class="flex items-center gap-2">
                         <div class="w-8 h-8 bg-emerald-600 rounded-full flex items-center justify-center text-white font-bold">F</div>
                         <h1 class="font-bold text-lg text-emerald-900 tracking-tight">Flamboyan Mart</h1>
                     </div>
                 </header>
-                <div class="px-4 animate-fadeIn">
+                <div class="px-4">
                     <div class="grid grid-cols-2 gap-3 mb-6">
                         <div class="bg-emerald-50 p-4 rounded-xl border border-emerald-100">
                             <p class="text-emerald-700 font-bold text-lg">Rp 0</p>

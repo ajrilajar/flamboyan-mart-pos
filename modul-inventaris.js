@@ -15,7 +15,7 @@ export function renderInventaris() {
                 <button onclick="window.switchView('view-pengaturan')" class="p-2 text-emerald-600"><i class="fa-solid fa-gear text-lg"></i></button>
             </div>
             <div id="list-barang" class="grid grid-cols-1 md:grid-cols-2 gap-4 pb-32 px-1"></div>
-            <button onclick="window.bukaHalamanEdit(null)" class="fixed bottom-24 right-4 md:right-[calc(50%-20rem)] bg-emerald-500 text-white px-4 py-2.5 rounded-full shadow-2xl flex items-center gap-2 font-bold z-40 active:scale-95 transition-all">
+            <button onclick="window.bukaHalamanEdit(null)" class="fixed bottom-24 right-4 md:right-[calc(50%-20rem)] bg-emerald-500 text-white px-4 py-2.5 rounded-full shadow-2xl flex items-center gap-2 font-bold z-40">
                 <i class="fa-solid fa-box-open text-sm"></i> <span class="uppercase text-[11px]">Tambah Barang</span>
             </button>
         </div>
@@ -24,28 +24,21 @@ export function renderInventaris() {
             <div class="${desktopWidth} mx-auto min-h-screen bg-white flex flex-col">
                 <div class="flex items-center p-2 border-b sticky top-0 bg-white z-10">
                     <button onclick="window.batalEdit()" class="p-2 text-gray-600 mr-1"><i class="fa-solid fa-arrow-left text-xl"></i></button>
-                    <h3 id="edit-title" class="font-bold text-base text-gray-800 proper-case tracking-tight">Tambah Barang</h3>
+                    <h3 id="edit-title" class="font-bold text-base text-gray-800 proper-case">Tambah Barang</h3>
                 </div>
                 <div class="p-3 space-y-4 flex-1">
                     <div class="relative border border-gray-200 rounded-xl std-input">
                         <label class="absolute -top-2.5 left-3 px-1 bg-white text-[9px] font-bold text-gray-400 proper-case tracking-widest">Nama Barang</label>
                         <input type="text" id="edit-nama" class="w-full h-full px-4 bg-transparent outline-none font-bold text-gray-700 proper-case text-sm">
                     </div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div onclick="window.bukaPickerSelection('kategori', 'view-edit')" class="relative border border-gray-200 rounded-xl flex justify-between items-center cursor-pointer std-input px-4">
-                            <label class="absolute -top-2.5 left-3 px-1 bg-white text-[9px] font-bold text-gray-400 proper-case tracking-widest">Kategori</label>
-                            <input type="text" id="edit-kategori" class="font-bold text-gray-700 outline-none pointer-events-none text-xs proper-case" readonly>
-                            <i class="fa-solid fa-chevron-right text-gray-300 text-[10px]"></i>
-                        </div>
-                        <div onclick="window.bukaPilihSatuanPengukuran()" class="relative border border-gray-200 rounded-xl flex justify-between items-center cursor-pointer std-input px-4">
-                            <label class="absolute -top-2.5 left-3 px-1 bg-white text-[9px] font-bold text-gray-400 proper-case tracking-widest">Satuan</label>
-                            <input type="text" id="edit-satuan-display" class="w-full font-bold text-gray-700 outline-none pointer-events-none text-xs uppercase truncate" readonly>
-                            <i class="fa-solid fa-chevron-right text-gray-300 text-[10px] flex-shrink-0"></i>
-                        </div>
+                    <div onclick="window.bukaPickerSelection('kategori', 'view-edit')" class="relative border border-gray-200 rounded-xl flex justify-between items-center cursor-pointer std-input px-4">
+                        <label class="absolute -top-2.5 left-3 px-1 bg-white text-[9px] font-bold text-gray-400 proper-case tracking-widest">Kategori</label>
+                        <input type="text" id="edit-kategori" class="font-bold text-gray-700 pointer-events-none text-xs proper-case" readonly>
+                        <i class="fa-solid fa-chevron-right text-gray-300 text-[10px]"></i>
                     </div>
                 </div>
                 <div class="p-3 bg-white border-t sticky bottom-0 z-20">
-                    <button onclick="window.simpanBarang()" class="w-full bg-emerald-500 text-white py-3.5 rounded-xl font-bold shadow-lg uppercase text-sm">Simpan</button>
+                    <button onclick="window.simpanBarang()" class="w-full bg-emerald-500 text-white py-3.5 rounded-xl font-bold uppercase text-sm">Simpan</button>
                 </div>
             </div>
         </div>
@@ -56,8 +49,8 @@ export function renderInventaris() {
                     <button onclick="window.switchView('view-list')" class="mr-4 p-2 rounded-full"><i class="fa-solid fa-arrow-left text-xl text-gray-600"></i></button>
                     <h3 class="font-bold text-lg text-gray-800 proper-case">Pengaturan Inventaris</h3>
                 </div>
-                <div class="p-3 space-y-2">
-                    <div onclick="window.bukaPickerSelection('kategori', 'view-pengaturan')" class="bg-white p-4 rounded-xl flex justify-between items-center shadow-sm cursor-pointer border border-gray-100 active:bg-gray-50">
+                <div class="p-3">
+                    <div onclick="window.bukaPickerSelection('kategori', 'view-pengaturan')" class="bg-white p-4 rounded-xl flex justify-between items-center border border-gray-100">
                         <div class="flex items-center gap-4"><i class="fa-solid fa-boxes-stacked text-emerald-500"></i><span class="font-bold text-gray-700 proper-case text-sm">Kelola Kategori</span></div>
                         <i class="fa-solid fa-chevron-right text-gray-300 text-xs"></i>
                     </div>
@@ -65,13 +58,13 @@ export function renderInventaris() {
             </div>
         </div>
 
-        <div id="view-picker" class="hidden">
+        <div id="view-picker" class="hidden picker-container">
             <div class="${desktopWidth} mx-auto h-full flex flex-col bg-white">
-                <div id="picker-drag-handle" class="w-full py-4 cursor-grab flex-shrink-0">
+                <div id="picker-drag-handle" class="w-full py-4 cursor-grab flex-shrink-0 touch-none">
                     <div class="w-12 h-1.5 bg-gray-200 rounded-full mx-auto"></div>
                 </div>
                 <div class="px-6 mb-4">
-                    <h3 id="picker-title" class="font-bold text-lg text-gray-800 proper-case tracking-tight">Pilih Kategori Barang</h3>
+                    <h3 id="picker-title" class="font-bold text-lg text-gray-800 proper-case">Pilih Kategori Barang</h3>
                 </div>
                 <div class="px-6 mb-4 flex-shrink-0">
                     <div class="relative border border-gray-100 bg-gray-50 rounded-xl std-input px-4 flex items-center gap-3">
@@ -81,7 +74,7 @@ export function renderInventaris() {
                 </div>
                 <div id="picker-list" class="flex-1 overflow-y-auto px-6 space-y-2 pb-24 no-scrollbar"></div>
                 <div class="p-4 bg-white border-t sticky bottom-0 z-20 mt-auto flex-shrink-0">
-                    <button id="picker-btn-add" class="w-full bg-emerald-500 text-white py-4 rounded-xl font-bold uppercase text-xs tracking-widest shadow-lg flex items-center justify-center gap-2">
+                    <button id="picker-btn-add" class="w-full bg-emerald-500 text-white py-4 rounded-xl font-bold uppercase text-xs tracking-widest flex items-center justify-center gap-2">
                         <i class="fa-solid fa-plus"></i> <span id="picker-btn-text">Tambah Kategori Baru</span>
                     </button>
                 </div>
@@ -92,17 +85,12 @@ export function renderInventaris() {
     loadFirebaseData();
 }
 
-// LOGIKA NAVIGASI CERDAS (Origin Flagging)
 window.bukaPickerSelection = (type, origin) => {
     lastOrigin = origin;
     const picker = document.getElementById('view-picker');
-    const title = type === 'kategori' ? 'Pilih Kategori Barang' : 'Pilih Satuan Dasar';
-    const btnText = type === 'kategori' ? 'Tambah Kategori Baru' : 'Tambah Satuan Baru';
-    
-    document.getElementById('picker-title').innerText = title;
-    document.getElementById('picker-btn-text').innerText = btnText;
+    document.getElementById('picker-title').innerText = type === 'kategori' ? 'Pilih Kategori Barang' : 'Pilih Satuan Dasar';
+    document.getElementById('picker-btn-text').innerText = type === 'kategori' ? 'Tambah Kategori Baru' : 'Tambah Satuan Baru';
     document.getElementById('picker-search').value = "";
-    document.getElementById('picker-btn-add').onclick = () => window.renderFormTambahBaru(type, null, null, '');
     
     renderPickerList(type);
     picker.classList.remove('hidden');
@@ -137,7 +125,6 @@ window.filterPickerList = (val) => {
 window.selectAndClose = (type, val) => {
     if (lastOrigin === 'view-edit') {
         if (type === 'kategori') document.getElementById('edit-kategori').value = val;
-        // Penanganan Satuan Utama bisa ditambahkan di sini
     }
     window.tutupPicker();
 };
@@ -148,7 +135,6 @@ window.tutupPicker = () => {
     setTimeout(() => picker.classList.add('hidden'), 250);
 };
 
-// LOGIKA DRAG TO CLOSE (Reference Match)
 function initPickerDrag() {
     const panel = document.getElementById('view-picker');
     const handle = document.getElementById('picker-drag-handle');
@@ -185,7 +171,6 @@ function initPickerDrag() {
     handle.addEventListener('touchend', onEnd);
 }
 
-// FUNGSI LAINNYA TETAP (State Preservation Ready)
 window.switchView = (v) => { 
     document.querySelectorAll('[id^="view-"]').forEach(el => el.classList.add('hidden')); 
     document.getElementById(v).classList.remove('hidden'); 
