@@ -47,6 +47,9 @@ export function renderInventaris() {
                             <i class="fa-solid fa-chevron-right text-gray-300 text-[10px] flex-shrink-0"></i>
                         </div>
                     </div>
+                    <div id="info-konversi" class="hidden flex items-start gap-2 text-[10px] text-emerald-600 font-bold bg-emerald-50 p-2 rounded-lg border border-emerald-100">
+                        <i class="fa-solid fa-link mt-0.5"></i><span id="text-konversi" class="uppercase"></span>
+                    </div>
                     <div class="grid grid-cols-2 gap-3">
                         <div class="relative border border-gray-200 rounded-lg">
                             <label class="absolute -top-2.5 left-2 px-1 bg-white text-[9px] font-bold text-gray-400 proper-case tracking-widest">Stok Awal</label>
@@ -117,7 +120,6 @@ export function renderInventaris() {
             </div>
         </div>
     `;
-
     initDragLogic();
     loadFirebaseData();
 }
@@ -126,41 +128,32 @@ function initDragLogic() {
     const panel = document.getElementById('modal-panel');
     const handle = document.getElementById('drag-handle');
     let startY = 0, currentY = 0;
-
-    const onStart = (e) => {
-        startY = e.type === 'touchstart' ? e.touches[0].clientY : e.clientY;
-        panel.style.transition = 'none';
-    };
-
-    const onMove = (e) => {
-        if (!startY) return;
-        currentY = e.type === 'touchmove' ? e.touches[0].clientY : e.clientY;
-        const deltaY = currentY - startY;
-        if (deltaY > 0) {
-            e.preventDefault();
-            panel.style.transform = `translateY(${deltaY}px)`;
-        }
-    };
-
-    const onEnd = () => {
-        const deltaY = currentY - startY;
-        panel.style.transition = 'transform 0.2s ease-out';
-        if (deltaY > 150) window.tutupModal();
-        else panel.style.transform = `translateY(0)`;
-        startY = 0;
-        currentY = 0;
-    };
-
+    const onStart = (e) => { startY = e.type === 'touchstart' ? e.touches[0].clientY : e.clientY; panel.style.transition = 'none'; };
+    const onMove = (e) => { if (!startY) return; currentY = e.type === 'touchmove' ? e.touches[0].clientY : e.clientY; const deltaY = currentY - startY; if (deltaY > 0) { e.preventDefault(); panel.style.transform = `translateY(${deltaY}px)`; } };
+    const onEnd = () => { const deltaY = currentY - startY; panel.style.transition = 'transform 0.2s ease-out'; if (deltaY > 150) window.tutupModal(); else panel.style.transform = `translateY(0)`; startY = 0; currentY = 0; };
     handle.addEventListener('touchstart', onStart, { passive: false });
     handle.addEventListener('touchmove', onMove, { passive: false });
     handle.addEventListener('touchend', onEnd);
 }
 
+window.konfirmasiSatuan = () => {
+    const utama = document.getElementById('val-satuan-utama').value;
+    if (!utama) return alert("Pilih Satuan Utama!");
+    let display = utama;
+    let chainInfo = `1 ${utama}`;
+    multiUnits.forEach(m => { if (m.unit && m.ratio) { display += ` & ${m.unit}`; chainInfo += ` → ${m.ratio} ${m.unit}`; } });
+    document.getElementById('edit-satuan-display').value = display;
+    const infoDiv = document.getElementById('info-konversi');
+    if (multiUnits.length > 0) { infoDiv.classList.remove('hidden'); document.getElementById('text-konversi').innerText = chainInfo; } 
+    else { infoDiv.classList.add('hidden'); }
+    window.switchView('view-edit');
+};
+
 function renderKonversiList() {
     const container = document.getElementById('dynamic-secondary-units');
-    const utama = document.getElementById('val-satuan-utama').value || 'UTAMA';
+    const utama = document.getElementById('val-satuan-utama').value || 'Utama';
     container.innerHTML = multiUnits.map((item, idx) => `
-        <div class="space-y-4 p-3 bg-gray-50 rounded-xl border border-dashed border-gray-200 relative animate-fadeIn">
+        <div class="space-y-4 p-3 bg-gray-50 rounded-xl border border-dashed border-gray-200 relative">
             <button onclick="window.hapusRowKonversi(${idx})" class="absolute -top-2 -right-2 w-6 h-6 bg-rose-500 text-white rounded-full flex items-center justify-center text-[10px] shadow-md border-2 border-white"><i class="fa-solid fa-xmark"></i></button>
             <div onclick="window.bukaPickerDasar('sekunder', ${idx})" class="relative border border-gray-200 rounded-xl p-2.5 flex justify-between items-center cursor-pointer bg-white">
                 <label class="absolute -top-2.5 left-2 px-1 bg-white text-[9px] font-bold text-gray-400 proper-case tracking-widest">Satuan Ke-${idx + 2}</label>
@@ -180,11 +173,8 @@ function renderListPicker(type, mode = null, index = null) {
     const data = type === 'kategori' ? dataKategori : dataSatuan;
     const title = type === 'kategori' ? 'Pilih Kategori' : 'Pilih Satuan Dasar';
     const btnLabel = type === 'kategori' ? 'Tambah Kategori Baru' : 'Tambah Satuan Baru';
-
     content.innerHTML = `
-        <div class="px-6 mb-4 flex-shrink-0">
-            <h3 class="font-bold text-lg text-gray-800 proper-case tracking-tight">${title}</h3>
-        </div>
+        <div class="px-6 mb-4 flex-shrink-0"><h3 class="font-bold text-lg text-gray-800 proper-case tracking-tight">${title}</h3></div>
         <div class="flex-1 overflow-y-auto px-6 space-y-1 divide-y divide-gray-50 pb-10 no-scrollbar">
             ${Object.entries(data).map(([id, item]) => `
                 <div onclick="window.selectAndClose('${type}', '${type === 'satuan' ? item.pendek : item.nama}', '${mode}', ${index})" class="py-4 flex justify-between items-center cursor-pointer active:bg-gray-50 transition-all">
@@ -211,9 +201,7 @@ window.filterInventaris = () => {
                     <h4 class="font-bold text-[16px] text-gray-700 truncate proper-case">${item.nama}</h4>
                     <p class="text-[11px] text-gray-400 font-bold tracking-tighter proper-case">${item.kategori}</p>
                 </div>
-                <div class="text-right">
-                    <p class="text-sm font-black text-emerald-600">${item.stok} <span class="uppercase text-[10px]">${item.satuan}</span></p>
-                </div>
+                <div class="text-right"><p class="text-sm font-black text-emerald-600">${item.stok} <span class="uppercase text-[10px]">${item.satuan}</span></p></div>
             </div>`;
     });
 };
@@ -222,7 +210,6 @@ window.renderFormTambahBaru = (type, mode, index, id = "") => {
     const content = document.getElementById('modal-content');
     const safeId = (id === "null" || id === null || id === "") ? "" : id;
     const item = safeId ? (type === 'kategori' ? dataKategori[safeId] : dataSatuan[safeId]) : { nama: "", pendek: "" };
-    
     content.innerHTML = `
         <div class="flex items-center px-4 pt-2 mb-6 flex-shrink-0">
             <button onclick="${safeId ? `window.bukaKelolaSetting('${type}')` : `window.renderListPicker('${type}', '${mode}', ${index})`}" class="mr-4 text-gray-400 p-2"><i class="fa-solid fa-arrow-left text-lg"></i></button>
@@ -240,25 +227,16 @@ window.renderFormTambahBaru = (type, mode, index, id = "") => {
                 </div>
             ` : ''}
         </div>
-        <div class="p-3 bg-white border-t sticky bottom-0 z-20 mt-auto flex-shrink-0">
-            <button onclick="window.prosesSimpanData('${type}', '${safeId}', '${mode}', ${index})" class="w-full bg-emerald-500 text-white py-3.5 rounded-xl font-bold shadow-lg active:scale-95 uppercase text-xs tracking-widest">Simpan & Selesai</button>
-        </div>
+        <div class="p-3 bg-white border-t sticky bottom-0 z-20 mt-auto flex-shrink-0"><button onclick="window.prosesSimpanData('${type}', '${safeId}', '${mode}', ${index})" class="w-full bg-emerald-500 text-white py-3.5 rounded-xl font-bold shadow-lg uppercase text-xs tracking-widest">Simpan & Selesai</button></div>
     `;
 };
 
 window.prosesSimpanData = async (type, id, mode, index) => {
     const nama = document.getElementById('new-name').value.trim();
     if (!nama) return;
-    const pendek = type === 'satuan' ? document.getElementById('new-short').value : null;
     const finalId = (id === "null" || id === "" || id === null) ? null : id;
-
-    if (type === 'kategori') { 
-        await SetingInv.simpanKategori(nama, finalId); 
-        if(!finalId) window.selectAndClose('kategori', nama); 
-    } else { 
-        await SetingInv.simpanSatuanDasar(nama, pendek, finalId); 
-        if(!finalId) window.selectAndClose('satuan', pendek.toUpperCase(), mode, index); 
-    }
+    if (type === 'kategori') { await SetingInv.simpanKategori(nama, finalId); if(!finalId) window.selectAndClose('kategori', nama); } 
+    else { const pendek = document.getElementById('new-short').value; await SetingInv.simpanSatuanDasar(nama, pendek, finalId); if(!finalId) window.selectAndClose('satuan', pendek.toUpperCase(), mode, index); }
     if(finalId) window.bukaKelolaSetting(type);
 };
 
@@ -272,16 +250,11 @@ window.bukaKelolaSetting = (type) => {
             ${Object.entries(data).map(([id, item]) => `
                 <div class="flex justify-between items-center py-4">
                     <span class="font-bold text-gray-700 text-sm proper-case">${item.nama} ${item.pendek ? `<span class="text-gray-300 ml-2 font-medium uppercase">${item.pendek}</span>` : ''}</span>
-                    <div class="flex gap-4">
-                        <button onclick="window.renderFormTambahBaru('${type}', null, null, '${id}')" class="text-gray-300"><i class="fa-solid fa-pen text-sm"></i></button>
-                        <button onclick="window.hapusSettingData('${type}', '${id}')" class="text-rose-200"><i class="fa-solid fa-trash-can text-sm"></i></button>
-                    </div>
+                    <div class="flex gap-4"><button onclick="window.renderFormTambahBaru('${type}', null, null, '${id}')" class="text-gray-300"><i class="fa-solid fa-pen text-sm"></i></button><button onclick="window.hapusSettingData('${type}', '${id}')" class="text-rose-200"><i class="fa-solid fa-trash-can text-sm"></i></button></div>
                 </div>
             `).join('')}
         </div>
-        <div class="p-3 bg-white border-t sticky bottom-0 z-20 mt-auto flex-shrink-0">
-            <button onclick="window.renderFormTambahBaru('${type}', null, null, '')" class="w-full bg-emerald-500 text-white py-3.5 rounded-xl font-bold uppercase text-xs tracking-widest">+ Tambah Baru</button>
-        </div>
+        <div class="p-3 bg-white border-t sticky bottom-0 z-20 mt-auto flex-shrink-0"><button onclick="window.renderFormTambahBaru('${type}', null, null, '')" class="w-full bg-emerald-500 text-white py-3.5 rounded-xl font-bold uppercase text-xs tracking-widest">+ Tambah Baru</button></div>
     `;
 };
 
@@ -291,7 +264,7 @@ window.overlayClose = (e) => { if(e.target.id === 'modal-container') window.tutu
 window.loadFirebaseData = () => { onValue(ref(db, 'products'), s => { databaseBarang = s.val() || {}; window.filterInventaris(); }); onValue(ref(db, 'settings/categories'), s => { dataKategori = s.val() || {}; }); onValue(ref(db, 'settings/units'), s => { dataSatuan = s.val() || {}; }); };
 window.switchView = (v) => { document.querySelectorAll('[id^="view-"]').forEach(el => el.classList.add('hidden')); document.getElementById(v).classList.remove('hidden'); window.scrollTo(0,0); };
 window.bukaPickerDasar = (mode, index = null) => { document.getElementById('modal-container').classList.remove('hidden'); renderListPicker('satuan', mode, index); };
-window.selectAndClose = (type, val, mode, index) => { if (type === 'kategori') { document.getElementById('edit-kategori').value = val; } else { if (mode === 'utama') { document.getElementById('val-satuan-utama').value = val.toUpperCase(); renderKonversiList(); } else { multiUnits[index].unit = val.toUpperCase(); renderKonversiList(); } } window.tutupModal(); };
+window.selectAndClose = (type, val, mode, index) => { if (type === 'kategori') { document.getElementById('edit-kategori').value = val; } else { if (mode === 'utama') { document.getElementById('val-satuan-utama').value = val.toUpperCase(); } else { multiUnits[index].unit = val.toUpperCase(); } renderKonversiList(); } window.tutupModal(); };
 window.bukaHalamanEdit = (id) => { currentEditId = id; multiUnits = []; window.switchView('view-edit'); };
 window.batalEdit = () => window.switchView('view-list');
 window.tutupMultiSatuan = () => window.switchView('view-edit');
@@ -299,3 +272,4 @@ window.bukaPilihSatuanPengukuran = () => { window.switchView('view-multi-satuan'
 window.tambahSatuanSekunder = () => { multiUnits.push({ unit: '', ratio: '' }); renderKonversiList(); };
 window.hapusRowKonversi = (idx) => { multiUnits.splice(idx, 1); renderKonversiList(); };
 window.updateRatio = (idx, val) => multiUnits[idx].ratio = val;
+window.hapusSettingData = async (type, id) => { type === 'kategori' ? await SetingInv.hapusKategori(id) : await SetingInv.hapusSatuanDasar(id); window.bukaKelolaSetting(type); };

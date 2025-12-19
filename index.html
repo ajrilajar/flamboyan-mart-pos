@@ -9,13 +9,12 @@
     <style>
         @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
         .animate-slide-up { animation: slideUp 0.3s ease-out; }
-        .no-scrollbar::-webkit-scrollbar { display: none; }
         .animate-fadeIn { animation: fadeIn 0.3s ease-in-out; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
         .proper-case { text-transform: capitalize; }
         
-        body.modal-open { overflow: hidden; overscroll-behavior-y: none; }
+        body.modal-open { overflow: hidden; touch-action: none; }
         
         #modal-panel { 
             will-change: transform;
@@ -32,6 +31,7 @@
             -webkit-overflow-scrolling: touch;
             overscroll-behavior: contain;
         }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
     </style>
 </head>
 <body class="bg-gray-50 text-gray-800 font-sans">
