@@ -7,15 +7,32 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
-        @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
-        .animate-slide-up { animation: slideUp 0.3s ease-out; }
-        .animate-fadeIn { animation: fadeIn 0.3s ease-in-out; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideUp { 
+            from { transform: translateY(100%); } 
+            to { transform: translateY(0); } 
+        }
+        .animate-slide-up { 
+            animation: slideUp 0.3s ease-out; 
+        }
+        .animate-fadeIn { 
+            animation: fadeIn 0.3s ease-in-out; 
+        }
+        @keyframes fadeIn { 
+            from { opacity: 0; } 
+            to { opacity: 1; } 
+        }
 
-        .proper-case { text-transform: capitalize; }
-        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .proper-case { 
+            text-transform: capitalize; 
+        }
+        .no-scrollbar::-webkit-scrollbar { 
+            display: none; 
+        }
 
-        body.modal-open { overflow: hidden; touch-action: none; }
+        body.modal-open { 
+            overflow: hidden; 
+            touch-action: none; 
+        }
 
         /* PERBAIKAN BACKDROP */
         .fixed.inset-0.bg-black\/60 {
@@ -58,79 +75,108 @@
         }
 
         /* ================================================================
-           ACTION BUTTONS MOBILE KEYBOARD AWARE
+           MOBILE KEYBOARD AWARE STYLES untuk Kode Lama
            ================================================================ */
-        .action-button-mobile {
-            /* Desktop default */
+        .mobile-keyboard-aware {
+            /* Desktop: normal positioning */
             position: relative;
         }
 
+        /* Mobile styles */
         @media (max-width: 767px) {
-            .action-button-mobile {
+            .mobile-keyboard-aware {
                 position: fixed !important;
                 bottom: 1rem !important;
                 left: 1rem !important;
                 right: 1rem !important;
                 z-index: 1000 !important;
                 transition: bottom 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
-                background: white;
-                padding: 1rem;
-                border-radius: 1rem;
-                box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.15);
+                background: white !important;
+                padding: 1rem !important;
+                border-radius: 1rem !important;
+                box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.15) !important;
+            }
+            
+            /* Form containers agar tidak tertutup tombol */
+            #view-edit .flex-1,
+            #view-multi-satuan .flex-1,
+            #view-picker .flex-1 {
+                padding-bottom: 6rem !important;
             }
         }
 
+        /* Desktop reset */
         @media (min-width: 768px) {
-            .action-button-mobile {
+            .mobile-keyboard-aware {
                 position: relative !important;
                 bottom: auto !important;
                 left: auto !important;
                 right: auto !important;
                 z-index: auto !important;
-                box-shadow: none !important;
                 background: transparent !important;
                 padding: 0 !important;
+                box-shadow: none !important;
+                border-radius: 0 !important;
+            }
+            
+            #view-edit .flex-1,
+            #view-multi-satuan .flex-1,
+            #view-picker .flex-1 {
+                padding-bottom: 0 !important;
             }
         }
 
-        /* Navigation tetap di bawah - JANGAN diubah */
+        /* Navigation tetap di bawah - TIDAK ikut keyboard handler */
         nav.fixed.bottom-0 {
             z-index: 50 !important;
             transition: none !important;
         }
 
-        /* Tombol di dalam navigation tetap statis */
-        nav.fixed.bottom-0 button {
-            position: static !important;
-            bottom: auto !important;
+        /* Safe area untuk iPhone notch */
+        @supports (padding: max(0px)) {
+            .mobile-keyboard-aware {
+                padding-bottom: max(1rem, env(safe-area-inset-bottom)) !important;
+            }
         }
 
-        /* Safe area support */
-        @supports (padding: max(0px)) {
-            .action-button-mobile {
-                padding-bottom: max(0.5rem, env(safe-area-inset-bottom));
-            }
+        /* Sticky headers dalam scroll containers */
+        .sticky.top-0 {
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .sticky.bottom-0 {
+            position: sticky;
+            bottom: 0;
+            z-index: 20;
         }
     </style>
 </head>
 <body class="bg-gray-50 text-gray-800 font-sans">
     <main id="main-content" class="pb-28"></main>
 
+    <!-- Navigation Bar (TETAP DI BAWAH, TIDAK NAIK SAAT KEYBOARD) -->
     <nav class="fixed bottom-0 left-0 right-0 bg-white border-t flex justify-around p-3 shadow-lg z-50">
         <button onclick="switchTab('beranda')" class="nav-btn flex flex-col items-center gap-1 text-emerald-600" id="btn-beranda">
-            <i class="fa-solid fa-house text-xl"></i><span class="text-[10px] font-medium">Beranda</span>
+            <i class="fa-solid fa-house text-xl"></i>
+            <span class="text-[10px] font-medium">Beranda</span>
         </button>
         <button onclick="switchTab('transaksi')" class="nav-btn flex flex-col items-center gap-1 text-gray-400" id="btn-transaksi">
-            <i class="fa-solid fa-receipt text-xl"></i><span class="text-[10px] font-medium">Transaksi</span>
+            <i class="fa-solid fa-receipt text-xl"></i>
+            <span class="text-[10px] font-medium">Transaksi</span>
         </button>
         <button onclick="switchTab('pihak')" class="nav-btn flex flex-col items-center gap-1 text-gray-400" id="btn-pihak">
-            <i class="fa-solid fa-address-book text-xl"></i><span class="text-[10px] font-medium">Pihak</span>
+            <i class="fa-solid fa-address-book text-xl"></i>
+            <span class="text-[10px] font-medium">Pihak</span>
         </button>
         <button onclick="switchTab('inventori')" class="nav-btn flex flex-col items-center gap-1 text-gray-400" id="btn-inventori">
-            <i class="fa-solid fa-boxes-stacked text-xl"></i><span class="text-[10px] font-medium">Inventaris</span>
+            <i class="fa-solid fa-boxes-stacked text-xl"></i>
+            <span class="text-[10px] font-medium">Inventaris</span>
         </button>
         <button onclick="switchTab('lainnya')" class="nav-btn flex flex-col items-center gap-1 text-gray-400" id="btn-lainnya">
-            <i class="fa-solid fa-bars text-xl"></i><span class="text-[10px] font-medium">Lainnya</span>
+            <i class="fa-solid fa-bars text-xl"></i>
+            <span class="text-[10px] font-medium">Lainnya</span>
         </button>
     </nav>
 
@@ -139,6 +185,8 @@
         
         window.switchTab = (tabName) => {
             const content = document.getElementById('main-content');
+            
+            // Update active tab styling
             document.querySelectorAll('.nav-btn').forEach(btn => {
                 btn.classList.remove('text-emerald-600');
                 btn.classList.add('text-gray-400');
@@ -150,6 +198,7 @@
                 activeBtn.classList.add('text-emerald-600');
             }
 
+            // Load module content
             if (tabName === 'beranda') { 
                 renderBeranda(); 
             } else if (tabName === 'inventori') { 
@@ -182,6 +231,7 @@
             `;
         }
 
+        // Initialize dengan beranda
         window.onload = () => window.switchTab('beranda');
     </script>
 </body>
