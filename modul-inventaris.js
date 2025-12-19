@@ -33,29 +33,29 @@ export function renderInventaris() {
                 <div class="p-3 space-y-4 flex-1">
                     <div class="relative border border-gray-200 rounded-lg focus-within:border-emerald-500 transition-all">
                         <label class="absolute -top-2.5 left-2 px-1 bg-white text-[9px] font-bold text-gray-400 proper-case tracking-widest">Nama Barang</label>
-                        <input type="text" id="edit-nama" placeholder="Nama Barang" class="w-full p-2.5 bg-transparent outline-none font-bold text-gray-700 proper-case text-sm">
+                        <input type="text" id="edit-nama" class="w-full p-2.5 bg-transparent outline-none font-bold text-gray-700 proper-case text-sm">
                     </div>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div onclick="window.bukaPickerSelection('kategori')" class="relative border border-gray-200 rounded-lg p-2.5 flex justify-between items-center cursor-pointer">
                             <label class="absolute -top-2.5 left-2 px-1 bg-white text-[9px] font-bold text-gray-400 proper-case tracking-widest">Kategori</label>
-                            <input type="text" id="edit-kategori" placeholder="Pilih Kategori" class="font-bold text-gray-700 outline-none pointer-events-none text-xs proper-case" readonly>
+                            <input type="text" id="edit-kategori" class="font-bold text-gray-700 outline-none pointer-events-none text-xs proper-case" readonly>
                             <i class="fa-solid fa-chevron-right text-gray-300 text-[10px]"></i>
                         </div>
                         <div onclick="window.bukaPilihSatuanPengukuran()" class="relative border border-gray-200 rounded-lg p-2.5 flex justify-between items-center cursor-pointer">
                             <label class="absolute -top-2.5 left-2 px-1 bg-white text-[9px] font-bold text-gray-400 proper-case tracking-widest">Satuan</label>
-                            <input type="text" id="edit-satuan-display" placeholder="PILIH SATUAN" class="w-full font-bold text-gray-700 outline-none pointer-events-none text-xs uppercase truncate" readonly>
+                            <input type="text" id="edit-satuan-display" class="w-full font-bold text-gray-700 outline-none pointer-events-none text-xs uppercase truncate" readonly>
                             <i class="fa-solid fa-chevron-right text-gray-300 text-[10px] flex-shrink-0"></i>
                         </div>
                     </div>
                     <div class="grid grid-cols-2 gap-3">
                         <div class="relative border border-gray-200 rounded-lg">
                             <label class="absolute -top-2.5 left-2 px-1 bg-white text-[9px] font-bold text-gray-400 proper-case tracking-widest">Stok Awal</label>
-                            <input type="number" id="edit-stok" placeholder="0" class="w-full p-2.5 bg-transparent outline-none font-bold text-gray-700 text-sm">
+                            <input type="number" id="edit-stok" class="w-full p-2.5 bg-transparent outline-none font-bold text-gray-700 text-sm">
                         </div>
                         <div class="relative border border-gray-200 rounded-lg flex items-center px-2">
                             <label class="absolute -top-2.5 left-2 px-1 bg-white text-[9px] font-bold text-gray-400 proper-case tracking-widest">Harga Jual</label>
                             <span class="text-gray-400 text-[10px] font-bold mr-1">RP</span>
-                            <input type="number" id="edit-jual" placeholder="0" class="w-full py-2.5 bg-transparent outline-none font-bold text-gray-700 text-sm">
+                            <input type="number" id="edit-jual" class="w-full py-2.5 bg-transparent outline-none font-bold text-gray-700 text-sm">
                         </div>
                     </div>
                 </div>
@@ -80,6 +80,30 @@ export function renderInventaris() {
                         <div class="flex items-center gap-4"><i class="fa-solid fa-scale-balanced text-emerald-500"></i><span class="font-bold text-gray-700 proper-case text-sm">Kelola Satuan Ukur</span></div>
                         <i class="fa-solid fa-chevron-right text-gray-300 text-xs"></i>
                     </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="view-multi-satuan" class="hidden fixed inset-0 bg-white z-[120] flex flex-col">
+            <div class="${desktopWidth} mx-auto w-full h-full flex flex-col bg-white">
+                <div class="flex items-center p-3 border-b">
+                    <button onclick="window.tutupMultiSatuan()" class="mr-3 p-2 active:bg-gray-100 rounded-full"><i class="fa-solid fa-arrow-left text-xl text-gray-600"></i></button>
+                    <h3 class="font-bold text-lg text-gray-800 proper-case tracking-tight">Satuan Pengukuran</h3>
+                </div>
+                <div class="p-4 space-y-6 flex-1 overflow-y-auto">
+                    <div onclick="window.bukaPickerDasar('utama')" class="relative border border-gray-200 rounded-xl p-3 flex justify-between items-center cursor-pointer">
+                        <label class="absolute -top-2.5 left-3 px-1 bg-white text-[9px] font-bold text-gray-400 proper-case tracking-widest">Satuan Utama</label>
+                        <input type="text" id="val-satuan-utama" class="font-bold text-gray-700 outline-none pointer-events-none uppercase" readonly>
+                        <i class="fa-solid fa-chevron-right text-gray-300 text-xs"></i>
+                    </div>
+                    <div id="dynamic-secondary-units" class="space-y-6"></div>
+                    <button onclick="window.tambahSatuanSekunder()" class="text-emerald-600 font-bold text-[10px] flex items-center gap-2 py-2 uppercase tracking-widest">
+                        <i class="fa-solid fa-circle-plus text-base"></i> Tambah Satuan Lainnya
+                    </button>
+                </div>
+                <div class="p-3 border-t grid grid-cols-2 gap-2 bg-gray-50">
+                    <button onclick="window.tutupMultiSatuan()" class="py-3 font-bold text-gray-400 text-[10px] uppercase tracking-widest bg-white border rounded-xl">Batal</button>
+                    <button onclick="window.konfirmasiSatuan()" class="py-3 bg-emerald-500 text-white font-bold rounded-xl active:scale-95 uppercase text-sm">Simpan</button>
                 </div>
             </div>
         </div>
@@ -130,6 +154,25 @@ function initDragLogic() {
     handle.addEventListener('touchstart', onStart, { passive: false });
     handle.addEventListener('touchmove', onMove, { passive: false });
     handle.addEventListener('touchend', onEnd);
+}
+
+function renderKonversiList() {
+    const container = document.getElementById('dynamic-secondary-units');
+    const utama = document.getElementById('val-satuan-utama').value || 'UTAMA';
+    container.innerHTML = multiUnits.map((item, idx) => `
+        <div class="space-y-4 p-3 bg-gray-50 rounded-xl border border-dashed border-gray-200 relative animate-fadeIn">
+            <button onclick="window.hapusRowKonversi(${idx})" class="absolute -top-2 -right-2 w-6 h-6 bg-rose-500 text-white rounded-full flex items-center justify-center text-[10px] shadow-md border-2 border-white"><i class="fa-solid fa-xmark"></i></button>
+            <div onclick="window.bukaPickerDasar('sekunder', ${idx})" class="relative border border-gray-200 rounded-xl p-2.5 flex justify-between items-center cursor-pointer bg-white">
+                <label class="absolute -top-2.5 left-2 px-1 bg-white text-[9px] font-bold text-gray-400 proper-case tracking-widest">Satuan Ke-${idx + 2}</label>
+                <input type="text" value="${item.unit}" class="font-bold text-gray-700 outline-none pointer-events-none uppercase text-xs" readonly>
+                <i class="fa-solid fa-chevron-right text-gray-300 text-[10px]"></i>
+            </div>
+            <div class="relative border border-gray-200 rounded-xl p-0.5 bg-white">
+                <label class="absolute -top-2 left-2 px-1 bg-white text-[9px] font-bold text-gray-400 proper-case">1 ${utama} = Berapa?</label>
+                <input type="number" oninput="window.updateRatio(${idx}, this.value)" value="${item.ratio}" class="w-full p-2 outline-none font-bold text-gray-700 text-sm">
+            </div>
+        </div>
+    `).join('');
 }
 
 function renderListPicker(type, mode = null, index = null) {
@@ -188,12 +231,12 @@ window.renderFormTambahBaru = (type, mode, index, id = "") => {
         <div class="px-6 space-y-6 flex-1">
             <div class="relative border-2 border-emerald-500 rounded-xl p-1">
                 <label class="absolute -top-2.5 left-3 px-1 bg-white text-[10px] font-bold text-emerald-500 proper-case">Nama ${type}</label>
-                <input type="text" id="new-name" value="${item.nama}" class="w-full p-3 bg-transparent outline-none font-bold text-gray-700 proper-case" placeholder="Nama ${type}">
+                <input type="text" id="new-name" value="${item.nama}" class="w-full p-3 bg-transparent outline-none font-bold text-gray-700 proper-case">
             </div>
             ${type === 'satuan' ? `
                 <div class="relative border border-gray-200 rounded-xl p-1 bg-gray-50">
                     <label class="absolute -top-2.5 left-3 px-1 bg-white text-[9px] font-bold text-gray-400 proper-case tracking-widest">Satuan Pendek</label>
-                    <input type="text" id="new-short" value="${item.pendek}" maxlength="5" class="w-full p-3 bg-transparent outline-none font-bold text-gray-700 uppercase" placeholder="PENDEK">
+                    <input type="text" id="new-short" value="${item.pendek}" maxlength="5" class="w-full p-3 bg-transparent outline-none font-bold text-gray-700 uppercase">
                 </div>
             ` : ''}
         </div>
@@ -248,10 +291,11 @@ window.overlayClose = (e) => { if(e.target.id === 'modal-container') window.tutu
 window.loadFirebaseData = () => { onValue(ref(db, 'products'), s => { databaseBarang = s.val() || {}; window.filterInventaris(); }); onValue(ref(db, 'settings/categories'), s => { dataKategori = s.val() || {}; }); onValue(ref(db, 'settings/units'), s => { dataSatuan = s.val() || {}; }); };
 window.switchView = (v) => { document.querySelectorAll('[id^="view-"]').forEach(el => el.classList.add('hidden')); document.getElementById(v).classList.remove('hidden'); window.scrollTo(0,0); };
 window.bukaPickerDasar = (mode, index = null) => { document.getElementById('modal-container').classList.remove('hidden'); renderListPicker('satuan', mode, index); };
-window.selectAndClose = (type, val, mode, index) => { if (type === 'kategori') { document.getElementById('edit-kategori').value = val; } else { if (mode === 'utama') document.getElementById('val-satuan-utama').value = val.toUpperCase(); else multiUnits[index].unit = val.toUpperCase(); } window.tutupModal(); };
+window.selectAndClose = (type, val, mode, index) => { if (type === 'kategori') { document.getElementById('edit-kategori').value = val; } else { if (mode === 'utama') { document.getElementById('val-satuan-utama').value = val.toUpperCase(); renderKonversiList(); } else { multiUnits[index].unit = val.toUpperCase(); renderKonversiList(); } } window.tutupModal(); };
 window.bukaHalamanEdit = (id) => { currentEditId = id; multiUnits = []; window.switchView('view-edit'); };
 window.batalEdit = () => window.switchView('view-list');
 window.tutupMultiSatuan = () => window.switchView('view-edit');
-window.bukaPilihSatuanPengukuran = () => window.switchView('view-multi-satuan');
-window.tambahSatuanSekunder = () => { multiUnits.push({ unit: '', ratio: '' }); };
-window.hapusRowKonversi = (idx) => { multiUnits.splice(idx, 1); };
+window.bukaPilihSatuanPengukuran = () => { window.switchView('view-multi-satuan'); renderKonversiList(); };
+window.tambahSatuanSekunder = () => { multiUnits.push({ unit: '', ratio: '' }); renderKonversiList(); };
+window.hapusRowKonversi = (idx) => { multiUnits.splice(idx, 1); renderKonversiList(); };
+window.updateRatio = (idx, val) => multiUnits[idx].ratio = val;
