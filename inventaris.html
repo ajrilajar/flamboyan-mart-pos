@@ -75,7 +75,6 @@
             background: #fafafa; 
         }
         
-        /* Tombol kotak (untuk Online & Settings) */
         .icon-btn-box { 
             height: 42px; 
             width: 45px; 
@@ -136,7 +135,7 @@
         .fab { 
             position: fixed; 
             right: 20px; 
-            bottom: 115px; /* DEFAULT UNTUK MOBILE - TURUN 15px */
+            bottom: 115px;
             width: 56px; 
             height: 56px; 
             background-color: var(--green); 
@@ -156,15 +155,13 @@
             box-shadow: 0 4px 10px rgba(39, 174, 96, 0.3); 
         }
         
-        /* MOBILE - Pastikan media query tidak menimpa */
         @media (max-width: 767px) {
             .fab {
                 right: 20px;
-                bottom: 120px; /* TURUN SEDIKIT LAGI */
+                bottom: 120px;
             }
         }
         
-        /* TABLET - Posisi tepat di atas icon "Lainnya" */
         @media (min-width: 768px) and (max-width: 1023px) {
             .fab {
                 left: 90%;
@@ -174,7 +171,6 @@
             }
         }
         
-        /* DESKTOP/LAPTOP - Posisi tepat di atas icon "Lainnya" */
         @media (min-width: 1024px) {
             .fab {
                 left: 90%;
@@ -242,7 +238,6 @@
             border-radius: 4px; 
         }
         
-        /* Settings Styles */
         .settings-content { 
             background: var(--white); 
             flex: 1; 
@@ -427,9 +422,6 @@
             margin-top: 5px; 
         }
         
-        /* ============ STYLE DARI V6.1 TAMBAH BARANG ============ */
-        
-        /* STANDARDIZED HEADER - SAMA UNTUK SEMUA */
         .standard-header { 
             background: var(--white); 
             padding: 0 20px; 
@@ -458,7 +450,6 @@
             color: var(--text);
         }
 
-        /* KONTEN UTAMA - JARAK LEBIH RAPAT */
         .content { 
             padding: 20px; 
             background: white; 
@@ -467,7 +458,6 @@
             padding-bottom: 80px; 
         }
 
-        /* FLOATING LABEL SYSTEM - JARAK LEBIH RAPAT */
         .input-group { 
             position: relative; 
             margin-bottom: 12px;
@@ -521,7 +511,6 @@
             color: transparent;
         }
 
-        /* SELECTOR STYLE */
         .select-wrapper { 
             position: relative; 
             cursor: pointer; 
@@ -541,7 +530,6 @@
             font-size: 20px; 
         }
 
-        /* TABS - JARAK LEBIH RAPAT */
         .tabs { 
             display: flex; 
             border-bottom: 2px solid #eee; 
@@ -564,14 +552,12 @@
             margin-bottom: -2px; 
         }
 
-        /* GRID 2 KOLOM - JARAK LEBIH RAPAT */
         .grid-2 { 
             display: grid; 
             grid-template-columns: 1fr 1fr; 
             gap: 10px;
         }
 
-        /* SWITCH STYLE - JARAK LEBIH RAPAT */
         .switch-row { 
             display: flex; 
             justify-content: space-between; 
@@ -589,7 +575,6 @@
             font-weight: 500; 
         }
 
-        /* PANEL PILIH KATEGORI & SATUAN */
         .pilih-panel { 
             position: fixed; 
             top: 0; 
@@ -641,7 +626,6 @@
             margin-top: 2px; 
         }
 
-        /* MODAL OVERLAY */
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -655,7 +639,6 @@
         
         .modal-overlay.show { display: block; }
 
-        /* FORM TAMBAH KATEGORI/SATUAN */
         .form-modal {
             position: fixed;
             top: 0;
@@ -694,7 +677,6 @@
             margin-bottom: 5px;
         }
 
-        /* INFO TEXT STYLE - JARAK LEBIH RAPAT */
         .info-text {
             color: var(--gray);
             font-size: 12px;
@@ -709,7 +691,6 @@
             margin-top: 1px;
         }
 
-        /* ============ STYLE BARU UNTUK PANEL SATUAN COMPACT ============ */
         .section-title-v6 { 
             font-size: 13px; 
             font-weight: 700; 
@@ -725,7 +706,6 @@
             margin: 15px 0;
         }
 
-        /* DESAIN COMPACT ROW (SATU BARIS) - Untuk konversi satuan */
         .conversion-list { 
             display: flex; 
             flex-direction: column; 
@@ -736,7 +716,6 @@
             margin-top: 8px;
         }
 
-        /* Style untuk scrollbar di conversion-list */
         .conversion-list::-webkit-scrollbar {
             width: 4px;
         }
@@ -768,7 +747,6 @@
             flex-shrink: 0;
         }
 
-        /* BAGIAN KIRI: 1 [SATUAN] = */
         .row-left { 
             display: flex; 
             align-items: center; 
@@ -784,7 +762,6 @@
             flex-shrink: 0;
         }
 
-        /* Chip Satuan yang bisa diedit */
         .clickable-unit {
             display: flex; 
             align-items: center; 
@@ -820,7 +797,6 @@
             flex-shrink: 0;
         }
 
-        /* BAGIAN TENGAH: Input & Satuan Dasar */
         .row-center { 
             display: flex; 
             align-items: center; 
@@ -855,7 +831,6 @@
             flex-shrink: 0;
         }
 
-        /* BAGIAN KANAN: Tombol Hapus */
         .btn-delete-compact {
             width: 30px;
             height: 30px;
@@ -873,7 +848,6 @@
             background: #ffebeb; 
         }
 
-        /* TOMBOL TAMBAH SATUAN BESAR - JARAK LEBIH RAPAT */
         .btn-add-unit {
             margin-top: 10px;
             border: 1px dashed #ccc;
@@ -902,7 +876,6 @@
             color: var(--green);
         }
         
-        /* STYLE UNTUK INFO KETIKA BELUM ADA SATUAN */
         .empty-state {
             text-align: center;
             padding: 30px 15px;
@@ -916,7 +889,6 @@
             opacity: 0.5;
         }
         
-        /* PERBAIKAN: Konten di panel satuan compact harus bisa discroll */
         .panel-content-scrollable {
             flex: 1;
             overflow-y: auto;
@@ -924,12 +896,10 @@
             padding-bottom: 90px;
         }
         
-        /* EMPTY STATE DI LIST */
         .list-container .empty-state {
             padding: 30px 15px;
         }
 
-        /* ============ HEADER INVENTARIS BARU ============ */
         .inventaris-header {
             background: var(--white);
             padding: 0 20px;
@@ -961,40 +931,12 @@
         .header-settings:active {
             background: rgba(39, 174, 96, 0.1);
         }
-
-        /* ============ STYLE UNTUK BACK BUTTON HANDLING ============ */
-        #back-toast {
-            position: fixed;
-            bottom: 120px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: rgba(0,0,0,0.85);
-            color: white;
-            padding: 12px 24px;
-            border-radius: 8px;
-            z-index: 10000;
-            font-size: 14px;
-            font-weight: 500;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-            pointer-events: none;
-            max-width: 80%;
-            text-align: center;
-            backdrop-filter: blur(10px);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-        }
     </style>
 </head>
 <body>
-    <!-- OVERLAY MODAL -->
     <div class="modal-overlay" id="modalOverlay"></div>
 
-    <!-- TOAST UNTUK BACK BUTTON -->
-    <div id="back-toast"></div>
-
-    <!-- PAGE INVENTARIS UTAMA -->
     <div id="page-inventaris" class="page">
-        <!-- HEADER BARU - TAMBAHKAN DI SINI -->
         <div class="inventaris-header">
             <h2>Inventaris</h2>
             <span class="material-icons-outlined header-settings" onclick="bukaPengaturan()">settings</span>
@@ -1010,22 +952,17 @@
                 <span class="material-icons-outlined" id="status-icon" style="font-size: 20px; color: var(--gray);">sensors</span>
                 <div class="switch-mini"><input type="checkbox" id="market-chk" onchange="updateOnlineStatus(this)"><span class="slider-mini"></span></div>
             </div>
-            
-            <!-- Icon pengaturan dihapus dari sini -->
-            <!-- <div class="icon-btn-box" onclick="showPage('page-pengaturan')"> dihapus -->
         </div>
         
         <div id="inventory-list" class="inventory-list"></div>
-        <!-- FAB untuk membuka halaman tambah barang V6.1 -->
         <div class="fab" onclick="bukaTambahBarang()">
             <span class="material-icons-outlined" style="font-size: 24px;">add</span>
         </div>
     </div>
 
-    <!-- PAGE PENGATURAN -->
     <div id="page-pengaturan" class="page hidden">
-        <div class="standard-header">  <!-- GANTI dari top-nav -->
-            <div class="back-button" onclick="tutupPengaturan()">
+        <div class="standard-header">
+            <div class="back-button" onclick="goBack()">
                 <span class="material-icons-outlined">arrow_back</span>
             </div>
             <h2>Pengaturan Barang</h2>
@@ -1047,10 +984,9 @@
         </div>
     </div>
 
-    <!-- PAGE KATEGORI -->
     <div id="page-kategori" class="page hidden">
-        <div class="standard-header">  <!-- GANTI dari top-nav -->
-            <div class="back-button" onclick="showPage('page-pengaturan')">
+        <div class="standard-header">
+            <div class="back-button" onclick="goBack()">
                 <span class="material-icons-outlined">arrow_back</span>
             </div>
             <h2>Kelola Kategori</h2>
@@ -1060,10 +996,9 @@
         <div class="bottom-btn-container"><button class="btn-full" onclick="openAdd('cat')">+ Tambahkan Kategori Baru</button></div>
     </div>
 
-    <!-- PAGE MARKETPLACE -->
     <div id="page-marketplace" class="page hidden">
-        <div class="standard-header">  <!-- GANTI dari top-nav -->
-            <div class="back-button" onclick="showPage('page-pengaturan')">
+        <div class="standard-header">
+            <div class="back-button" onclick="goBack()">
                 <span class="material-icons-outlined">arrow_back</span>
             </div>
             <h2>Kelola Marketplace</h2>
@@ -1073,10 +1008,9 @@
         <div class="bottom-btn-container"><button class="btn-full" onclick="openAdd('mkt')">+ Tambahkan Marketplace Baru</button></div>
     </div>
 
-    <!-- PAGE SUPLAYER -->
     <div id="page-suplayer" class="page hidden">
-        <div class="standard-header">  <!-- GANTI dari top-nav -->
-            <div class="back-button" onclick="showPage('page-pengaturan')">
+        <div class="standard-header">
+            <div class="back-button" onclick="goBack()">
                 <span class="material-icons-outlined">arrow_back</span>
             </div>
             <h2>Kelola Suplayer</h2>
@@ -1086,10 +1020,9 @@
         <div class="bottom-btn-container"><button class="btn-full" onclick="openAdd('sup')">+ Tambahkan Suplayer Baru</button></div>
     </div>
 
-    <!-- PAGE FORM CRUD -->
     <div id="page-form-crud" class="page hidden">
-        <div class="standard-header">  <!-- GANTI dari top-nav -->
-            <div class="back-button" id="crudBackBtn">
+        <div class="standard-header">
+            <div class="back-button" onclick="goBack()">
                 <span class="material-icons-outlined">arrow_back</span>
             </div>
             <h2 id="crudFormTitle">Form</h2>
@@ -1098,10 +1031,9 @@
         <div class="bottom-btn-container"><button id="crudSaveBtn" class="btn-full" disabled>Simpan</button></div>
     </div>
 
-    <!-- PAGE SATUAN -->
     <div id="page-satuan" class="page hidden">
-        <div class="standard-header">  <!-- GANTI dari top-nav -->
-            <div class="back-button" onclick="showPage('page-pengaturan')">
+        <div class="standard-header">
+            <div class="back-button" onclick="goBack()">
                 <span class="material-icons-outlined">arrow_back</span>
             </div>
             <h2>Kelola Satuan</h2>
@@ -1111,10 +1043,9 @@
         <div class="bottom-btn-container"><button class="btn-full" onclick="openAddUnit()">+ Tambahkan Satuan Baru</button></div>
     </div>
 
-    <!-- PAGE FORM UNIT -->
     <div id="page-form-unit" class="page hidden">
-        <div class="standard-header">  <!-- GANTI dari top-nav -->
-            <div class="back-button" onclick="showPage('page-satuan')">
+        <div class="standard-header">
+            <div class="back-button" onclick="goBack()">
                 <span class="material-icons-outlined">arrow_back</span>
             </div>
             <h2 id="formUnitTitle">Form Satuan</h2>
@@ -1123,10 +1054,9 @@
         <div class="bottom-btn-container"><button id="btnActionUnit" class="btn-full" disabled>Simpan</button></div>
     </div>
 
-    <!-- ============ PAGE TAMBAH BARANG V6.1 ============ -->
     <div id="page-tambah-barang-v6" class="page hidden">
         <div class="standard-header">
-            <div class="back-button" onclick="tutupTambahBarang()">
+            <div class="back-button" onclick="goBack()">
                 <span class="material-icons-outlined">arrow_back</span>
             </div>
             <h2>Tambah Barang Baru</h2>
@@ -1144,7 +1074,6 @@
                 <span class="material-icons-outlined chevron">chevron_right</span>
             </div>
 
-            <!-- PANEL SATUAN COMPACT BARU -->
             <div class="input-group select-wrapper" onclick="bukaPanelSatuanCompact()">
                 <input type="text" class="input-box-v6" id="satuan" placeholder=" " readonly>
                 <label class="floating-label" for="satuan">Satuan</label>
@@ -1185,7 +1114,6 @@
                 <label class="floating-label" for="harga_grosir">Harga Grosir</label>
             </div>
 
-            <!-- SWITCH PERINGATAN STOK RENDAH -->
             <div class="switch-row">
                 <div class="switch-label">
                     <span class="material-icons-outlined" style="color:var(--green)">notifications_active</span>
@@ -1198,7 +1126,6 @@
             </div>
         </div>
 
-        <!-- BOTTOM BUTTON -->
         <div class="bottom-btn-container">
             <button class="btn-full" id="btnSimpan" disabled>
                 <span class="material-icons-outlined">save</span>
@@ -1207,10 +1134,9 @@
         </div>
     </div>
 
-    <!-- PANEL PILIH KATEGORI -->
     <div id="panelKategori" class="pilih-panel">
         <div class="standard-header">
-            <div class="back-button" onclick="tutupPanelKategori()">
+            <div class="back-button" onclick="goBack()">
                 <span class="material-icons-outlined">arrow_back</span>
             </div>
             <h2>Pilih Kategori</h2>
@@ -1221,10 +1147,7 @@
                 <input type="text" id="searchKategori" placeholder="Cari kategori..." onkeyup="filterKategori()">
             </div>
         </div>
-        <div class="list-container" id="listKategori">
-            <!-- Daftar kategori akan dimuat di sini -->
-        </div>
-        <!-- TOMBOL TAMBAH KATEGORI BARU -->
+        <div class="list-container" id="listKategori"></div>
         <div class="bottom-btn-container">
             <button class="btn-full" onclick="bukaFormKategori()">
                 <span class="material-icons-outlined">add</span>
@@ -1233,18 +1156,15 @@
         </div>
     </div>
 
-    <!-- PANEL SATUAN COMPACT - DIPERBAIKI DENGAN SCROLL DAN JARAK RAPAT -->
     <div id="panelSatuanCompact" class="pilih-panel">
         <div class="standard-header">
-            <div class="back-button" onclick="tutupPanelSatuanCompact()">
+            <div class="back-button" onclick="goBack()">
                 <span class="material-icons-outlined">arrow_back</span>
             </div>
             <h2>Atur Satuan</h2>
         </div>
 
-        <!-- PERBAIKAN: Gunakan container dengan scroll -->
         <div class="panel-content-scrollable">
-            <!-- 1. SATUAN DASAR (TERKECIL) - SAMA PERSIS DENGAN FORM UTAMA -->
             <div class="section-title-v6">Satuan Dasar (Terkecil)</div>
             
             <div class="input-group select-wrapper" onclick="bukaPanelPilihSatuan('utama')">
@@ -1257,17 +1177,12 @@
                 <span>Contoh: Pcs, Gram, Butir (Unit stok terkecil)</span>
             </div>
 
-            <!-- 2. KONVERSI SATUAN BESAR -->
             <div id="areaKonversi" style="display: none;">
                 <hr class="section-divider">
                 <div class="section-title-v6">Konversi Satuan Besar</div>
 
-                <!-- PERBAIKAN: Container konversi dengan scroll sendiri -->
-                <div id="listKonversiContainer" class="conversion-list">
-                    <!-- Daftar konversi akan ditampilkan di sini -->
-                </div>
+                <div id="listKonversiContainer" class="conversion-list"></div>
 
-                <!-- PERBAIKAN: Tombol tambah berada di bawah area scroll -->
                 <div class="btn-add-unit green" onclick="bukaPanelPilihSatuan('tambahan')">
                     <span class="material-icons-outlined" style="color:var(--green)">add_circle</span>
                     <span style="color:var(--green)">Tambah Satuan Besar</span>
@@ -1275,7 +1190,6 @@
             </div>
         </div>
 
-        <!-- TOMBOL SIMPAN -->
         <div class="bottom-btn-container">
             <button class="btn-full" id="btnSimpanSatuanCompact" onclick="simpanSatuanCompact()" disabled>
                 <span class="material-icons-outlined">save</span>
@@ -1284,10 +1198,9 @@
         </div>
     </div>
 
-    <!-- PANEL PILIH SATUAN (DIGUNAKAN UNTUK SEMUA KEBUTUHAN) -->
     <div id="panelSatuan" class="pilih-panel">
         <div class="standard-header">
-            <div class="back-button" onclick="tutupPanelSatuan()">
+            <div class="back-button" onclick="goBack()">
                 <span class="material-icons-outlined">arrow_back</span>
             </div>
             <h2 id="panelSatuanTitle">Pilih Satuan</h2>
@@ -1298,10 +1211,7 @@
                 <input type="text" id="searchSatuan" placeholder="Cari satuan..." onkeyup="filterSatuan()">
             </div>
         </div>
-        <div class="list-container" id="listSatuan">
-            <!-- Daftar satuan akan dimuat di sini -->
-        </div>
-        <!-- TOMBOL TAMBAH SATUAN BARU -->
+        <div class="list-container" id="listSatuan"></div>
         <div class="bottom-btn-container">
             <button class="btn-full" onclick="bukaFormSatuan()">
                 <span class="material-icons-outlined">add</span>
@@ -1310,10 +1220,9 @@
         </div>
     </div>
 
-    <!-- FORM TAMBAH KATEGORI BARU -->
     <div id="formKategori" class="form-modal">
         <div class="standard-header">
-            <div class="back-button" onclick="tutupFormKategori()">
+            <div class="back-button" onclick="goBack()">
                 <span class="material-icons-outlined">arrow_back</span>
             </div>
             <h2>Tambah Kategori Baru</h2>
@@ -1336,10 +1245,9 @@
         </div>
     </div>
 
-    <!-- FORM TAMBAH SATUAN BARU -->
     <div id="formSatuan" class="form-modal">
         <div class="standard-header">
-            <div class="back-button" onclick="tutupFormSatuan()">
+            <div class="back-button" onclick="goBack()">
                 <span class="material-icons-outlined">arrow_back</span>
             </div>
             <h2>Tambah Satuan Baru</h2>
@@ -1379,41 +1287,15 @@
         const app = initializeApp(firebaseConfig); 
         const db = getDatabase(app);
 
-        // ============ SISTEM NAVIGASI BACK BUTTON ============
-        let navigationStack = [];
-        let backButtonPressed = 0;
-        let backButtonTimeout = null;
+        // ============ SISTEM NAVIGASI SEDERHANA ============
+        let pageHistory = ['page-inventaris'];
+        let panelStack = [];
 
-        // Fungsi untuk push state baru ke history
-        function pushNavigationState(pageId, panelId = null) {
-            const state = {
-                page: pageId,
-                panel: panelId,
-                timestamp: Date.now()
-            };
-            navigationStack.push(state);
-            // Tambah ke browser history dengan hash
-            window.history.pushState(state, '', `#${pageId}`);
-            console.log('Navigation pushed:', state, 'Stack:', navigationStack.length);
-        }
-
-        // Fungsi untuk pop state dari history
-        function popNavigationState() {
-            if (navigationStack.length > 1) {
-                navigationStack.pop();
-                const prevState = navigationStack[navigationStack.length - 1];
-                window.history.replaceState(prevState, '', `#${prevState.page}`);
-            } else {
-                window.history.replaceState(null, '', '');
-            }
-        }
-
-        // Fungsi untuk navigate ke halaman
-        function navigateTo(pageId, panelId = null) {
-            console.log('Navigating to:', pageId, 'panel:', panelId);
+        function goToPage(pageId) {
+            console.log('Going to:', pageId);
             
-            // Tutup semua panel terlebih dahulu
-            tutupSemuaPanel();
+            // Tutup semua panel
+            closeAllPanels();
             
             // Sembunyikan semua halaman
             document.querySelectorAll('.page').forEach(p => p.classList.add('hidden'));
@@ -1422,152 +1304,224 @@
             const page = document.getElementById(pageId);
             if (page) {
                 page.classList.remove('hidden');
+                pageHistory.push(pageId);
                 
-                // Tambah ke navigation stack
-                pushNavigationState(pageId, panelId);
-                
-                // Kirim pesan ke parent jika perlu
                 if (pageId === 'page-inventaris') {
                     window.parent.postMessage('show-parent-ui', '*');
-                } else if (pageId === 'page-pengaturan' || pageId === 'page-tambah-barang-v6') {
+                } else {
                     window.parent.postMessage('hide-parent-ui', '*');
                 }
-                
-                console.log('Navigation complete. Current stack:', navigationStack);
             }
         }
 
-        // Fungsi untuk handle back button
-        function handleBackButton() {
-            console.log('Back button pressed. Stack:', navigationStack.length);
+        function goBack() {
+            console.log('Going back. Pages:', pageHistory.length, 'Panels:', panelStack.length);
             
-            if (navigationStack.length > 1) {
-                // Ada halaman sebelumnya dalam stack
-                navigationStack.pop();
-                const prevState = navigationStack[navigationStack.length - 1];
+            // 1. Jika ada panel, tutup panel teratas
+            if (panelStack.length > 0) {
+                const panelId = panelStack.pop();
+                document.getElementById(panelId).classList.remove('show');
                 
-                console.log('Going back to:', prevState);
+                // Jika tidak ada panel lagi, sembunyikan overlay
+                if (panelStack.length === 0) {
+                    document.getElementById('modalOverlay').classList.remove('show');
+                }
+                return;
+            }
+            
+            // 2. Jika tidak di halaman utama, kembali ke halaman sebelumnya
+            if (pageHistory.length > 1) {
+                pageHistory.pop();
+                const prevPage = pageHistory[pageHistory.length - 1];
                 
-                // Sembunyikan semua halaman
                 document.querySelectorAll('.page').forEach(p => p.classList.add('hidden'));
+                document.getElementById(prevPage).classList.remove('hidden');
                 
-                // Tampilkan halaman sebelumnya
-                const prevPage = document.getElementById(prevState.page);
-                if (prevPage) {
-                    prevPage.classList.remove('hidden');
-                    
-                    // Handle panel jika ada
-                    if (prevState.panel) {
-                        const panel = document.getElementById(prevState.panel);
-                        if (panel) {
-                            panel.classList.add('show');
-                            document.getElementById('modalOverlay').classList.add('show');
-                        }
+                if (prevPage === 'page-inventaris') {
+                    window.parent.postMessage('show-parent-ui', '*');
+                } else {
+                    window.parent.postMessage('hide-parent-ui', '*');
+                }
+            } 
+            // 3. Jika di halaman utama, minta parent kembali
+            else {
+                window.parent.postMessage('go-back', '*');
+            }
+        }
+
+        function openPanel(panelId) {
+            panelStack.push(panelId);
+            document.getElementById(panelId).classList.add('show');
+            document.getElementById('modalOverlay').classList.add('show');
+        }
+
+        function closeAllPanels() {
+            panelStack.forEach(panelId => {
+                document.getElementById(panelId).classList.remove('show');
+            });
+            panelStack = [];
+            document.getElementById('modalOverlay').classList.remove('show');
+        }
+
+        // ============ SETUP TOMBOL ============
+        document.addEventListener('DOMContentLoaded', function() {
+            // Setup tombol back
+            document.querySelectorAll('.back-button').forEach(btn => {
+                btn.onclick = function(e) {
+                    e.preventDefault();
+                    goBack();
+                };
+            });
+            
+            // Setup overlay
+            document.getElementById('modalOverlay').onclick = function() {
+                if (panelStack.length > 0) {
+                    goBack();
+                }
+            };
+            
+            // Inisialisasi
+            goToPage('page-inventaris');
+            initFirebase();
+        });
+
+        // ============ FUNGSI NAVIGASI ============
+        window.showPage = goToPage;
+        window.bukaPengaturan = function() { goToPage('page-pengaturan'); };
+        window.bukaTambahBarang = function() { goToPage('page-tambah-barang-v6'); };
+        window.tutupPengaturan = function() { goToPage('page-inventaris'); };
+        window.tutupTambahBarang = function() { goToPage('page-inventaris'); };
+
+        window.bukaPanelKategori = function() { openPanel('panelKategori'); loadKategoriV6(); };
+        window.tutupPanelKategori = function() { goBack(); };
+        window.bukaPanelSatuanCompact = function() { 
+            openPanel('panelSatuanCompact'); 
+            // Load data
+            const satuanValue = document.getElementById('satuan').value.trim();
+            appState = { satuanUtama: null, satuanTambahan: [] };
+            
+            if (satuanValue) {
+                const match = satuanValue.match(/^(.*?)\s*(?:\((.*?)\))?$/);
+                if (match) {
+                    const namaUtama = match[1].trim();
+                    const satuanInfo = satuanData.find(s => s.nama === namaUtama);
+                    if (satuanInfo) {
+                        appState.satuanUtama = { nama: satuanInfo.nama, kode: satuanInfo.kode };
                     }
                     
-                    // Kirim pesan ke parent
-                    if (prevState.page === 'page-inventaris') {
-                        window.parent.postMessage('show-parent-ui', '*');
-                    } else {
-                        window.parent.postMessage('hide-parent-ui', '*');
+                    if (match[2]) {
+                        const satuanTambahanArray = match[2].split(',').map(s => s.trim()).filter(s => s);
+                        satuanTambahanArray.forEach(nama => {
+                            const satuanInfo = satuanData.find(s => s.nama === nama);
+                            if (satuanInfo) {
+                                appState.satuanTambahan.push({ nama: satuanInfo.nama, kode: satuanInfo.kode, rasio: '' });
+                            }
+                        });
                     }
                 }
-                
-                // Update URL hash
-                window.location.hash = prevState.page;
-            } else {
-                // Stack kosong atau hanya satu halaman - tampilkan konfirmasi keluar
-                showBackToast();
             }
-        }
-
-        // Fungsi untuk menampilkan toast konfirmasi back button
-        function showBackToast() {
-            backButtonPressed++;
-            
-            const toast = document.getElementById('back-toast');
-            if (backButtonPressed === 1) {
-                toast.textContent = 'Tekan sekali lagi untuk keluar';
-                toast.style.opacity = '1';
-                
-                // Reset setelah 2 detik
-                backButtonTimeout = setTimeout(() => {
-                    backButtonPressed = 0;
-                    toast.style.opacity = '0';
-                }, 2000);
-            } else if (backButtonPressed >= 2) {
-                // Keluar dari aplikasi
-                clearTimeout(backButtonTimeout);
-                toast.style.opacity = '0';
-                backButtonPressed = 0;
-                
-                // Kirim pesan ke parent untuk keluar
-                window.parent.postMessage('exit-app', '*');
-            }
-        }
-
-        // Event listener untuk popstate (tombol back browser)
-        window.addEventListener('popstate', function(event) {
-            console.log('Popstate event:', event.state);
-            if (event.state) {
-                handleBackButton();
-            } else {
-                // Jika tidak ada state, tetap di halaman saat ini
-                window.history.pushState(
-                    navigationStack[navigationStack.length - 1], 
-                    '', 
-                    `#${navigationStack[navigationStack.length - 1].page}`
-                );
-            }
-        });
-
-        // Event listener untuk pesan dari parent (untuk back button)
-        window.addEventListener('message', function(event) {
-            if (event.data === 'handle-back-button') {
-                handleBackButton();
-            }
-        });
-
-        // Event listener untuk tombol back fisik di Android (via Cordova/PhoneGap)
-        document.addEventListener('backbutton', function(e) {
-            e.preventDefault();
-            handleBackButton();
-        }, false);
-
-        // Event listener untuk beforeunload (mencegah keluar tak sengaja)
-        window.addEventListener('beforeunload', function(e) {
-            if (navigationStack.length > 1) {
-                e.preventDefault();
-                e.returnValue = 'Anda memiliki perubahan yang belum disimpan. Yakin ingin keluar?';
-                return e.returnValue;
-            }
-        });
-
-        // ============ FUNGSI NAVIGASI BARU UNTUK HEADER ============
-        window.bukaPengaturan = function() {
-            navigateTo('page-pengaturan');
+            renderUICompact();
         };
-        
-        window.bukaTambahBarang = function() {
-            navigateTo('page-tambah-barang-v6');
+        window.tutupPanelSatuanCompact = function() { goBack(); };
+        window.bukaPanelPilihSatuan = function(mode) { 
+            modePilih = mode; 
+            openPanel('panelSatuan'); 
+            loadSatuanV6(); 
         };
-        
-        window.tutupPengaturan = function() {
-            navigateTo('page-inventaris');
-        };
-        
-        window.tutupTambahBarang = function() {
-            navigateTo('page-inventaris');
-        };
-        
+        window.tutupPanelSatuan = function() { goBack(); modePilih = ''; indexEdit = -1; };
+        window.bukaFormKategori = function() { openPanel('formKategori'); };
+        window.tutupFormKategori = function() { goBack(); };
+        window.bukaFormSatuan = function() { openPanel('formSatuan'); };
+        window.tutupFormSatuan = function() { goBack(); };
+
+        // ============ VARIABEL V6.1 ============
+        let modePilih = '';
+        let indexEdit = -1;
+        let kategoriData = [];
+        let satuanData = [];
+        let appState = { satuanUtama: null, satuanTambahan: [] };
+
+        // ============ FIREBASE FUNGSI ============
         let actT = null; 
         let actI = null; 
         let cache = { products: {}, cat: {}, mkt: {}, sup: {} };
         
-        // ============ FUNGSI NAVIGASI UTAMA ============
-        window.showPage = (id) => { 
-            navigateTo(id);
-        };
+        function initFirebase() {
+            onValue(ref(db, 'products'), (snap) => {
+                cache.products = snap.val() || {}; 
+                const inv = document.getElementById('inventory-list'); 
+                inv.innerHTML = "";
+                
+                for (let id in cache.products) {
+                    const p = cache.products[id];
+                    inv.innerHTML += `
+                        <div class="card">
+                            <div class="initial">${p.nama.substring(0,2).toUpperCase()}</div>
+                            <div class="info">
+                                <div class="name"><b>${p.nama}</b></div>
+                                <div class="price-row">
+                                    <div>Jual<strong>Rp ${Number(p.hargaJual).toLocaleString('id-ID')}</strong></div>
+                                    <div>Beli<strong>Rp ${Number(p.hargaBeli).toLocaleString('id-ID')}</strong></div>
+                                </div>
+                            </div>
+                            <div class="status">
+                                <span class="badge">${p.kategori}</span>
+                                <div style="font-weight:800; margin-top:5px;">${p.stok} ${p.satuan || 'PCS'}</div>
+                            </div>
+                        </div>`;
+                }
+                
+                refreshList(cache.cat, 'category-list-display', 'kategori', 'cat'); 
+                refreshList(cache.mkt, 'market-list-display', 'marketplace', 'mkt'); 
+                refreshList(cache.sup, 'supplier-list-display', 'suplayer', 'sup');
+            });
+            
+            onValue(ref(db, 'categories'), (snap) => { 
+                cache.cat = snap.val() || {}; 
+                refreshList(cache.cat, 'category-list-display', 'kategori', 'cat'); 
+            });
+            
+            onValue(ref(db, 'marketplaces'), (snap) => { 
+                cache.mkt = snap.val() || {}; 
+                refreshList(cache.mkt, 'market-list-display', 'marketplace', 'mkt'); 
+            });
+            
+            onValue(ref(db, 'suppliers'), (snap) => { 
+                cache.sup = snap.val() || {}; 
+                refreshList(cache.sup, 'supplier-list-display', 'suplayer', 'sup'); 
+            });
+            
+            onValue(ref(db, 'units'), (snap) => {
+                const el = document.getElementById('unit-list-display'); 
+                el.innerHTML = ""; 
+                const data = snap.val() || {};
+                
+                for (let id in data) {
+                    const item = document.createElement('div'); 
+                    item.className = 'common-list-item';
+                    item.innerHTML = `
+                        <div class="unit-info">
+                            <b>${data[id].nama}</b>
+                            <div style="color:var(--gray);font-size:12px">${data[id].kode}</div>
+                        </div>
+                        <div class="unit-actions">
+                            <span class="material-icons-outlined edit-u" style="cursor:pointer; margin-right:15px">edit</span>
+                            <span class="material-icons-outlined del-u" style="color:var(--red); cursor:pointer">delete</span>
+                        </div>`;
+                    
+                    item.querySelector('.edit-u').onclick = () => openEditUnit(id, data[id].nama, data[id].kode);
+                    item.querySelector('.del-u').onclick = () => { 
+                        if(confirm('Hapus Satuan?')) remove(ref(db, `units/${id}`)); 
+                    }; 
+                    
+                    el.appendChild(item);
+                }
+            });
+            
+            // Load data V6.1
+            loadKategoriV6();
+            loadSatuanV6();
+        }
         
         window.updateOnlineStatus = (c) => { 
             document.getElementById('status-icon').style.color = c.checked ? "var(--green)" : "var(--gray)"; 
@@ -1612,85 +1566,13 @@
             }
         };
         
-        // Load data produk untuk inventaris
-        onValue(ref(db, 'products'), (snap) => {
-            cache.products = snap.val() || {}; 
-            const inv = document.getElementById('inventory-list'); 
-            inv.innerHTML = "";
-            
-            for (let id in cache.products) {
-                const p = cache.products[id];
-                inv.innerHTML += `
-                    <div class="card">
-                        <div class="initial">${p.nama.substring(0,2).toUpperCase()}</div>
-                        <div class="info">
-                            <div class="name"><b>${p.nama}</b></div>
-                            <div class="price-row">
-                                <div>Jual<strong>Rp ${Number(p.hargaJual).toLocaleString('id-ID')}</strong></div>
-                                <div>Beli<strong>Rp ${Number(p.hargaBeli).toLocaleString('id-ID')}</strong></div>
-                            </div>
-                        </div>
-                        <div class="status">
-                            <span class="badge">${p.kategori}</span>
-                            <div style="font-weight:800; margin-top:5px;">${p.stok} ${p.satuan || 'PCS'}</div>
-                        </div>
-                    </div>`;
-            }
-            
-            refreshList(cache.cat, 'category-list-display', 'kategori', 'cat'); 
-            refreshList(cache.mkt, 'market-list-display', 'marketplace', 'mkt'); 
-            refreshList(cache.sup, 'supplier-list-display', 'suplayer', 'sup');
-        });
-        
-        onValue(ref(db, 'categories'), (snap) => { 
-            cache.cat = snap.val() || {}; 
-            refreshList(cache.cat, 'category-list-display', 'kategori', 'cat'); 
-        });
-        
-        onValue(ref(db, 'marketplaces'), (snap) => { 
-            cache.mkt = snap.val() || {}; 
-            refreshList(cache.mkt, 'market-list-display', 'marketplace', 'mkt'); 
-        });
-        
-        onValue(ref(db, 'suppliers'), (snap) => { 
-            cache.sup = snap.val() || {}; 
-            refreshList(cache.sup, 'supplier-list-display', 'suplayer', 'sup'); 
-        });
-        
-        onValue(ref(db, 'units'), (snap) => {
-            const el = document.getElementById('unit-list-display'); 
-            el.innerHTML = ""; 
-            const data = snap.val() || {};
-            
-            for (let id in data) {
-                const item = document.createElement('div'); 
-                item.className = 'common-list-item';
-                item.innerHTML = `
-                    <div class="unit-info">
-                        <b>${data[id].nama}</b>
-                        <div style="color:var(--gray);font-size:12px">${data[id].kode}</div>
-                    </div>
-                    <div class="unit-actions">
-                        <span class="material-icons-outlined edit-u" style="cursor:pointer; margin-right:15px">edit</span>
-                        <span class="material-icons-outlined del-u" style="color:var(--red); cursor:pointer">delete</span>
-                    </div>`;
-                
-                item.querySelector('.edit-u').onclick = () => openEditUnit(id, data[id].nama, data[id].kode);
-                item.querySelector('.del-u').onclick = () => { 
-                    if(confirm('Hapus Satuan?')) remove(ref(db, `units/${id}`)); 
-                }; 
-                
-                el.appendChild(item);
-            }
-        });
-        
         window.openAdd = (t) => { 
             actT = t; 
             actI = null; 
             document.getElementById('crudFormTitle').innerText = "Tambah"; 
             document.getElementById('crudInput').value = ""; 
-            document.getElementById('crudBackBtn').onclick = () => showPage(`page-${t === 'cat' ? 'kategori' : t === 'mkt' ? 'marketplace' : 'suplayer'}`); 
-            showPage('page-form-crud'); 
+            document.getElementById('crudBackBtn').onclick = () => goToPage(`page-${t === 'cat' ? 'kategori' : t === 'mkt' ? 'marketplace' : 'suplayer'}`); 
+            goToPage('page-form-crud'); 
         };
         
         window.openEdit = (t, i, n) => { 
@@ -1699,7 +1581,7 @@
             document.getElementById('crudFormTitle').innerText = "Edit"; 
             document.getElementById('crudInput').value = n; 
             document.getElementById('crudSaveBtn').disabled = false; 
-            showPage('page-form-crud'); 
+            goToPage('page-form-crud'); 
         };
         
         document.getElementById('crudSaveBtn').onclick = () => {
@@ -1707,8 +1589,8 @@
             const path = actT === 'cat' ? 'categories' : actT === 'mkt' ? 'marketplaces' : 'suppliers';
             
             actI ? 
-                update(ref(db, `${path}/${actI}`), {nama: val}).then(() => showPage(`page-${actT === 'cat' ? 'kategori' : actT === 'mkt' ? 'marketplace' : 'suplayer'}`)) : 
-                push(ref(db, path), {nama: val}).then(() => showPage(`page-${actT === 'cat' ? 'kategori' : actT === 'mkt' ? 'marketplace' : 'suplayer'}`));
+                update(ref(db, `${path}/${actI}`), {nama: val}).then(() => goToPage(`page-${actT === 'cat' ? 'kategori' : actT === 'mkt' ? 'marketplace' : 'suplayer'}`)) : 
+                push(ref(db, path), {nama: val}).then(() => goToPage(`page-${actT === 'cat' ? 'kategori' : actT === 'mkt' ? 'marketplace' : 'suplayer'}`));
         };
         
         window.openAddUnit = () => { 
@@ -1716,7 +1598,7 @@
             document.getElementById('formUnitTitle').innerText="Tambah Satuan"; 
             document.getElementById('unitName').value=""; 
             document.getElementById('unitShort').value=""; 
-            showPage('page-form-unit'); 
+            goToPage('page-form-unit'); 
         };
         
         window.openEditUnit = (id, n, k) => { 
@@ -1724,7 +1606,7 @@
             document.getElementById('formUnitTitle').innerText="Edit Satuan"; 
             document.getElementById('unitName').value=n; 
             document.getElementById('unitShort').value=k; 
-            showPage('page-form-unit'); 
+            goToPage('page-form-unit'); 
         };
         
         document.getElementById('btnActionUnit').onclick = () => {
@@ -1734,48 +1616,28 @@
             };
             
             actI ? 
-                update(ref(db, `units/${actI}`), data).then(() => showPage('page-satuan')) : 
-                push(ref(db, 'units'), data).then(() => showPage('page-satuan'));
+                update(ref(db, `units/${actI}`), data).then(() => goToPage('page-satuan')) : 
+                push(ref(db, 'units'), data).then(() => goToPage('page-satuan'));
         };
         
         document.getElementById('crudInput').oninput = function() { 
             document.getElementById('crudSaveBtn').disabled = !this.value; 
         };
         
-        // ============ FUNGSI DARI V6.1 TAMBAH BARANG ============
+        document.getElementById('unitName').oninput = () => { 
+            document.getElementById('btnActionUnit').disabled = !(document.getElementById('unitName').value && document.getElementById('unitShort').value); 
+        };
         
-        // Variabel global untuk data kategori dan satuan V6.1
-        let kategoriData = [];
-        let satuanData = [];
-
-        // STATE APLIKASI COMPACT
-        let appState = {
-            satuanUtama: null, // object {nama, kode}
-            satuanTambahan: [] // array of object {nama, kode, rasio}
+        document.getElementById('unitShort').oninput = function() { 
+            this.value = this.value.toUpperCase(); 
+            document.getElementById('btnActionUnit').disabled = !(document.getElementById('unitName').value && this.value); 
         };
 
-        let modePilih = ''; // 'utama', 'tambahan', 'edit'
-        let indexEdit = -1;
-
-        // Fungsi untuk menutup semua panel dan modal
-        function tutupSemuaPanel() {
-            document.getElementById('modalOverlay').classList.remove('show');
-            document.getElementById('panelKategori').classList.remove('show');
-            document.getElementById('panelSatuanCompact').classList.remove('show');
-            document.getElementById('panelSatuan').classList.remove('show');
-            document.getElementById('formKategori').classList.remove('show');
-            document.getElementById('formSatuan').classList.remove('show');
-            modePilih = '';
-            indexEdit = -1;
-        }
-
-        // Validasi form utama V6.1
+        // ============ FUNGSI V6.1 ============
         document.getElementById('nama_barang').addEventListener('input', function() {
-            const btnSimpan = document.getElementById('btnSimpan');
-            btnSimpan.disabled = !this.value.trim();
+            document.getElementById('btnSimpan').disabled = !this.value.trim();
         });
 
-        // Tab switching V6.1
         document.querySelectorAll('.tab').forEach(tab => {
             tab.addEventListener('click', function() {
                 document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
@@ -1783,30 +1645,12 @@
             });
         });
 
-        // ============ FUNGSI UNTUK PANEL KATEGORI V6.1 ============
-        window.bukaPanelKategori = function() {
-            document.getElementById('panelKategori').classList.add('show');
-            document.getElementById('modalOverlay').classList.add('show');
-            loadKategoriV6();
-            
-            // Tambah ke navigation stack dengan panel info
-            pushNavigationState('page-tambah-barang-v6', 'panelKategori');
-        };
-
-        window.tutupPanelKategori = function() {
-            // Kembali ke halaman tambah barang baru
-            navigateTo('page-tambah-barang-v6');
-        };
-
         window.filterKategori = function() {
             const searchTerm = document.getElementById('searchKategori').value.toLowerCase();
             const container = document.getElementById('listKategori');
-            
             container.innerHTML = '';
             
-            const filtered = kategoriData.filter(item => 
-                item.nama.toLowerCase().includes(searchTerm)
-            );
+            const filtered = kategoriData.filter(item => item.nama.toLowerCase().includes(searchTerm));
             
             if (filtered.length === 0) {
                 container.innerHTML = '<div class="empty-state"><span class="material-icons-outlined">category</span><div>Tidak ada kategori yang ditemukan</div></div>';
@@ -1816,14 +1660,11 @@
             filtered.forEach(item => {
                 const div = document.createElement('div');
                 div.className = 'list-item';
-                div.innerHTML = `
-                    <div class="name">${item.nama}</div>
-                    <div class="subtitle">${item.count || 0} barang</div>
-                `;
+                div.innerHTML = `<div class="name">${item.nama}</div><div class="subtitle">${item.count || 0} barang</div>`;
                 div.onclick = () => {
                     document.getElementById('kategori').value = item.nama;
                     document.getElementById('kategori').dispatchEvent(new Event('input', { bubbles: true }));
-                    tutupPanelKategori();
+                    goBack();
                 };
                 container.appendChild(div);
             });
@@ -1835,7 +1676,6 @@
                     const categories = snapCategories.val() || {};
                     const products = snapProducts.val() || {};
                     
-                    // Hitung jumlah produk per kategori
                     const productCount = {};
                     for (let pid in products) {
                         const p = products[pid];
@@ -1843,187 +1683,80 @@
                         productCount[kategori] = (productCount[kategori] || 0) + 1;
                     }
                     
-                    // Konversi ke array untuk filter
                     kategoriData = [];
                     for (let id in categories) {
                         const cat = categories[id];
-                        kategoriData.push({
-                            id: id,
-                            nama: cat.nama,
-                            count: productCount[cat.nama] || 0
-                        });
+                        kategoriData.push({ id: id, nama: cat.nama, count: productCount[cat.nama] || 0 });
                     }
                     
-                    // Tambahkan kategori "Umum" jika belum ada
                     if (!kategoriData.find(c => c.nama === "Umum")) {
-                        kategoriData.push({
-                            id: 'umum',
-                            nama: "Umum",
-                            count: productCount["Umum"] || 0
-                        });
+                        kategoriData.push({ id: 'umum', nama: "Umum", count: productCount["Umum"] || 0 });
                     }
                     
-                    // Urutkan berdasarkan nama
                     kategoriData.sort((a, b) => a.nama.localeCompare(b.nama));
-                    
-                    // Render kategori
                     filterKategori();
                 });
             });
         }
 
-        // ============ LOAD DATA SATUAN V6.1 ============
         function loadSatuanV6() {
             onValue(ref(db, 'units'), (snapUnits) => {
                 onValue(ref(db, 'products'), (snapProducts) => {
                     const units = snapUnits.val() || {};
                     const products = snapProducts.val() || {};
                     
-                    // Hitung jumlah produk per satuan
                     const productCount = {};
                     for (let pid in products) {
                         const p = products[pid];
                         const satuan = p.satuan?.trim();
-                        if (satuan) {
-                            productCount[satuan] = (productCount[satuan] || 0) + 1;
-                        }
+                        if (satuan) productCount[satuan] = (productCount[satuan] || 0) + 1;
                     }
                     
-                    // Konversi ke array untuk filter
                     satuanData = [];
                     for (let id in units) {
                         const unit = units[id];
-                        satuanData.push({
-                            id: id,
-                            nama: unit.nama,
-                            kode: unit.kode,
-                            count: productCount[unit.kode] || 0
-                        });
+                        satuanData.push({ id: id, nama: unit.nama, kode: unit.kode, count: productCount[unit.kode] || 0 });
                     }
                     
-                    // Tambahkan satuan default jika belum ada
                     if (!satuanData.find(u => u.kode === "PCS")) {
-                        satuanData.push({
-                            id: 'default',
-                            nama: "Pieces",
-                            kode: "PCS",
-                            count: 0
-                        });
+                        satuanData.push({ id: 'default', nama: "Pieces", kode: "PCS", count: 0 });
                     }
                     
-                    // Urutkan berdasarkan nama
                     satuanData.sort((a, b) => a.nama.localeCompare(b.nama));
-                    
-                    // Render satuan untuk panel
                     filterSatuan();
                 });
             });
         }
 
-        // ============ FUNGSI PANEL SATUAN COMPACT V6.1 ============
-        window.bukaPanelSatuanCompact = function() {
-            // Parse nilai satuan dari field satuan di form utama
-            const satuanValue = document.getElementById('satuan').value.trim();
-            
-            // Reset atau load state dari nilai yang ada
-            appState = {
-                satuanUtama: null,
-                satuanTambahan: []
-            };
-            
-            if (satuanValue) {
-                // Parse format: "SatuanUtama (Satuan1, Satuan2, ...)"
-                const match = satuanValue.match(/^(.*?)\s*(?:\((.*?)\))?$/);
-                if (match) {
-                    const namaUtama = match[1].trim();
-                    
-                    // Cari satuan utama di database
-                    const satuanInfo = satuanData.find(s => s.nama === namaUtama);
-                    if (satuanInfo) {
-                        appState.satuanUtama = {
-                            nama: satuanInfo.nama,
-                            kode: satuanInfo.kode
-                        };
-                    }
-                    
-                    // Parse satuan tambahan jika ada
-                    if (match[2]) {
-                        const satuanTambahanArray = match[2].split(',').map(s => s.trim()).filter(s => s);
-                        satuanTambahanArray.forEach(nama => {
-                            const satuanInfo = satuanData.find(s => s.nama === nama);
-                            if (satuanInfo) {
-                                appState.satuanTambahan.push({
-                                    nama: satuanInfo.nama,
-                                    kode: satuanInfo.kode,
-                                    rasio: '' // Default, akan diisi manual
-                                });
-                            }
-                        });
-                    }
-                }
-            }
-            
-            // Render UI compact
-            renderUICompact();
-            
-            document.getElementById('panelSatuanCompact').classList.add('show');
-            document.getElementById('modalOverlay').classList.add('show');
-            
-            // Tambah ke navigation stack dengan panel info
-            pushNavigationState('page-tambah-barang-v6', 'panelSatuanCompact');
-        };
-
-        window.tutupPanelSatuanCompact = function() {
-            // Kembali ke halaman tambah barang baru
-            navigateTo('page-tambah-barang-v6');
-        };
-
-        // Fungsi render UI compact V6.1
         function renderUICompact() {
             const inputSatuanUtama = document.getElementById('inputSatuanUtama');
             const area = document.getElementById('areaKonversi');
             const btnSimpan = document.getElementById('btnSimpanSatuanCompact');
 
-            // 1. Render Bagian Atas (Satuan Dasar)
             if (appState.satuanUtama) {
-                // Format: Nama (Kode) untuk informasi lengkap
                 inputSatuanUtama.value = `${appState.satuanUtama.nama} (${appState.satuanUtama.kode})`;
                 area.style.display = 'block';
                 btnSimpan.disabled = false;
-                
-                // Trigger event untuk floating label
                 inputSatuanUtama.dispatchEvent(new Event('input', { bubbles: true }));
             } else {
                 inputSatuanUtama.value = '';
                 area.style.display = 'none';
                 btnSimpan.disabled = true;
-                
-                // Trigger event untuk floating label
                 inputSatuanUtama.dispatchEvent(new Event('input', { bubbles: true }));
             }
 
-            // 2. Render List Konversi (Compact Rows)
             const container = document.getElementById('listKonversiContainer');
             container.innerHTML = '';
             
             if (appState.satuanTambahan.length === 0) {
-                const emptyDiv = document.createElement('div');
-                emptyDiv.className = 'empty-state';
-                emptyDiv.innerHTML = `
-                    <span class="material-icons-outlined">scale</span>
-                    <div>Belum ada satuan besar.<br>Klik tombol di bawah untuk menambahkan.</div>
-                `;
-                container.appendChild(emptyDiv);
+                container.innerHTML = '<div class="empty-state"><span class="material-icons-outlined">scale</span><div>Belum ada satuan besar.<br>Klik tombol di bawah untuk menambahkan.</div></div>';
                 return;
             }
 
             appState.satuanTambahan.forEach((item, index) => {
+                const baseCode = appState.satuanUtama ? appState.satuanUtama.kode : '...';
                 const row = document.createElement('div');
                 row.className = 'compact-conversion-row';
-                
-                // Ambil kode base unit untuk ditampilkan di kanan
-                const baseCode = appState.satuanUtama ? appState.satuanUtama.kode : '...';
-
                 row.innerHTML = `
                     <div class="row-left">
                         <span class="static-num">1</span>
@@ -2033,43 +1766,24 @@
                         </div>
                         <span class="static-num">=</span>
                     </div>
-
                     <div class="row-center">
-                        <input type="tel" class="compact-input-field" 
-                               value="${item.rasio}" 
-                               placeholder="0" 
-                               oninput="updateRasioCompact(${index}, this.value)"
-                               onblur="validasiRasio(${index})">
+                        <input type="tel" class="compact-input-field" value="${item.rasio}" placeholder="0" oninput="updateRasioCompact(${index}, this.value)" onblur="validasiRasio(${index})">
                         <span class="base-unit-code">${baseCode}</span>
                     </div>
-
                     <div class="btn-delete-compact" onclick="hapusSatuanCompact(${index})">
                         <span class="material-icons-outlined">delete_outline</span>
                     </div>
                 `;
                 container.appendChild(row);
             });
-            
-            // PERBAIKAN: Scroll ke bawah jika ada banyak item
-            setTimeout(() => {
-                if (appState.satuanTambahan.length > 3) {
-                    container.scrollTop = container.scrollHeight;
-                }
-            }, 100);
         }
 
-        // Fungsi update rasio V6.1
         window.updateRasioCompact = function(index, val) {
-            // Validasi input hanya angka positif
             const cleaned = val.replace(/[^\d]/g, '');
-            if (cleaned && parseFloat(cleaned) > 0) {
-                appState.satuanTambahan[index].rasio = cleaned;
-            } else {
-                appState.satuanTambahan[index].rasio = '';
-            }
+            if (cleaned && parseFloat(cleaned) > 0) appState.satuanTambahan[index].rasio = cleaned;
+            else appState.satuanTambahan[index].rasio = '';
         };
 
-        // Fungsi validasi rasio V6.1
         window.validasiRasio = function(index) {
             const item = appState.satuanTambahan[index];
             if (item.rasio && parseFloat(item.rasio) <= 0) {
@@ -2079,7 +1793,6 @@
             }
         };
 
-        // Fungsi hapus satuan V6.1
         window.hapusSatuanCompact = function(index) {
             if (confirm("Hapus satuan ini dari daftar?")) {
                 appState.satuanTambahan.splice(index, 1);
@@ -2087,77 +1800,21 @@
             }
         };
 
-        // ============ FUNGSI PANEL PILIH SATUAN V6.1 ============
-        window.bukaPanelPilihSatuan = function(mode) {
-            modePilih = mode;
-            document.getElementById('searchSatuan').value = ''; // Reset pencarian
-            
-            // Set judul berdasarkan mode
-            let title = 'Pilih Satuan';
-            if (mode === 'utama') title = 'Pilih Satuan Dasar';
-            else if (mode === 'tambahan') title = 'Pilih Satuan Besar';
-            else if (mode === 'edit') title = 'Ganti Satuan';
-            
-            document.getElementById('panelSatuanTitle').textContent = title;
-            
-            // Tampilkan panel satuan yang sudah ada
-            document.getElementById('panelSatuanCompact').classList.remove('show');
-            document.getElementById('panelSatuan').classList.add('show');
-            document.getElementById('modalOverlay').classList.add('show');
-            
-            // Load data satuan
-            loadSatuanV6();
-            
-            // Update navigation stack untuk panel satuan
-            pushNavigationState('page-tambah-barang-v6', 'panelSatuan');
-        };
-
         window.bukaPanelEditCompact = function(index) {
             modePilih = 'edit';
             indexEdit = index;
-            document.getElementById('searchSatuan').value = '';
             document.getElementById('panelSatuanTitle').textContent = 'Ganti Satuan';
-            
-            document.getElementById('panelSatuanCompact').classList.remove('show');
-            document.getElementById('panelSatuan').classList.add('show');
-            document.getElementById('modalOverlay').classList.add('show');
-            
+            openPanel('panelSatuan');
             loadSatuanV6();
-            
-            // Update navigation stack untuk panel edit
-            pushNavigationState('page-tambah-barang-v6', 'panelSatuan');
-        };
-
-        window.tutupPanelSatuan = function() {
-            document.getElementById('panelSatuan').classList.remove('show');
-            
-            // KEMBALI KE PANEL SATUAN COMPACT JIKA DARI MODE UTAMA/TAMBAHAN/EDIT
-            if (modePilih === 'utama' || modePilih === 'tambahan' || modePilih === 'edit') {
-                document.getElementById('panelSatuanCompact').classList.add('show');
-                document.getElementById('modalOverlay').classList.add('show');
-                
-                // Update navigation stack kembali ke panel compact
-                pushNavigationState('page-tambah-barang-v6', 'panelSatuanCompact');
-            } else {
-                document.getElementById('modalOverlay').classList.remove('show');
-                // Kembali ke halaman sebelumnya dalam stack
-                handleBackButton();
-            }
-            
-            modePilih = '';
-            indexEdit = -1;
         };
 
         window.filterSatuan = function() {
             const searchTerm = document.getElementById('searchSatuan').value.toLowerCase();
             const container = document.getElementById('listSatuan');
-            
             container.innerHTML = '';
             
             const filtered = satuanData.filter(item => 
-                item.nama.toLowerCase().includes(searchTerm) || 
-                item.kode.toLowerCase().includes(searchTerm)
-            );
+                item.nama.toLowerCase().includes(searchTerm) || item.kode.toLowerCase().includes(searchTerm));
             
             if (filtered.length === 0) {
                 container.innerHTML = '<div class="empty-state"><span class="material-icons-outlined">straighten</span><div>Tidak ada satuan yang ditemukan</div></div>';
@@ -2167,181 +1824,75 @@
             filtered.forEach(item => {
                 const div = document.createElement('div');
                 div.className = 'list-item';
-                div.innerHTML = `
-                    <div class="name">${item.nama}</div>
-                    <div class="subtitle">${item.kode}</div>
-                `;
+                div.innerHTML = `<div class="name">${item.nama}</div><div class="subtitle">${item.kode}</div>`;
                 div.onclick = () => {
-                    // Logika untuk mode compact
                     if (modePilih === 'utama') {
-                        // Jika sedang memilih satuan utama untuk panel compact
-                        appState.satuanUtama = {
-                            nama: item.nama,
-                            kode: item.kode
-                        };
-                        // Jika satuan utama berubah, reset satuan tambahan
+                        appState.satuanUtama = { nama: item.nama, kode: item.kode };
                         appState.satuanTambahan = [];
-                        
-                        // Kembali ke panel compact
-                        tutupPanelSatuan();
-                        document.getElementById('panelSatuanCompact').classList.add('show');
-                        
-                        // Render ulang UI compact
+                        goBack();
+                        openPanel('panelSatuanCompact');
                         renderUICompact();
-                        
                     } else if (modePilih === 'tambahan') {
-                        // Jika sedang memilih satuan tambahan
-                        // Cek duplikat
-                        const exists = appState.satuanTambahan.find(s => s.kode === item.kode);
-                        if (exists) {
-                            alert('Satuan ini sudah ada di daftar!');
-                            return;
+                        if (appState.satuanTambahan.find(s => s.kode === item.kode)) {
+                            alert('Satuan ini sudah ada di daftar!'); return;
                         }
-                        
-                        // Jangan biarkan memilih satuan yang sama dengan satuan utama
                         if (appState.satuanUtama && appState.satuanUtama.kode === item.kode) {
-                            alert('Tidak bisa memilih satuan yang sama dengan satuan dasar!');
-                            return;
+                            alert('Tidak bisa memilih satuan yang sama dengan satuan dasar!'); return;
                         }
-                        
-                        appState.satuanTambahan.push({
-                            nama: item.nama,
-                            kode: item.kode,
-                            rasio: ''
-                        });
-                        
-                        // Kembali ke panel compact
-                        tutupPanelSatuan();
-                        document.getElementById('panelSatuanCompact').classList.add('show');
-                        
-                        // Render ulang UI compact
+                        appState.satuanTambahan.push({ nama: item.nama, kode: item.kode, rasio: '' });
+                        goBack();
+                        openPanel('panelSatuanCompact');
                         renderUICompact();
-                        
                     } else if (modePilih === 'edit') {
-                        // Jika sedang mengedit satuan tambahan
-                        // Cek duplikat (kecuali diri sendiri)
-                        const exists = appState.satuanTambahan.find((s, idx) => s.kode === item.kode && idx !== indexEdit);
-                        if (exists) {
-                            alert('Satuan ini sudah ada!');
-                            return;
+                        if (appState.satuanTambahan.find((s, idx) => s.kode === item.kode && idx !== indexEdit)) {
+                            alert('Satuan ini sudah ada!'); return;
                         }
-                        
-                        // Jangan biarkan mengubah ke satuan yang sama dengan satuan utama
                         if (appState.satuanUtama && appState.satuanUtama.kode === item.kode) {
-                            alert('Tidak bisa mengubah ke satuan yang sama dengan satuan dasar!');
-                            return;
+                            alert('Tidak bisa mengubah ke satuan yang sama dengan satuan dasar!'); return;
                         }
-                        
-                        // Simpan rasio lama, ganti nama & kode
                         const rasioLama = appState.satuanTambahan[indexEdit].rasio;
-                        appState.satuanTambahan[indexEdit] = {
-                            nama: item.nama,
-                            kode: item.kode,
-                            rasio: rasioLama
-                        };
-                        
-                        // Kembali ke panel compact
-                        tutupPanelSatuan();
-                        document.getElementById('panelSatuanCompact').classList.add('show');
-                        
-                        // Render ulang UI compact
+                        appState.satuanTambahan[indexEdit] = { nama: item.nama, kode: item.kode, rasio: rasioLama };
+                        goBack();
+                        openPanel('panelSatuanCompact');
                         renderUICompact();
-                        
                     } else {
-                        // Mode lama: langsung dari form tambah barang (jika dipanggil dari form utama)
                         document.getElementById('satuan').value = item.nama;
                         document.getElementById('satuan').dispatchEvent(new Event('input', { bubbles: true }));
-                        tutupPanelSatuan();
+                        goBack();
                     }
                 };
                 container.appendChild(div);
             });
         };
 
-        // Fungsi simpan satuan compact V6.1
         window.simpanSatuanCompact = function() {
-            // Validasi sederhana
             if(!appState.satuanUtama) {
-                alert("Pilih satuan dasar terlebih dahulu!");
-                return;
+                alert("Pilih satuan dasar terlebih dahulu!"); return;
             }
             
-            // Validasi rasio untuk semua satuan tambahan
             for (let i = 0; i < appState.satuanTambahan.length; i++) {
                 const item = appState.satuanTambahan[i];
                 if (!item.rasio || item.rasio.trim() === '' || parseFloat(item.rasio) <= 0) {
                     alert(`Harap isi rasio untuk satuan ${item.nama} (harus lebih dari 0)`);
-                    // Fokus ke input yang bermasalah
                     const input = document.querySelector(`#listKonversiContainer .compact-conversion-row:nth-child(${i+1}) .compact-input-field`);
                     if (input) input.focus();
                     return;
                 }
             }
             
-            // Format string hasil untuk field satuan di form utama
             let result = appState.satuanUtama.nama;
             if(appState.satuanTambahan.length > 0) {
                 const extras = appState.satuanTambahan.map(s => s.nama).join(', ');
                 result += ` (${extras})`;
             }
             
-            // Isi field satuan di form utama
             document.getElementById('satuan').value = result;
             document.getElementById('satuan').dispatchEvent(new Event('input', { bubbles: true }));
-            
-            // Simpan data konversi ke variabel global (untuk digunakan saat simpan barang)
-            simpanDataKonversiKeGlobal();
-            
-            // Tutup panel
-            tutupPanelSatuanCompact();
+            goBack();
         };
 
-        // Fungsi simpan data konversi ke variabel global V6.1
-        function simpanDataKonversiKeGlobal() {
-            // Simpan data dalam format yang sesuai dengan sistem lama
-            window.dataSatuan = {
-                satuanUtama: appState.satuanUtama ? appState.satuanUtama.nama : '',
-                satuanTambahan: appState.satuanTambahan.map(item => ({
-                    nama: item.nama,
-                    konversi: {
-                        jumlahUtama: '1',
-                        jumlahTambahan: item.rasio || ''
-                    }
-                })),
-                konversi: appState.satuanTambahan.map(item => ({
-                    satuan: item.nama,
-                    rasio: item.rasio,
-                    jumlahUtama: '1',
-                    jumlahTambahan: item.rasio
-                }))
-            };
-            
-            console.log("Data satuan yang disimpan:", window.dataSatuan);
-        }
-
-        // ============ FUNGSI FORM KATEGORI BARU V6.1 ============
-        window.bukaFormKategori = function() {
-            document.getElementById('formKategori').classList.add('show');
-            
-            // Tambah ke navigation stack
-            pushNavigationState('page-tambah-barang-v6', 'formKategori');
-        };
-
-        window.tutupFormKategori = function() {
-            // Kembali ke panel kategori, bukan tutup semua
-            document.getElementById('formKategori').classList.remove('show');
-            document.getElementById('namaKategoriBaru').value = '';
-            document.getElementById('btnSimpanKategori').disabled = true;
-            document.getElementById('panelKategori').classList.add('show');
-            
-            // Update navigation stack kembali ke panel kategori
-            pushNavigationState('page-tambah-barang-v6', 'panelKategori');
-        };
-
-        // Validasi input kategori V6.1
         document.getElementById('namaKategoriBaru').addEventListener('input', function() {
-            const btn = document.getElementById('btnSimpanKategori');
-            btn.disabled = !this.value.trim();
+            document.getElementById('btnSimpanKategori').disabled = !this.value.trim();
         });
 
         window.simpanKategoriBaru = function() {
@@ -2350,51 +1901,21 @@
             
             const properName = nama.toLowerCase().replace(/\b\w/g, c => c.toUpperCase());
             
-            push(ref(db, 'categories'), { 
-                nama: properName,
-                createdAt: new Date().toISOString()
-            }).then(() => {
-                // Auto-select kategori yang baru dibuat
-                document.getElementById('kategori').value = properName;
-                document.getElementById('kategori').dispatchEvent(new Event('input', { bubbles: true }));
-                
-                // Tutup form dan panel
-                tutupFormKategori();
-                tutupPanelKategori();
-                
-                // Refresh daftar kategori
-                loadKategoriV6();
-            }).catch(error => {
-                alert("Gagal menambahkan kategori: " + error.message);
-            });
+            push(ref(db, 'categories'), { nama: properName, createdAt: new Date().toISOString() })
+                .then(() => {
+                    document.getElementById('kategori').value = properName;
+                    document.getElementById('kategori').dispatchEvent(new Event('input', { bubbles: true }));
+                    goBack();
+                    loadKategoriV6();
+                }).catch(error => {
+                    alert("Gagal menambahkan kategori: " + error.message);
+                });
         };
 
-        // ============ FUNGSI FORM SATUAN BARU V6.1 ============
-        window.bukaFormSatuan = function() {
-            document.getElementById('formSatuan').classList.add('show');
-            
-            // Tambah ke navigation stack
-            pushNavigationState('page-tambah-barang-v6', 'formSatuan');
-        };
-
-        window.tutupFormSatuan = function() {
-            // Kembali ke panel satuan
-            document.getElementById('formSatuan').classList.remove('show');
-            document.getElementById('namaSatuanBaru').value = '';
-            document.getElementById('kodeSatuanBaru').value = '';
-            document.getElementById('btnSimpanSatuan').disabled = true;
-            document.getElementById('panelSatuan').classList.add('show');
-            
-            // Update navigation stack kembali ke panel satuan
-            pushNavigationState('page-tambah-barang-v6', 'panelSatuan');
-        };
-
-        // Validasi input satuan V6.1
         function validasiFormSatuan() {
             const nama = document.getElementById('namaSatuanBaru').value.trim();
             const kode = document.getElementById('kodeSatuanBaru').value.trim();
-            const btn = document.getElementById('btnSimpanSatuan');
-            btn.disabled = !(nama && kode);
+            document.getElementById('btnSimpanSatuan').disabled = !(nama && kode);
         }
 
         document.getElementById('namaSatuanBaru').addEventListener('input', validasiFormSatuan);
@@ -2408,27 +1929,17 @@
             
             const properName = nama.toLowerCase().replace(/\b\w/g, c => c.toUpperCase());
             
-            push(ref(db, 'units'), { 
-                nama: properName,
-                kode: kode,
-                createdAt: new Date().toISOString()
-            }).then(() => {
-                // Auto-select satuan yang baru dibuat (simpan NAMA SATUAN, bukan kode)
-                document.getElementById('satuan').value = properName;
-                document.getElementById('satuan').dispatchEvent(new Event('input', { bubbles: true }));
-                
-                // Tutup form dan panel
-                tutupFormSatuan();
-                tutupPanelSatuan();
-                
-                // Refresh daftar satuan
-                loadSatuanV6();
-            }).catch(error => {
-                alert("Gagal menambahkan satuan: " + error.message);
-            });
+            push(ref(db, 'units'), { nama: properName, kode: kode, createdAt: new Date().toISOString() })
+                .then(() => {
+                    document.getElementById('satuan').value = properName;
+                    document.getElementById('satuan').dispatchEvent(new Event('input', { bubbles: true }));
+                    goBack();
+                    loadSatuanV6();
+                }).catch(error => {
+                    alert("Gagal menambahkan satuan: " + error.message);
+                });
         };
 
-        // ============ FUNGSI SIMPAN BARANG V6.1 ============
         document.getElementById('btnSimpan').addEventListener('click', function() {
             const namaBarang = document.getElementById('nama_barang').value.trim();
             const kategori = document.getElementById('kategori').value.trim();
@@ -2442,28 +1953,21 @@
             const peringatanStok = document.getElementById('peringatan_stok').checked;
             
             if (!namaBarang) {
-                alert("Nama barang harus diisi!");
-                return;
+                alert("Nama barang harus diisi!"); return;
             }
             
-            // Cari kode satuan berdasarkan nama satuan utama
             let kodeSatuan = "PCS";
             let satuanUtamaNama = "";
             
-            // Gunakan data dari sistem compact jika ada
             if (appState.satuanUtama) {
                 satuanUtamaNama = appState.satuanUtama.nama;
                 kodeSatuan = appState.satuanUtama.kode;
             } else {
-                // Fallback ke parsing dari string
                 satuanUtamaNama = satuan.split('(')[0].trim();
                 const satuanInfo = satuanData.find(s => s.nama === satuanUtamaNama);
-                if (satuanInfo) {
-                    kodeSatuan = satuanInfo.kode;
-                }
+                if (satuanInfo) kodeSatuan = satuanInfo.kode;
             }
             
-            // Siapkan data konversi untuk disimpan
             const konversiData = [];
             if (appState.satuanTambahan && appState.satuanTambahan.length > 0) {
                 appState.satuanTambahan.forEach((item) => {
@@ -2501,7 +2005,7 @@
                 .then(() => {
                     alert("Barang berhasil ditambahkan!");
                     resetFormV6();
-                    navigateTo('page-inventaris');
+                    goToPage('page-inventaris');
                 })
                 .catch(error => {
                     alert("Gagal menambahkan barang: " + error.message);
@@ -2521,174 +2025,23 @@
             document.getElementById('peringatan_stok').checked = false;
             document.getElementById('btnSimpan').disabled = true;
             
-            // Reset data satuan compact
-            appState = {
-                satuanUtama: null,
-                satuanTambahan: []
-            };
+            appState = { satuanUtama: null, satuanTambahan: [] };
             
-            // Reset dataSatuan global
-            window.dataSatuan = {
-                satuanUtama: '',
-                satuanTambahan: [],
-                konversi: []
-            };
-            
-            // Trigger event untuk reset floating label
             document.querySelectorAll('.input-box-v6').forEach(input => {
                 input.dispatchEvent(new Event('input', { bubbles: true }));
             });
         }
 
-        // Format input harga V6.1
         function formatRupiah(input) {
             const value = input.value.replace(/[^\d]/g, '');
-            if (value) {
-                input.value = 'Rp ' + parseInt(value).toLocaleString('id-ID');
-            } else {
-                input.value = '';
-            }
+            if (value) input.value = 'Rp ' + parseInt(value).toLocaleString('id-ID');
+            else input.value = '';
         }
 
-        // Tambahkan event listener untuk format harga V6.1
         document.getElementById('harga_jual').addEventListener('blur', function() { formatRupiah(this); });
         document.getElementById('harga_beli').addEventListener('blur', function() { formatRupiah(this); });
         document.getElementById('harga_eceran').addEventListener('blur', function() { formatRupiah(this); });
         document.getElementById('harga_grosir').addEventListener('blur', function() { formatRupiah(this); });
-
-        // Tutup panel saat klik overlay V6.1
-        document.getElementById('modalOverlay').addEventListener('click', function() {
-            tutupSemuaPanel();
-        });
-
-        // ============ INISIALISASI GABUNGAN ============
-        document.addEventListener('DOMContentLoaded', function() {
-            // Inisialisasi sistem inventaris utama
-            navigateTo('page-inventaris');
-            
-            // Inisialisasi fungsi dari sistem lama
-            document.getElementById('unitName').oninput = () => { 
-                document.getElementById('btnActionUnit').disabled = !(document.getElementById('unitName').value && document.getElementById('unitShort').value); 
-            };
-            
-            document.getElementById('unitShort').oninput = function() { 
-                this.value = this.value.toUpperCase(); 
-                document.getElementById('btnActionUnit').disabled = !(document.getElementById('unitName').value && this.value); 
-            };
-            
-            // Inisialisasi dataSatuan global V6.1
-            window.dataSatuan = {
-                satuanUtama: '',
-                satuanTambahan: [],
-                konversi: []
-            };
-            
-            // Inisialisasi appState V6.1
-            appState = {
-                satuanUtama: null,
-                satuanTambahan: []
-            };
-            
-            // Load data untuk V6.1
-            loadKategoriV6();
-            loadSatuanV6();
-        });
-    // ==========================================
-    // SISTEM NAVIGASI TOMBOL KEMBALI (ANDROID/IOS)
-    // ==========================================
-    
-    document.addEventListener('DOMContentLoaded', () => {
-        // 1. Set state awal sebagai Home
-        if (!history.state) {
-            history.replaceState({ page: 'home' }, null, '');
-        }
-
-        // 2. Override fungsi showPage agar mencatat riwayat
-        const originalShowPage = window.showPage;
-        window.showPage = function(id) {
-            // Jalankan fungsi aslinya
-            originalShowPage(id);
-
-            // Jika pindah KE halaman selain home, catat di history
-            if (id !== 'page-inventaris') {
-                history.pushState({ page: id }, null, '');
-            }
-        };
-
-        // 3. Override fungsi buka panel agar mencatat riwayat
-        const functionsToTrack = [
-            'bukaPengaturan', 
-            'bukaTambahBarang',
-            'bukaPanelKategori',
-            'bukaPanelSatuanCompact',
-            'bukaPanelPilihSatuan',
-            'bukaFormKategori',
-            'bukaFormSatuan',
-            'openAdd',
-            'openEdit',
-            'openAddUnit',
-            'openEditUnit'
-        ];
-
-        functionsToTrack.forEach(funcName => {
-            if (window[funcName]) {
-                const originalFunc = window[funcName];
-                window[funcName] = function(...args) {
-                    originalFunc.apply(this, args);
-                    // Catat bahwa ada modal/panel terbuka
-                    history.pushState({ modal: true }, null, '');
-                };
-            }
-        });
-    });
-
-    // 4. Event Listener saat tombol Back HP ditekan
-    window.addEventListener('popstate', function(event) {
-        // Cek apakah ada Panel/Modal yang terbuka (Overlay show)
-        const modalOverlay = document.getElementById('modalOverlay');
-        const panels = document.querySelectorAll('.pilih-panel.show, .form-modal.show');
-        
-        // KONDISI 1: Jika ada Panel/Modal terbuka (Kategori, Satuan, dll)
-        if (panels.length > 0 || (modalOverlay && modalOverlay.classList.contains('show'))) {
-            // Tutup semua panel tanpa mengubah history lagi (karena kita sedang 'mundur')
-            tutupSemuaPanel();
-            return;
-        }
-
-        // KONDISI 2: Jika sedang di Halaman Lain (Pengaturan, Tambah Barang, dll)
-        const homePage = document.getElementById('page-inventaris');
-        if (homePage.classList.contains('hidden')) {
-            // Paksa kembali ke halaman utama secara visual
-            // Kita panggil showPage manual tanpa pushState agar tidak loop
-            document.querySelectorAll('.page').forEach(p => p.classList.add('hidden'));
-            homePage.classList.remove('hidden');
-            
-            // Kirim sinyal ke parent UI
-            if (window.parent) window.parent.postMessage('show-parent-ui', '*');
-            return;
-        }
-
-        // KONDISI 3: Jika sudah di Home Page
-        // Biarkan browser melakukan defaultnya (keluar aplikasi atau minimize)
-    });
-
-    // 5. PENYESUAIAN PENTING:
-    // Agar tombol "Panah Kembali" di pojok kiri atas aplikasi sinkron dengan tombol HP,
-    // Kita ubah perilaku onclick-nya menjadi history.back()
-    
-    document.addEventListener('click', function(e) {
-        // Mencari tombol back-button yang diklik
-        const backBtn = e.target.closest('.back-button');
-        if (backBtn) {
-            // Hentikan fungsi onclick bawaan HTML
-            e.preventDefault();
-            e.stopPropagation();
-            
-            // Gunakan history back browser
-            history.back();
-        }
-    }, true); // Use capture phase to override inline onclicks
-
     </script>
 </body>
 </html>
