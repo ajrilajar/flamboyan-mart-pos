@@ -2593,7 +2593,101 @@
             loadKategoriV6();
             loadSatuanV6();
         });
+    // ==========================================
+    // SISTEM NAVIGASI TOMBOL KEMBALI (ANDROID/IOS)
+    // ==========================================
+    
+    document.addEventListener('DOMContentLoaded', () => {
+        // 1. Set state awal sebagai Home
+        if (!history.state) {
+            history.replaceState({ page: 'home' }, null, '');
+        }
 
+        // 2. Override fungsi showPage agar mencatat riwayat
+        const originalShowPage = window.showPage;
+        window.showPage = function(id) {
+            // Jalankan fungsi aslinya
+            originalShowPage(id);
+
+            // Jika pindah KE halaman selain home, catat di history
+            if (id !== 'page-inventaris') {
+                history.pushState({ page: id }, null, '');
+            }
+        };
+
+        // 3. Override fungsi buka panel agar mencatat riwayat
+        const functionsToTrack = [
+            'bukaPengaturan', 
+            'bukaTambahBarang',
+            'bukaPanelKategori',
+            'bukaPanelSatuanCompact',
+            'bukaPanelPilihSatuan',
+            'bukaFormKategori',
+            'bukaFormSatuan',
+            'openAdd',
+            'openEdit',
+            'openAddUnit',
+            'openEditUnit'
+        ];
+
+        functionsToTrack.forEach(funcName => {
+            if (window[funcName]) {
+                const originalFunc = window[funcName];
+                window[funcName] = function(...args) {
+                    originalFunc.apply(this, args);
+                    // Catat bahwa ada modal/panel terbuka
+                    history.pushState({ modal: true }, null, '');
+                };
+            }
+        });
+    });
+
+    // 4. Event Listener saat tombol Back HP ditekan
+    window.addEventListener('popstate', function(event) {
+        // Cek apakah ada Panel/Modal yang terbuka (Overlay show)
+        const modalOverlay = document.getElementById('modalOverlay');
+        const panels = document.querySelectorAll('.pilih-panel.show, .form-modal.show');
+        
+        // KONDISI 1: Jika ada Panel/Modal terbuka (Kategori, Satuan, dll)
+        if (panels.length > 0 || (modalOverlay && modalOverlay.classList.contains('show'))) {
+            // Tutup semua panel tanpa mengubah history lagi (karena kita sedang 'mundur')
+            tutupSemuaPanel();
+            return;
+        }
+
+        // KONDISI 2: Jika sedang di Halaman Lain (Pengaturan, Tambah Barang, dll)
+        const homePage = document.getElementById('page-inventaris');
+        if (homePage.classList.contains('hidden')) {
+            // Paksa kembali ke halaman utama secara visual
+            // Kita panggil showPage manual tanpa pushState agar tidak loop
+            document.querySelectorAll('.page').forEach(p => p.classList.add('hidden'));
+            homePage.classList.remove('hidden');
+            
+            // Kirim sinyal ke parent UI
+            if (window.parent) window.parent.postMessage('show-parent-ui', '*');
+            return;
+        }
+
+        // KONDISI 3: Jika sudah di Home Page
+        // Biarkan browser melakukan defaultnya (keluar aplikasi atau minimize)
+    });
+
+    // 5. PENYESUAIAN PENTING:
+    // Agar tombol "Panah Kembali" di pojok kiri atas aplikasi sinkron dengan tombol HP,
+    // Kita ubah perilaku onclick-nya menjadi history.back()
+    
+    document.addEventListener('click', function(e) {
+        // Mencari tombol back-button yang diklik
+        const backBtn = e.target.closest('.back-button');
+        if (backBtn) {
+            // Hentikan fungsi onclick bawaan HTML
+            e.preventDefault();
+            e.stopPropagation();
+            
+            // Gunakan history back browser
+            history.back();
+        }
+    }, true); // Use capture phase to override inline onclicks
     </script>
 </body>
 </html>
