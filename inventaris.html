@@ -160,7 +160,7 @@
         @media (max-width: 767px) {
             .fab {
                 right: 20px;
-                bottom: 20px; /* KONFIRMASI POSISI */
+                bottom: 120px; /* TURUN SEDIKIT LAGI */
             }
         }
         
@@ -961,11 +961,36 @@
         .header-settings:active {
             background: rgba(39, 174, 96, 0.1);
         }
+
+        /* ============ STYLE UNTUK BACK BUTTON HANDLING ============ */
+        #back-toast {
+            position: fixed;
+            bottom: 120px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0,0,0,0.85);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            z-index: 10000;
+            font-size: 14px;
+            font-weight: 500;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+            max-width: 80%;
+            text-align: center;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
     </style>
 </head>
 <body>
     <!-- OVERLAY MODAL -->
     <div class="modal-overlay" id="modalOverlay"></div>
+
+    <!-- TOAST UNTUK BACK BUTTON -->
+    <div id="back-toast"></div>
 
     <!-- PAGE INVENTARIS UTAMA -->
     <div id="page-inventaris" class="page">
@@ -1101,7 +1126,7 @@
     <!-- ============ PAGE TAMBAH BARANG V6.1 ============ -->
     <div id="page-tambah-barang-v6" class="page hidden">
         <div class="standard-header">
-            <div class="back-button" onclick="showPage('page-inventaris')">
+            <div class="back-button" onclick="tutupTambahBarang()">
                 <span class="material-icons-outlined">arrow_back</span>
             </div>
             <h2>Tambah Barang Baru</h2>
@@ -1354,25 +1379,185 @@
         const app = initializeApp(firebaseConfig); 
         const db = getDatabase(app);
 
+        // ============ SISTEM NAVIGASI BACK BUTTON ============
+        let navigationStack = [];
+        let backButtonPressed = 0;
+        let backButtonTimeout = null;
+
+        // Fungsi untuk push state baru ke history
+        function pushNavigationState(pageId, panelId = null) {
+            const state = {
+                page: pageId,
+                panel: panelId,
+                timestamp: Date.now()
+            };
+            navigationStack.push(state);
+            // Tambah ke browser history dengan hash
+            window.history.pushState(state, '', `#${pageId}`);
+            console.log('Navigation pushed:', state, 'Stack:', navigationStack.length);
+        }
+
+        // Fungsi untuk pop state dari history
+        function popNavigationState() {
+            if (navigationStack.length > 1) {
+                navigationStack.pop();
+                const prevState = navigationStack[navigationStack.length - 1];
+                window.history.replaceState(prevState, '', `#${prevState.page}`);
+            } else {
+                window.history.replaceState(null, '', '');
+            }
+        }
+
+        // Fungsi untuk navigate ke halaman
+        function navigateTo(pageId, panelId = null) {
+            console.log('Navigating to:', pageId, 'panel:', panelId);
+            
+            // Tutup semua panel terlebih dahulu
+            tutupSemuaPanel();
+            
+            // Sembunyikan semua halaman
+            document.querySelectorAll('.page').forEach(p => p.classList.add('hidden'));
+            
+            // Tampilkan halaman yang diminta
+            const page = document.getElementById(pageId);
+            if (page) {
+                page.classList.remove('hidden');
+                
+                // Tambah ke navigation stack
+                pushNavigationState(pageId, panelId);
+                
+                // Kirim pesan ke parent jika perlu
+                if (pageId === 'page-inventaris') {
+                    window.parent.postMessage('show-parent-ui', '*');
+                } else if (pageId === 'page-pengaturan' || pageId === 'page-tambah-barang-v6') {
+                    window.parent.postMessage('hide-parent-ui', '*');
+                }
+                
+                console.log('Navigation complete. Current stack:', navigationStack);
+            }
+        }
+
+        // Fungsi untuk handle back button
+        function handleBackButton() {
+            console.log('Back button pressed. Stack:', navigationStack.length);
+            
+            if (navigationStack.length > 1) {
+                // Ada halaman sebelumnya dalam stack
+                navigationStack.pop();
+                const prevState = navigationStack[navigationStack.length - 1];
+                
+                console.log('Going back to:', prevState);
+                
+                // Sembunyikan semua halaman
+                document.querySelectorAll('.page').forEach(p => p.classList.add('hidden'));
+                
+                // Tampilkan halaman sebelumnya
+                const prevPage = document.getElementById(prevState.page);
+                if (prevPage) {
+                    prevPage.classList.remove('hidden');
+                    
+                    // Handle panel jika ada
+                    if (prevState.panel) {
+                        const panel = document.getElementById(prevState.panel);
+                        if (panel) {
+                            panel.classList.add('show');
+                            document.getElementById('modalOverlay').classList.add('show');
+                        }
+                    }
+                    
+                    // Kirim pesan ke parent
+                    if (prevState.page === 'page-inventaris') {
+                        window.parent.postMessage('show-parent-ui', '*');
+                    } else {
+                        window.parent.postMessage('hide-parent-ui', '*');
+                    }
+                }
+                
+                // Update URL hash
+                window.location.hash = prevState.page;
+            } else {
+                // Stack kosong atau hanya satu halaman - tampilkan konfirmasi keluar
+                showBackToast();
+            }
+        }
+
+        // Fungsi untuk menampilkan toast konfirmasi back button
+        function showBackToast() {
+            backButtonPressed++;
+            
+            const toast = document.getElementById('back-toast');
+            if (backButtonPressed === 1) {
+                toast.textContent = 'Tekan sekali lagi untuk keluar';
+                toast.style.opacity = '1';
+                
+                // Reset setelah 2 detik
+                backButtonTimeout = setTimeout(() => {
+                    backButtonPressed = 0;
+                    toast.style.opacity = '0';
+                }, 2000);
+            } else if (backButtonPressed >= 2) {
+                // Keluar dari aplikasi
+                clearTimeout(backButtonTimeout);
+                toast.style.opacity = '0';
+                backButtonPressed = 0;
+                
+                // Kirim pesan ke parent untuk keluar
+                window.parent.postMessage('exit-app', '*');
+            }
+        }
+
+        // Event listener untuk popstate (tombol back browser)
+        window.addEventListener('popstate', function(event) {
+            console.log('Popstate event:', event.state);
+            if (event.state) {
+                handleBackButton();
+            } else {
+                // Jika tidak ada state, tetap di halaman saat ini
+                window.history.pushState(
+                    navigationStack[navigationStack.length - 1], 
+                    '', 
+                    `#${navigationStack[navigationStack.length - 1].page}`
+                );
+            }
+        });
+
+        // Event listener untuk pesan dari parent (untuk back button)
+        window.addEventListener('message', function(event) {
+            if (event.data === 'handle-back-button') {
+                handleBackButton();
+            }
+        });
+
+        // Event listener untuk tombol back fisik di Android (via Cordova/PhoneGap)
+        document.addEventListener('backbutton', function(e) {
+            e.preventDefault();
+            handleBackButton();
+        }, false);
+
+        // Event listener untuk beforeunload (mencegah keluar tak sengaja)
+        window.addEventListener('beforeunload', function(e) {
+            if (navigationStack.length > 1) {
+                e.preventDefault();
+                e.returnValue = 'Anda memiliki perubahan yang belum disimpan. Yakin ingin keluar?';
+                return e.returnValue;
+            }
+        });
+
         // ============ FUNGSI NAVIGASI BARU UNTUK HEADER ============
         window.bukaPengaturan = function() {
-            showPage('page-pengaturan');
-            window.parent.postMessage('hide-parent-ui', '*');
+            navigateTo('page-pengaturan');
         };
         
         window.bukaTambahBarang = function() {
-            showPage('page-tambah-barang-v6');
-            window.parent.postMessage('hide-parent-ui', '*');
+            navigateTo('page-tambah-barang-v6');
         };
         
         window.tutupPengaturan = function() {
-            showPage('page-inventaris');
-            window.parent.postMessage('show-parent-ui', '*');
+            navigateTo('page-inventaris');
         };
         
         window.tutupTambahBarang = function() {
-            showPage('page-inventaris');
-            window.parent.postMessage('show-parent-ui', '*');
+            navigateTo('page-inventaris');
         };
         
         let actT = null; 
@@ -1381,23 +1566,7 @@
         
         // ============ FUNGSI NAVIGASI UTAMA ============
         window.showPage = (id) => { 
-            document.querySelectorAll('.page').forEach(p => p.classList.add('hidden')); 
-            document.getElementById(id).classList.remove('hidden');
-            
-            // TUTUP SEMUA PANEL SAAT PINDAH HALAMAN
-            tutupSemuaPanel();
-            
-            // Kirim pesan ke parent untuk sembunyikan/tampilkan nav
-            if (id === 'page-pengaturan' || id === 'page-tambah-barang-v6' || 
-                id === 'page-kategori' || id === 'page-satuan' || 
-                id === 'page-marketplace' || id === 'page-suplayer' ||
-                id === 'page-form-crud' || id === 'page-form-unit') {
-                // Jika masuk ke halaman pengaturan atau tambah barang, sembunyikan nav parent
-                window.parent.postMessage('hide-parent-ui', '*');
-            } else if (id === 'page-inventaris') {
-                // Jika kembali ke halaman utama inventaris, tampilkan nav parent
-                window.parent.postMessage('show-parent-ui', '*');
-            }
+            navigateTo(id);
         };
         
         window.updateOnlineStatus = (c) => { 
@@ -1619,11 +1788,14 @@
             document.getElementById('panelKategori').classList.add('show');
             document.getElementById('modalOverlay').classList.add('show');
             loadKategoriV6();
+            
+            // Tambah ke navigation stack dengan panel info
+            pushNavigationState('page-tambah-barang-v6', 'panelKategori');
         };
 
         window.tutupPanelKategori = function() {
             // Kembali ke halaman tambah barang baru
-            showPage('page-tambah-barang-v6');
+            navigateTo('page-tambah-barang-v6');
         };
 
         window.filterKategori = function() {
@@ -1796,11 +1968,14 @@
             
             document.getElementById('panelSatuanCompact').classList.add('show');
             document.getElementById('modalOverlay').classList.add('show');
+            
+            // Tambah ke navigation stack dengan panel info
+            pushNavigationState('page-tambah-barang-v6', 'panelSatuanCompact');
         };
 
         window.tutupPanelSatuanCompact = function() {
             // Kembali ke halaman tambah barang baru
-            showPage('page-tambah-barang-v6');
+            navigateTo('page-tambah-barang-v6');
         };
 
         // Fungsi render UI compact V6.1
@@ -1932,6 +2107,9 @@
             
             // Load data satuan
             loadSatuanV6();
+            
+            // Update navigation stack untuk panel satuan
+            pushNavigationState('page-tambah-barang-v6', 'panelSatuan');
         };
 
         window.bukaPanelEditCompact = function(index) {
@@ -1945,6 +2123,9 @@
             document.getElementById('modalOverlay').classList.add('show');
             
             loadSatuanV6();
+            
+            // Update navigation stack untuk panel edit
+            pushNavigationState('page-tambah-barang-v6', 'panelSatuan');
         };
 
         window.tutupPanelSatuan = function() {
@@ -1954,8 +2135,13 @@
             if (modePilih === 'utama' || modePilih === 'tambahan' || modePilih === 'edit') {
                 document.getElementById('panelSatuanCompact').classList.add('show');
                 document.getElementById('modalOverlay').classList.add('show');
+                
+                // Update navigation stack kembali ke panel compact
+                pushNavigationState('page-tambah-barang-v6', 'panelSatuanCompact');
             } else {
                 document.getElementById('modalOverlay').classList.remove('show');
+                // Kembali ke halaman sebelumnya dalam stack
+                handleBackButton();
             }
             
             modePilih = '';
@@ -2136,6 +2322,9 @@
         // ============ FUNGSI FORM KATEGORI BARU V6.1 ============
         window.bukaFormKategori = function() {
             document.getElementById('formKategori').classList.add('show');
+            
+            // Tambah ke navigation stack
+            pushNavigationState('page-tambah-barang-v6', 'formKategori');
         };
 
         window.tutupFormKategori = function() {
@@ -2144,6 +2333,9 @@
             document.getElementById('namaKategoriBaru').value = '';
             document.getElementById('btnSimpanKategori').disabled = true;
             document.getElementById('panelKategori').classList.add('show');
+            
+            // Update navigation stack kembali ke panel kategori
+            pushNavigationState('page-tambah-barang-v6', 'panelKategori');
         };
 
         // Validasi input kategori V6.1
@@ -2180,6 +2372,9 @@
         // ============ FUNGSI FORM SATUAN BARU V6.1 ============
         window.bukaFormSatuan = function() {
             document.getElementById('formSatuan').classList.add('show');
+            
+            // Tambah ke navigation stack
+            pushNavigationState('page-tambah-barang-v6', 'formSatuan');
         };
 
         window.tutupFormSatuan = function() {
@@ -2189,6 +2384,9 @@
             document.getElementById('kodeSatuanBaru').value = '';
             document.getElementById('btnSimpanSatuan').disabled = true;
             document.getElementById('panelSatuan').classList.add('show');
+            
+            // Update navigation stack kembali ke panel satuan
+            pushNavigationState('page-tambah-barang-v6', 'panelSatuan');
         };
 
         // Validasi input satuan V6.1
@@ -2303,7 +2501,7 @@
                 .then(() => {
                     alert("Barang berhasil ditambahkan!");
                     resetFormV6();
-                    showPage('page-inventaris');
+                    navigateTo('page-inventaris');
                 })
                 .catch(error => {
                     alert("Gagal menambahkan barang: " + error.message);
@@ -2366,7 +2564,7 @@
         // ============ INISIALISASI GABUNGAN ============
         document.addEventListener('DOMContentLoaded', function() {
             // Inisialisasi sistem inventaris utama
-            showPage('page-inventaris');
+            navigateTo('page-inventaris');
             
             // Inisialisasi fungsi dari sistem lama
             document.getElementById('unitName').oninput = () => { 
