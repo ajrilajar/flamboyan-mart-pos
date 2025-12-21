@@ -663,16 +663,16 @@
             padding: 12px;
             border: 1px solid #ddd;
             border-radius: 8px;
-            box-sizing: border-box;
-            outline: none;
-            font-size: 14px;
-            margin-top: 5px;
+            box-sizing: border-box; 
+            outline: none; 
+            font-size: 14px; 
+            margin-top: 5px; 
         }
         
         .form-label {
             font-size: 13px;
             font-weight: 600;
-            color: var(--green);
+            color: var(--green); 
             display: block;
             margin-bottom: 5px;
         }
@@ -931,6 +931,236 @@
         .header-settings:active {
             background: rgba(39, 174, 96, 0.1);
         }
+        
+        /* Utility untuk tab content */
+        .tab-content-section {
+            display: none;
+            animation: fadeIn 0.2s ease-in-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+/* --- CSS FINAL: PAKSA LAYOUT RAPI --- */
+
+/* 1. Baris Pembungkus: Paksa Rata Atas */
+.flex-row {
+    display: flex !important;
+    width: 100% !important;
+    /* Menggunakan gap 10px */
+    gap: 10px !important;
+    align-items: flex-start !important;
+    margin-bottom: 15px !important;
+    box-sizing: border-box !important;
+}
+
+/* 80:20 (Harga Beli & Satuan) */
+.w-80 { 
+    flex: 0 0 calc(80% - 5px) !important; /* Kurangi setengah dari gap */
+    max-width: calc(80% - 5px) !important;
+}
+.w-20 { 
+    flex: 0 0 calc(20% - 5px) !important; /* Kurangi setengah dari gap */
+    max-width: calc(20% - 5px) !important;
+}
+
+/* 30:70 (Min Qty & Harga Grosir) */
+.w-30 { 
+    flex: 0 0 calc(30% - 3px) !important; 
+    max-width: calc(30% - 3px) !important;
+}
+.w-70 { 
+    flex: 0 0 calc(70% - 7px) !important; 
+    max-width: calc(70% - 7px) !important;
+}
+
+/* Pastikan input group tidak punya margin sisa yang mendorong ke kanan */
+.flex-row .input-group {
+    margin: 0 !important;
+    width: 100% !important;
+}
+
+/* Sembunyikan simbol panah bawah di dropdown jika masih ada di CSS */
+.select-trigger .material-icons-outlined {
+    display: none !important;
+}
+
+/* 3. Container Dropdown: Paksa Tinggi & Reset Margin */
+.custom-select-container {
+    position: relative !important;
+    height: 52px !important; /* Tinggi Wajib Sama dengan Input */
+    margin: 0 !important;
+    padding: 0 !important;
+    box-sizing: border-box !important;
+}
+
+/* 4. Input Kiri: Paksa Tinggi & Reset Margin */
+.flex-row .input-group {
+    margin-bottom: 0 !important; /* Hapus margin bawah agar sejajar */
+    height: 52px !important;
+}
+
+/* 5. Tombol Dropdown: Styling */
+.select-trigger {
+    width: 100% !important;
+    height: 100% !important; /* Ikut tinggi container (52px) */
+    background-color: #f8f9fa;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 8px !important; /* Padding kecil agar muat */
+    cursor: pointer;
+    box-sizing: border-box !important;
+}
+
+/* 6. Teks di dalam Tombol */
+.select-trigger span {
+    font-size: 13px !important;
+    font-weight: 700;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* 7. List Dropdown: Agar tidak melebar */
+.select-options {
+    position: absolute;
+    top: 105%;
+    /* Ganti 'left: 0' menjadi 'right: 0' agar patokannya sisi kanan kotak 20% */
+    right: 0 !important; 
+    left: auto !important;
+    
+    /* Gunakan min-width agar jika nama sangat panjang, dia membentang ke KIRI */
+    min-width: 150px !important; 
+    width: auto !important; /* Biarkan lebar mengikuti konten */
+    max-width: 250px !important; /* Batas maksimal agar tidak menutupi seluruh layar */
+    
+    background: white;
+    border: 1px solid #eee;
+    border-radius: 8px;
+    box-shadow: -5px 5px 15px rgba(0,0,0,0.1); /* Shadow bergeser ke kiri */
+    z-index: 1000;
+    display: none;
+    overflow: hidden;
+}
+.select-options.open { display: block; }
+
+.select-option {
+    padding: 12px;
+    border-bottom: 1px solid #f0f0f0;
+    cursor: pointer;
+    font-size: 14px;
+}
+.select-option:hover { background: #f9f9f9; }
+
+/* --- CSS MODAL KONFIRMASI (KHUSUS TAMBAH BARANG) --- */
+.modal-confirm-overlay-tb {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    z-index: 2000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.modal-confirm-card-tb {
+    background: white;
+    width: 100%;
+    max-width: 320px;
+    border-radius: 20px;
+    padding: 25px 20px;
+    text-align: center;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    animation: popUpTb 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes popUpTb {
+    from { transform: scale(0.8); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+}
+
+.icon-circle-tb {
+    width: 50px; height: 50px;
+    background: #e8f5e9;
+    color: var(--green);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 15px auto;
+}
+
+.modal-confirm-title-tb {
+    font-size: 18px; font-weight: 700; color: #333;
+    margin-bottom: 10px;
+}
+
+.modal-confirm-text-tb {
+    font-size: 14px; color: #666; line-height: 1.5;
+    margin-bottom: 25px;
+}
+
+.btn-continue-tb {
+    background: var(--green);
+    color: white;
+    border: none;
+    width: 100%;
+    padding: 12px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    margin-bottom: 15px;
+}
+
+.btn-discard-tb {
+    background: transparent;
+    border: none;
+    color: #333;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    padding: 5px;
+}
+
+/* Gaya untuk teks satuan di dalam field */
+.unit-indicator {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--green);
+    pointer-events: none; /* Agar tidak mengganggu klik input */
+    opacity: 0; /* Sembunyi secara default */
+    transition: opacity 0.2s;
+    background: white;
+    padding-left: 5px;
+}
+
+/* Munculkan saat input diisi atau difokuskan */
+.input-box-v6:focus ~ .unit-indicator,
+.input-box-v6:not(:placeholder-shown) ~ .unit-indicator {
+    opacity: 1;
+}
+
+/* --- HAPUS TOMBOL PANAH TAMBAH/KURANG PADA INPUT NUMBER --- */
+
+/* Untuk Chrome, Safari, Edge, dan Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+/* Untuk Firefox */
+input[type=number] {
+    -moz-appearance: textfield;
+}
     </style>
 </head>
 <body>
@@ -1080,49 +1310,82 @@
                 <span class="material-icons-outlined chevron">chevron_right</span>
             </div>
 
-            <div class="tabs">
-                <div class="tab active">Detail Stok</div>
-                <div class="tab">Detail Tambahan</div>
+            <div class="tabs" id="dynamic-tabs">
+                </div>
+
+<div id="section-offline" class="tab-content-section">
+    
+    <div class="flex-row" style="position: relative; z-index: 10;">
+        
+        <div class="input-group w-80">
+            <input type="text" class="input-box-v6" id="harga_beli" placeholder=" ">
+            <label class="floating-label" for="harga_beli">Harga Beli</label>
+        </div>
+
+        <div class="custom-select-container w-20" id="unitDropdownContainer">
+            <div class="select-trigger" onclick="toggleUnitDropdown()">
+                <span id="selectedUnitText" style="font-weight:700; color:var(--green)"></span>
+                <span class="material-icons-outlined" style="font-size:16px;">expand_more</span>
+            </div>
+            
+            <div class="select-options" id="dropdownUnitList"></div>
+            
+            <input type="hidden" id="satuan_beli_terpilih"> 
+        </div>
+
+    </div>
+
+    <div class="input-group">
+        <input type="number" class="input-box-v6" id="harga_jual" placeholder=" ">
+        <label class="floating-label" for="harga_jual">Harga Warung</label>
+    </div>
+
+    <div class="input-group">
+        <input type="number" class="input-box-v6" id="harga_eceran" placeholder=" ">
+        <label class="floating-label" for="harga_eceran">Harga Eceran</label>
+    </div>
+
+    <div id="container-grosir-v6"></div>
+
+    <div class="btn-add-unit green" id="btn-tambah-grosir" onclick="tambahTierGrosirV6()" style="margin-top: 10px;">
+        <span class="material-icons-outlined">add_circle</span>
+        <span>Tambah Tier Grosir</span>
+    </div>
+
+</div>
+
+            <div id="section-online" class="tab-content-section">
+                <div class="input-group">
+                    <input type="text" class="input-box-v6" id="harga_marketplace" placeholder=" ">
+                    <label class="floating-label" for="harga_marketplace">Harga Marketplace</label>
+                </div>
+                <div class="input-group">
+                    <input type="text" class="input-box-v6" id="stok_marketplace" placeholder=" ">
+                    <label class="floating-label" for="stok_marketplace">Stok Marketplace</label>
+                </div>
             </div>
 
-            <div class="grid-2">
-                <div class="input-group">
-                    <input type="text" class="input-box-v6" id="stok_awal" placeholder=" ">
-                    <label class="floating-label" for="stok_awal">Stok Awal</label>
+            <div id="section-tambahan" class="tab-content-section">
+                <div class="grid-2">
+                    <div class="input-group">
+                        <input type="text" class="input-box-v6" id="stok_awal" placeholder=" ">
+                        <label class="floating-label" for="stok_awal">Stok Awal</label>
+                    </div>
+                    <div class="input-group">
+                        <input type="text" class="input-box-v6" id="stok_min" placeholder=" ">
+                        <label class="floating-label" for="stok_min">Min. Stock</label>
+                    </div>
                 </div>
-                <div class="input-group">
-                    <input type="text" class="input-box-v6" id="stok_min" placeholder=" ">
-                    <label class="floating-label" for="stok_min">Jumlah Minimum Stok</label>
+                <div class="switch-row">
+                    <div class="switch-label">
+                        <span class="material-icons-outlined" style="color:var(--green)">notifications_active</span>
+                        <span>Peringatan Stok Rendah</span>
+                    </div>
+                    <label class="switch">
+                        <input type="checkbox" id="peringatan_stok">
+                        <span class="slider"></span>
+                    </label>
                 </div>
-                <div class="input-group">
-                    <input type="text" class="input-box-v6" id="harga_jual" placeholder=" ">
-                    <label class="floating-label" for="harga_jual">Harga Jual</label>
-                </div>
-                <div class="input-group">
-                    <input type="text" class="input-box-v6" id="harga_beli" placeholder=" ">
-                    <label class="floating-label" for="harga_beli">Harga Beli</label>
-                </div>
-            </div>
-
-            <div class="input-group">
-                <input type="text" class="input-box-v6" id="harga_eceran" placeholder=" ">
-                <label class="floating-label" for="harga_eceran">Harga Eceran</label>
-            </div>
-
-            <div class="input-group">
-                <input type="text" class="input-box-v6" id="harga_grosir" placeholder=" ">
-                <label class="floating-label" for="harga_grosir">Harga Grosir</label>
-            </div>
-
-            <div class="switch-row">
-                <div class="switch-label">
-                    <span class="material-icons-outlined" style="color:var(--green)">notifications_active</span>
-                    <span>Peringatan Stok Rendah</span>
-                </div>
-                <label class="switch">
-                    <input type="checkbox" id="peringatan_stok">
-                    <span class="slider"></span>
-                </label>
             </div>
         </div>
 
@@ -1203,7 +1466,7 @@
             <div class="back-button" onclick="goBack()">
                 <span class="material-icons-outlined">arrow_back</span>
             </div>
-            <h2 id="panelSatuanTitle">Pilih Satuan</h2>
+            <h2>Pilih Satuan</h2>
         </div>
         <div class="search-area">
             <div class="search-wrap">
@@ -1273,775 +1536,527 @@
             </button>
         </div>
     </div>
-
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
-        import { getDatabase, ref, onValue, push, update, remove } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js";
+<div id="modalDiscardTambahBarang" class="modal-confirm-overlay-tb">
+    <div class="modal-confirm-card-tb">
+        <div class="icon-circle-tb">
+            <span class="material-icons-outlined" style="font-size: 28px;">question_mark</span>
+        </div>
+        <div class="modal-confirm-title-tb">Buang Perubahan?</div>
+        <div class="modal-confirm-text-tb">
+            Anda memiliki perubahan data barang yang belum disimpan. Apakah Anda yakin ingin menghapusnya?
+        </div>
         
-        const firebaseConfig = { 
-            apiKey: "AIzaSyDL9F1DOnjrCCtDZ13aXL-yX4oAyQfUu9Y", 
-            databaseURL: "https://gen-lang-client-0116140691-default-rtdb.asia-southeast1.firebasedatabase.app", 
-            projectId: "gen-lang-client-0116140691" 
-        };
+        <button class="btn-continue-tb" onclick="tutupModalDiscard()">Lanjutkan Mengedit</button>
+        <button class="btn-discard-tb" onclick="konfirmasiBuang()">Kembali</button>
+    </div>
+</div>
+
+<script type="module">
+    // Import database
+    import { db, ref, onValue, push, update, remove } from "./firebase-config.js";
+    import './pengaturan-inventaris.js';
+    import './tambah-barang-inventaris.js';
+
+    // ============ 1. NAVIGASI & UI UTAMA ============
+    let pageHistory = ['page-inventaris'];
+    let panelStack = [];
+    
+    // Override goBack untuk menangani Panel, Modal, dan Navigasi Halaman
+    window.goBack = function() {
+        // A. Cek Panel Popup (Prioritas Utama: Kategori/Satuan)
+        // Jika ada panel terbuka, tutup panelnya saja. Jangan cek form kotor dulu.
+        if (panelStack.length > 0) {
+            const panelId = panelStack.pop();
+            const panelEl = document.getElementById(panelId);
+            if (panelEl) panelEl.classList.remove('show');
+            
+            // Jika tidak ada panel lain yang buka, hilangkan layar gelap
+            if (panelStack.length === 0) {
+                const overlay = document.getElementById('modalOverlay');
+                if(overlay) overlay.classList.remove('show');
+            }
+            return;
+        }
+
+        // B. Cek Apakah Form Tambah Barang "Kotor" (Ada data belum disimpan)
+        const pageTambah = document.getElementById('page-tambah-barang-v6');
+        const isTambahPageActive = pageTambah && !pageTambah.classList.contains('hidden');
         
-        const app = initializeApp(firebaseConfig); 
-        const db = getDatabase(app);
+        if (isTambahPageActive && isFormDirty) {
+            // Tampilkan Modal Konfirmasi
+            const modal = document.getElementById('modalDiscardTambahBarang');
+            if(modal) modal.style.display = 'flex';
+            return; // STOP! Jangan navigasi mundur.
+        }
 
-        // ============ SISTEM NAVIGASI SEDERHANA ============
-        let pageHistory = ['page-inventaris'];
-        let panelStack = [];
-
-        function goToPage(pageId) {
-            console.log('Going to:', pageId);
+        // C. Navigasi Mundur Normal (Halaman)
+        if (pageHistory.length > 1) {
+            pageHistory.pop(); 
+            const prevPage = pageHistory[pageHistory.length - 1]; 
             
-            // Tutup semua panel
-            closeAllPanels();
-            
-            // Sembunyikan semua halaman
             document.querySelectorAll('.page').forEach(p => p.classList.add('hidden'));
+            const prevPageEl = document.getElementById(prevPage);
+            if(prevPageEl) prevPageEl.classList.remove('hidden');
             
-            // Tampilkan halaman yang diminta
-            const page = document.getElementById(pageId);
-            if (page) {
-                page.classList.remove('hidden');
-                pageHistory.push(pageId);
-                
-                if (pageId === 'page-inventaris') {
-                    window.parent.postMessage('show-parent-ui', '*');
-                } else {
-                    window.parent.postMessage('hide-parent-ui', '*');
-                }
-            }
+            // Komunikasi ke Parent (index.html)
+            if (prevPage === 'page-inventaris') window.parent.postMessage('show-parent-ui', '*');
+            else window.parent.postMessage('hide-parent-ui', '*');
+        } else {
+            // Jika history habis, minta parent tutup aplikasi/iframe
+            window.parent.postMessage('go-back', '*');
         }
+    };
 
-        function goBack() {
-            console.log('Going back. Pages:', pageHistory.length, 'Panels:', panelStack.length);
+    window.goToPage = function(pageId) {
+        closeAllPanels();
+        document.querySelectorAll('.page').forEach(p => p.classList.add('hidden'));
+        
+        const page = document.getElementById(pageId);
+        if (page) {
+            page.classList.remove('hidden');
+            pageHistory.push(pageId);
             
-            // 1. Jika ada panel, tutup panel teratas
-            if (panelStack.length > 0) {
-                const panelId = panelStack.pop();
-                document.getElementById(panelId).classList.remove('show');
-                
-                // Jika tidak ada panel lagi, sembunyikan overlay
-                if (panelStack.length === 0) {
-                    document.getElementById('modalOverlay').classList.remove('show');
-                }
-                return;
-            }
-            
-            // 2. Jika tidak di halaman utama, kembali ke halaman sebelumnya
-            if (pageHistory.length > 1) {
-                pageHistory.pop();
-                const prevPage = pageHistory[pageHistory.length - 1];
-                
-                document.querySelectorAll('.page').forEach(p => p.classList.add('hidden'));
-                document.getElementById(prevPage).classList.remove('hidden');
-                
-                if (prevPage === 'page-inventaris') {
-                    window.parent.postMessage('show-parent-ui', '*');
-                } else {
-                    window.parent.postMessage('hide-parent-ui', '*');
-                }
-            } 
-            // 3. Jika di halaman utama, minta parent kembali
-            else {
-                window.parent.postMessage('go-back', '*');
-            }
+            if (pageId === 'page-inventaris') window.parent.postMessage('show-parent-ui', '*');
+            else window.parent.postMessage('hide-parent-ui', '*');
         }
+    };
 
-        function openPanel(panelId) {
-            panelStack.push(panelId);
-            document.getElementById(panelId).classList.add('show');
-            document.getElementById('modalOverlay').classList.add('show');
-        }
+    window.openPanel = function(panelId) {
+        panelStack.push(panelId);
+        document.getElementById(panelId).classList.add('show');
+        document.getElementById('modalOverlay').classList.add('show');
+    };
 
-        function closeAllPanels() {
-            panelStack.forEach(panelId => {
-                document.getElementById(panelId).classList.remove('show');
-            });
-            panelStack = [];
-            document.getElementById('modalOverlay').classList.remove('show');
-        }
+    function closeAllPanels() {
+        panelStack.forEach(panelId => {
+            const el = document.getElementById(panelId);
+            if(el) el.classList.remove('show');
+        });
+        panelStack = [];
+        const overlay = document.getElementById('modalOverlay');
+        if(overlay) overlay.classList.remove('show');
+    }
 
-        // ============ SETUP TOMBOL ============
-        document.addEventListener('DOMContentLoaded', function() {
-            // Setup tombol back
-            document.querySelectorAll('.back-button').forEach(btn => {
-                btn.onclick = function(e) {
-                    e.preventDefault();
-                    goBack();
-                };
-            });
-            
-            // Setup overlay
-            document.getElementById('modalOverlay').onclick = function() {
-                if (panelStack.length > 0) {
-                    goBack();
+    // ============ 2. LOGIKA RESET & DIRTY CHECK (ANTI-CRASH) ============
+    let isFormDirty = false;
+
+    // Fungsi Hook Aman: Mendeteksi perubahan oleh script (Kategori/Satuan)
+    function hookProgrammaticChange(inputId) {
+        const el = document.getElementById(inputId);
+        // Cek ketat: jika elemen tidak ada atau sudah di-hook, berhenti.
+        if (!el || el.dataset.hooked === "true") return; 
+
+        const descriptor = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value');
+
+        Object.defineProperty(el, 'value', {
+            get: function() { return descriptor.get.call(this); },
+            set: function(val) {
+                const oldVal = descriptor.get.call(this);
+                descriptor.set.call(this, val); // Jalankan set asli
+                
+                // Hanya tandai kotor jika nilainya benar-benar berubah
+                // DAN bukan saat proses reset (kita handle flag reset manual nanti)
+                if (oldVal !== val) {
+                    isFormDirty = true;
                 }
-            };
-            
-            // Inisialisasi
-            goToPage('page-inventaris');
-            initFirebase();
+            },
+            configurable: true
+        });
+        
+        el.dataset.hooked = "true";
+    }
+
+    function initDirtyCheck() {
+        const formContainer = document.getElementById('page-tambah-barang-v6');
+        if(!formContainer) return;
+
+        // 1. Event Delegation (Lebih Ringan & Stabil)
+        // Menangkap ketikan di input apa saja di dalam form
+        formContainer.addEventListener('input', (e) => {
+            if(e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') isFormDirty = true;
+        });
+        formContainer.addEventListener('change', (e) => {
+            if(e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT') isFormDirty = true;
         });
 
-        // ============ FUNGSI NAVIGASI ============
-        window.showPage = goToPage;
-        window.bukaPengaturan = function() { goToPage('page-pengaturan'); };
-        window.bukaTambahBarang = function() { goToPage('page-tambah-barang-v6'); };
-        window.tutupPengaturan = function() { goToPage('page-inventaris'); };
-        window.tutupTambahBarang = function() { goToPage('page-inventaris'); };
+        // 2. Pasang Hook Khusus untuk Input ReadOnly (Kategori & Satuan)
+        hookProgrammaticChange('kategori');
+        hookProgrammaticChange('satuan');
+    }
 
-        window.bukaPanelKategori = function() { openPanel('panelKategori'); loadKategoriV6(); };
-        window.tutupPanelKategori = function() { goBack(); };
-        window.bukaPanelSatuanCompact = function() { 
-            openPanel('panelSatuanCompact'); 
-            // Load data
-            const satuanValue = document.getElementById('satuan').value.trim();
-            appState = { satuanUtama: null, satuanTambahan: [] };
+    // Fungsi RESET FORM (VERSI AMAN / SAFE MODE)
+    window.resetFormV6 = function() {
+        try {
+            // A. Reset Input Text & Number
+            document.querySelectorAll('#page-tambah-barang-v6 input').forEach(input => {
+                if(input.type !== 'checkbox' && input.type !== 'radio') input.value = '';
+            });
+
+            // B. Reset Elemen Spesifik (Dengan Pengecekan Eksistensi)
+            const switchStok = document.getElementById('peringatan_stok');
+            if(switchStok) switchStok.checked = false;
             
-            if (satuanValue) {
-                const match = satuanValue.match(/^(.*?)\s*(?:\((.*?)\))?$/);
-                if (match) {
-                    const namaUtama = match[1].trim();
-                    const satuanInfo = satuanData.find(s => s.nama === namaUtama);
-                    if (satuanInfo) {
-                        appState.satuanUtama = { nama: satuanInfo.nama, kode: satuanInfo.kode };
-                    }
-                    
-                    if (match[2]) {
-                        const satuanTambahanArray = match[2].split(',').map(s => s.trim()).filter(s => s);
-                        satuanTambahanArray.forEach(nama => {
-                            const satuanInfo = satuanData.find(s => s.nama === nama);
-                            if (satuanInfo) {
-                                appState.satuanTambahan.push({ nama: satuanInfo.nama, kode: satuanInfo.kode, rasio: '' });
-                            }
-                        });
-                    }
-                }
+            const displaySatuan = document.getElementById('selectedUnitText');
+            if(displaySatuan) displaySatuan.innerText = "";
+            
+            const hiddenSatuan = document.getElementById('satuan_beli_terpilih');
+            if(hiddenSatuan) hiddenSatuan.value = "";
+
+            const btnSimpan = document.getElementById('btnSimpan');
+            if(btnSimpan) btnSimpan.disabled = true;
+
+            // C. Reset AppState Global (Logic Satuan)
+            if(typeof window.appState !== 'undefined') {
+                window.appState = { satuanUtama: null, satuanTambahan: [] };
             }
-            renderUICompact();
-        };
-        window.tutupPanelSatuanCompact = function() { goBack(); };
-        window.bukaPanelPilihSatuan = function(mode) { 
-            modePilih = mode; 
-            openPanel('panelSatuan'); 
-            loadSatuanV6(); 
-        };
-        window.tutupPanelSatuan = function() { goBack(); modePilih = ''; indexEdit = -1; };
-        window.bukaFormKategori = function() { openPanel('formKategori'); };
-        window.tutupFormKategori = function() { goBack(); };
-        window.bukaFormSatuan = function() { openPanel('formSatuan'); };
-        window.tutupFormSatuan = function() { goBack(); };
-
-        // ============ VARIABEL V6.1 ============
-        let modePilih = '';
-        let indexEdit = -1;
-        let kategoriData = [];
-        let satuanData = [];
-        let appState = { satuanUtama: null, satuanTambahan: [] };
-
-        // ============ FIREBASE FUNGSI ============
-        let actT = null; 
-        let actI = null; 
-        let cache = { products: {}, cat: {}, mkt: {}, sup: {} };
-        
-        function initFirebase() {
-            onValue(ref(db, 'products'), (snap) => {
-                cache.products = snap.val() || {}; 
-                const inv = document.getElementById('inventory-list'); 
-                inv.innerHTML = "";
-                
-                for (let id in cache.products) {
-                    const p = cache.products[id];
-                    inv.innerHTML += `
-                        <div class="card">
-                            <div class="initial">${p.nama.substring(0,2).toUpperCase()}</div>
-                            <div class="info">
-                                <div class="name"><b>${p.nama}</b></div>
-                                <div class="price-row">
-                                    <div>Jual<strong>Rp ${Number(p.hargaJual).toLocaleString('id-ID')}</strong></div>
-                                    <div>Beli<strong>Rp ${Number(p.hargaBeli).toLocaleString('id-ID')}</strong></div>
-                                </div>
-                            </div>
-                            <div class="status">
-                                <span class="badge">${p.kategori}</span>
-                                <div style="font-weight:800; margin-top:5px;">${p.stok} ${p.satuan || 'PCS'}</div>
-                            </div>
-                        </div>`;
-                }
-                
-                refreshList(cache.cat, 'category-list-display', 'kategori', 'cat'); 
-                refreshList(cache.mkt, 'market-list-display', 'marketplace', 'mkt'); 
-                refreshList(cache.sup, 'supplier-list-display', 'suplayer', 'sup');
-            });
-            
-            onValue(ref(db, 'categories'), (snap) => { 
-                cache.cat = snap.val() || {}; 
-                refreshList(cache.cat, 'category-list-display', 'kategori', 'cat'); 
-            });
-            
-            onValue(ref(db, 'marketplaces'), (snap) => { 
-                cache.mkt = snap.val() || {}; 
-                refreshList(cache.mkt, 'market-list-display', 'marketplace', 'mkt'); 
-            });
-            
-            onValue(ref(db, 'suppliers'), (snap) => { 
-                cache.sup = snap.val() || {}; 
-                refreshList(cache.sup, 'supplier-list-display', 'suplayer', 'sup'); 
-            });
-            
-            onValue(ref(db, 'units'), (snap) => {
-                const el = document.getElementById('unit-list-display'); 
-                el.innerHTML = ""; 
-                const data = snap.val() || {};
-                
-                for (let id in data) {
-                    const item = document.createElement('div'); 
-                    item.className = 'common-list-item';
-                    item.innerHTML = `
-                        <div class="unit-info">
-                            <b>${data[id].nama}</b>
-                            <div style="color:var(--gray);font-size:12px">${data[id].kode}</div>
-                        </div>
-                        <div class="unit-actions">
-                            <span class="material-icons-outlined edit-u" style="cursor:pointer; margin-right:15px">edit</span>
-                            <span class="material-icons-outlined del-u" style="color:var(--red); cursor:pointer">delete</span>
-                        </div>`;
-                    
-                    item.querySelector('.edit-u').onclick = () => openEditUnit(id, data[id].nama, data[id].kode);
-                    item.querySelector('.del-u').onclick = () => { 
-                        if(confirm('Hapus Satuan?')) remove(ref(db, `units/${id}`)); 
-                    }; 
-                    
-                    el.appendChild(item);
-                }
-            });
-            
-            // Load data V6.1
-            loadKategoriV6();
-            loadSatuanV6();
+        } catch (e) {
+            console.warn("Reset Form Warning:", e);
+        } finally {
+            // D. PASTIKAN Status Dirty Reset ke False (Apapun yang terjadi)
+            isFormDirty = false;
         }
-        
-        window.updateOnlineStatus = (c) => { 
-            document.getElementById('status-icon').style.color = c.checked ? "var(--green)" : "var(--gray)"; 
-        };
-        
-        window.adjustDecimal = (v) => { 
-            const i = document.getElementById('decimal-count'); 
-            let r = parseInt(i.value) + v; 
-            if (r >= 0 && r <= 4) i.value = r; 
-        };
-        
-        const properCase = (s) => s.toLowerCase().replace(/\b\w/g, c => c.toUpperCase());
-        
-        const refreshList = (data, container, key, type) => {
-            const el = document.getElementById(container); 
-            el.innerHTML = "";
-            
-            for (let id in data) {
-                let count = 0; 
-                for(let pId in cache.products) {
-                    if(cache.products[pId][key] === data[id].nama) count++;
-                }
-                
-                const item = document.createElement('div'); 
-                item.className = 'common-list-item';
-                item.innerHTML = `
-                    <div class="unit-info">
-                        <b>${data[id].nama}</b>
-                        <div style="color:var(--gray);font-size:12px">${count} Barang</div>
-                    </div>
-                    <div class="unit-actions">
-                        <span class="material-icons-outlined edit-ic" style="cursor:pointer; margin-right:15px">edit</span>
-                        <span class="material-icons-outlined del-ic" style="color:var(--red); cursor:pointer">delete</span>
-                    </div>`;
-                
-                item.querySelector('.edit-ic').onclick = () => openEdit(type, id, data[id].nama);
-                item.querySelector('.del-ic').onclick = () => { 
-                    if(confirm('Hapus?')) remove(ref(db, `${type === 'cat' ? 'categories' : type === 'mkt' ? 'marketplaces' : 'suppliers'}/${id}`)); 
-                };
-                
-                el.appendChild(item);
-            }
-        };
-        
-        window.openAdd = (t) => { 
-            actT = t; 
-            actI = null; 
-            document.getElementById('crudFormTitle').innerText = "Tambah"; 
-            document.getElementById('crudInput').value = ""; 
-            document.getElementById('crudBackBtn').onclick = () => goToPage(`page-${t === 'cat' ? 'kategori' : t === 'mkt' ? 'marketplace' : 'suplayer'}`); 
-            goToPage('page-form-crud'); 
-        };
-        
-        window.openEdit = (t, i, n) => { 
-            actT = t; 
-            actI = i; 
-            document.getElementById('crudFormTitle').innerText = "Edit"; 
-            document.getElementById('crudInput').value = n; 
-            document.getElementById('crudSaveBtn').disabled = false; 
-            goToPage('page-form-crud'); 
-        };
-        
-        document.getElementById('crudSaveBtn').onclick = () => {
-            const val = properCase(document.getElementById('crudInput').value); 
-            const path = actT === 'cat' ? 'categories' : actT === 'mkt' ? 'marketplaces' : 'suppliers';
-            
-            actI ? 
-                update(ref(db, `${path}/${actI}`), {nama: val}).then(() => goToPage(`page-${actT === 'cat' ? 'kategori' : actT === 'mkt' ? 'marketplace' : 'suplayer'}`)) : 
-                push(ref(db, path), {nama: val}).then(() => goToPage(`page-${actT === 'cat' ? 'kategori' : actT === 'mkt' ? 'marketplace' : 'suplayer'}`));
-        };
-        
-        window.openAddUnit = () => { 
-            actI = null; 
-            document.getElementById('formUnitTitle').innerText="Tambah Satuan"; 
-            document.getElementById('unitName').value=""; 
-            document.getElementById('unitShort').value=""; 
-            goToPage('page-form-unit'); 
-        };
-        
-        window.openEditUnit = (id, n, k) => { 
-            actI = id; 
-            document.getElementById('formUnitTitle').innerText="Edit Satuan"; 
-            document.getElementById('unitName').value=n; 
-            document.getElementById('unitShort').value=k; 
-            goToPage('page-form-unit'); 
-        };
-        
-        document.getElementById('btnActionUnit').onclick = () => {
-            const data = { 
-                nama: properCase(document.getElementById('unitName').value), 
-                kode: document.getElementById('unitShort').value.toUpperCase() 
-            };
-            
-            actI ? 
-                update(ref(db, `units/${actI}`), data).then(() => goToPage('page-satuan')) : 
-                push(ref(db, 'units'), data).then(() => goToPage('page-satuan'));
-        };
-        
-        document.getElementById('crudInput').oninput = function() { 
-            document.getElementById('crudSaveBtn').disabled = !this.value; 
-        };
-        
-        document.getElementById('unitName').oninput = () => { 
-            document.getElementById('btnActionUnit').disabled = !(document.getElementById('unitName').value && document.getElementById('unitShort').value); 
-        };
-        
-        document.getElementById('unitShort').oninput = function() { 
-            this.value = this.value.toUpperCase(); 
-            document.getElementById('btnActionUnit').disabled = !(document.getElementById('unitName').value && this.value); 
-        };
+    };
 
-        // ============ FUNGSI V6.1 ============
-        document.getElementById('nama_barang').addEventListener('input', function() {
-            document.getElementById('btnSimpan').disabled = !this.value.trim();
-        });
+    // Override Buka Tambah Barang (Entry Point)
+    window.bukaTambahBarang = function() {
+        // 1. Reset dulu agar bersih dari sesi sebelumnya
+        window.resetFormV6(); 
+        
+        // 2. Buka Halaman
+        window.goToPage('page-tambah-barang-v6');
+        
+        // 3. Setup UI (Tabs)
+        if(window.setupTabs) window.setupTabs(); 
+        
+        // 4. Inisialisasi Detektor (Aman dipanggil berkali-kali karena ada cek di dalamnya)
+        initDirtyCheck();
+        
+        // 5. Paksa Flag Bersih lagi (untuk memastikan hook tidak menandai kotor saat setup)
+        isFormDirty = false;
+    };
 
-        document.querySelectorAll('.tab').forEach(tab => {
-            tab.addEventListener('click', function() {
-                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-                this.classList.add('active');
-            });
-        });
+    // Fungsi Modal Konfirmasi
+    window.tutupModalDiscard = function() {
+        const modal = document.getElementById('modalDiscardTambahBarang');
+        if(modal) modal.style.display = 'none';
+    };
 
-        window.filterKategori = function() {
-            const searchTerm = document.getElementById('searchKategori').value.toLowerCase();
-            const container = document.getElementById('listKategori');
-            container.innerHTML = '';
+    window.konfirmasiBuang = function() {
+        const modal = document.getElementById('modalDiscardTambahBarang');
+        if(modal) modal.style.display = 'none';
+        
+        window.resetFormV6(); // Bersihkan data
+        
+        // Mundur Manual (Bypass dirty check karena sudah dibersihkan)
+        if (pageHistory.length > 1) {
+            pageHistory.pop();
+            const prevPage = pageHistory[pageHistory.length - 1];
+            document.querySelectorAll('.page').forEach(p => p.classList.add('hidden'));
+            const prevEl = document.getElementById(prevPage);
+            if(prevEl) prevEl.classList.remove('hidden');
             
-            const filtered = kategoriData.filter(item => item.nama.toLowerCase().includes(searchTerm));
-            
-            if (filtered.length === 0) {
-                container.innerHTML = '<div class="empty-state"><span class="material-icons-outlined">category</span><div>Tidak ada kategori yang ditemukan</div></div>';
-                return;
-            }
-            
-            filtered.forEach(item => {
-                const div = document.createElement('div');
-                div.className = 'list-item';
-                div.innerHTML = `<div class="name">${item.nama}</div><div class="subtitle">${item.count || 0} barang</div>`;
-                div.onclick = () => {
-                    document.getElementById('kategori').value = item.nama;
-                    document.getElementById('kategori').dispatchEvent(new Event('input', { bubbles: true }));
-                    goBack();
-                };
-                container.appendChild(div);
-            });
-        };
-
-        function loadKategoriV6() {
-            onValue(ref(db, 'categories'), (snapCategories) => {
-                onValue(ref(db, 'products'), (snapProducts) => {
-                    const categories = snapCategories.val() || {};
-                    const products = snapProducts.val() || {};
-                    
-                    const productCount = {};
-                    for (let pid in products) {
-                        const p = products[pid];
-                        const kategori = p.kategori?.trim() || "Umum";
-                        productCount[kategori] = (productCount[kategori] || 0) + 1;
-                    }
-                    
-                    kategoriData = [];
-                    for (let id in categories) {
-                        const cat = categories[id];
-                        kategoriData.push({ id: id, nama: cat.nama, count: productCount[cat.nama] || 0 });
-                    }
-                    
-                    if (!kategoriData.find(c => c.nama === "Umum")) {
-                        kategoriData.push({ id: 'umum', nama: "Umum", count: productCount["Umum"] || 0 });
-                    }
-                    
-                    kategoriData.sort((a, b) => a.nama.localeCompare(b.nama));
-                    filterKategori();
-                });
-            });
+            if (prevPage === 'page-inventaris') window.parent.postMessage('show-parent-ui', '*');
+            else window.parent.postMessage('hide-parent-ui', '*');
+        } else {
+            window.parent.postMessage('go-back', '*');
         }
+    };
 
-        function loadSatuanV6() {
-            onValue(ref(db, 'units'), (snapUnits) => {
-                onValue(ref(db, 'products'), (snapProducts) => {
-                    const units = snapUnits.val() || {};
-                    const products = snapProducts.val() || {};
-                    
-                    const productCount = {};
-                    for (let pid in products) {
-                        const p = products[pid];
-                        const satuan = p.satuan?.trim();
-                        if (satuan) productCount[satuan] = (productCount[satuan] || 0) + 1;
-                    }
-                    
-                    satuanData = [];
-                    for (let id in units) {
-                        const unit = units[id];
-                        satuanData.push({ id: id, nama: unit.nama, kode: unit.kode, count: productCount[unit.kode] || 0 });
-                    }
-                    
-                    if (!satuanData.find(u => u.kode === "PCS")) {
-                        satuanData.push({ id: 'default', nama: "Pieces", kode: "PCS", count: 0 });
-                    }
-                    
-                    satuanData.sort((a, b) => a.nama.localeCompare(b.nama));
-                    filterSatuan();
-                });
-            });
-        }
+    // ============ 3. LOGIKA DROPDOWN SATUAN ============
+    window.toggleUnitDropdown = function() {
+        const list = document.getElementById('dropdownUnitList');
+        if(!list) return;
+        window.renderUnitFromParentField(); 
+        list.classList.toggle('open');
+    };
 
-        function renderUICompact() {
-            const inputSatuanUtama = document.getElementById('inputSatuanUtama');
-            const area = document.getElementById('areaKonversi');
-            const btnSimpan = document.getElementById('btnSimpanSatuanCompact');
+    window.renderUnitFromParentField = function() {
+        const list = document.getElementById('dropdownUnitList');
+        const display = document.getElementById('selectedUnitText');
+        const hiddenInput = document.getElementById('satuan_beli_terpilih');
+        const parentInput = document.getElementById('satuan');
+        
+        if(!list || !display || !hiddenInput || !parentInput) return;
 
-            if (appState.satuanUtama) {
-                inputSatuanUtama.value = `${appState.satuanUtama.nama} (${appState.satuanUtama.kode})`;
-                area.style.display = 'block';
-                btnSimpan.disabled = false;
-                inputSatuanUtama.dispatchEvent(new Event('input', { bubbles: true }));
+        const parentValue = parentInput.value; 
+        const dbSatuan = window.satuanData || [];
+
+        list.innerHTML = ''; 
+        let parsedNames = [];
+
+        if (parentValue) {
+            const match = parentValue.match(/^(.*?)\s*(?:\((.*?)\))?$/);
+            if (match) {
+                if(match[1]) parsedNames.push(match[1].trim());
+                if (match[2]) parsedNames.push(...match[2].split(',').map(s => s.trim()));
             } else {
-                inputSatuanUtama.value = '';
-                area.style.display = 'none';
-                btnSimpan.disabled = true;
-                inputSatuanUtama.dispatchEvent(new Event('input', { bubbles: true }));
+                parsedNames.push(parentValue);
             }
-
-            const container = document.getElementById('listKonversiContainer');
-            container.innerHTML = '';
-            
-            if (appState.satuanTambahan.length === 0) {
-                container.innerHTML = '<div class="empty-state"><span class="material-icons-outlined">scale</span><div>Belum ada satuan besar.<br>Klik tombol di bawah untuk menambahkan.</div></div>';
-                return;
-            }
-
-            appState.satuanTambahan.forEach((item, index) => {
-                const baseCode = appState.satuanUtama ? appState.satuanUtama.kode : '...';
-                const row = document.createElement('div');
-                row.className = 'compact-conversion-row';
-                row.innerHTML = `
-                    <div class="row-left">
-                        <span class="static-num">1</span>
-                        <div class="clickable-unit" onclick="bukaPanelEditCompact(${index})">
-                            <span class="unit-code">${item.kode}</span>
-                            <span class="material-icons-outlined icon-edit">edit</span>
-                        </div>
-                        <span class="static-num">=</span>
-                    </div>
-                    <div class="row-center">
-                        <input type="tel" class="compact-input-field" value="${item.rasio}" placeholder="0" oninput="updateRasioCompact(${index}, this.value)" onblur="validasiRasio(${index})">
-                        <span class="base-unit-code">${baseCode}</span>
-                    </div>
-                    <div class="btn-delete-compact" onclick="hapusSatuanCompact(${index})">
-                        <span class="material-icons-outlined">delete_outline</span>
-                    </div>
-                `;
-                container.appendChild(row);
-            });
         }
 
-        window.updateRasioCompact = function(index, val) {
-            const cleaned = val.replace(/[^\d]/g, '');
-            if (cleaned && parseFloat(cleaned) > 0) appState.satuanTambahan[index].rasio = cleaned;
-            else appState.satuanTambahan[index].rasio = '';
-        };
+        if (parsedNames.length === 0) {
+            const div = document.createElement('div');
+            div.className = 'select-option';
+            div.innerText = "(Isi Satuan dulu)";
+            div.style.color = '#ccc';
+            div.style.pointerEvents = 'none';
+            list.appendChild(div);
+        } else {
+            parsedNames.forEach((namaPanjang) => {
+                const dataFound = dbSatuan.find(s => s.nama.toLowerCase() === namaPanjang.toLowerCase());
+                const kodeResmi = dataFound ? dataFound.kode : namaPanjang; 
 
-        window.validasiRasio = function(index) {
-            const item = appState.satuanTambahan[index];
-            if (item.rasio && parseFloat(item.rasio) <= 0) {
-                alert("Rasio harus lebih besar dari 0");
-                appState.satuanTambahan[index].rasio = '';
-                renderUICompact();
-            }
-        };
-
-        window.hapusSatuanCompact = function(index) {
-            if (confirm("Hapus satuan ini dari daftar?")) {
-                appState.satuanTambahan.splice(index, 1);
-                renderUICompact();
-            }
-        };
-
-        window.bukaPanelEditCompact = function(index) {
-            modePilih = 'edit';
-            indexEdit = index;
-            document.getElementById('panelSatuanTitle').textContent = 'Ganti Satuan';
-            openPanel('panelSatuan');
-            loadSatuanV6();
-        };
-
-        window.filterSatuan = function() {
-            const searchTerm = document.getElementById('searchSatuan').value.toLowerCase();
-            const container = document.getElementById('listSatuan');
-            container.innerHTML = '';
-            
-            const filtered = satuanData.filter(item => 
-                item.nama.toLowerCase().includes(searchTerm) || item.kode.toLowerCase().includes(searchTerm));
-            
-            if (filtered.length === 0) {
-                container.innerHTML = '<div class="empty-state"><span class="material-icons-outlined">straighten</span><div>Tidak ada satuan yang ditemukan</div></div>';
-                return;
-            }
-            
-            filtered.forEach(item => {
                 const div = document.createElement('div');
-                div.className = 'list-item';
-                div.innerHTML = `<div class="name">${item.nama}</div><div class="subtitle">${item.kode}</div>`;
+                div.className = 'select-option';
+                div.innerText = namaPanjang; 
                 div.onclick = () => {
-                    if (modePilih === 'utama') {
-                        appState.satuanUtama = { nama: item.nama, kode: item.kode };
-                        appState.satuanTambahan = [];
-                        goBack();
-                        openPanel('panelSatuanCompact');
-                        renderUICompact();
-                    } else if (modePilih === 'tambahan') {
-                        if (appState.satuanTambahan.find(s => s.kode === item.kode)) {
-                            alert('Satuan ini sudah ada di daftar!'); return;
-                        }
-                        if (appState.satuanUtama && appState.satuanUtama.kode === item.kode) {
-                            alert('Tidak bisa memilih satuan yang sama dengan satuan dasar!'); return;
-                        }
-                        appState.satuanTambahan.push({ nama: item.nama, kode: item.kode, rasio: '' });
-                        goBack();
-                        openPanel('panelSatuanCompact');
-                        renderUICompact();
-                    } else if (modePilih === 'edit') {
-                        if (appState.satuanTambahan.find((s, idx) => s.kode === item.kode && idx !== indexEdit)) {
-                            alert('Satuan ini sudah ada!'); return;
-                        }
-                        if (appState.satuanUtama && appState.satuanUtama.kode === item.kode) {
-                            alert('Tidak bisa mengubah ke satuan yang sama dengan satuan dasar!'); return;
-                        }
-                        const rasioLama = appState.satuanTambahan[indexEdit].rasio;
-                        appState.satuanTambahan[indexEdit] = { nama: item.nama, kode: item.kode, rasio: rasioLama };
-                        goBack();
-                        openPanel('panelSatuanCompact');
-                        renderUICompact();
-                    } else {
-                        document.getElementById('satuan').value = item.nama;
-                        document.getElementById('satuan').dispatchEvent(new Event('input', { bubbles: true }));
-                        goBack();
-                    }
+                    display.innerText = kodeResmi; 
+                    hiddenInput.value = namaPanjang; 
+                    
+                    // Tandai Manual sebagai Kotor
+                    isFormDirty = true; 
+
+                    const lblJual = document.querySelector('label[for="harga_jual"]');
+                    if(lblJual) lblJual.innerText = `Harga Warung (${namaPanjang})`;
+
+                    const lblEceran = document.querySelector('label[for="harga_eceran"]');
+                    if(lblEceran) lblEceran.innerText = `Harga Eceran (${namaPanjang})`;
+                    
+                    list.classList.remove('open');
                 };
-                container.appendChild(div);
+                list.appendChild(div);
             });
-        };
-
-        window.simpanSatuanCompact = function() {
-            if(!appState.satuanUtama) {
-                alert("Pilih satuan dasar terlebih dahulu!"); return;
-            }
-            
-            for (let i = 0; i < appState.satuanTambahan.length; i++) {
-                const item = appState.satuanTambahan[i];
-                if (!item.rasio || item.rasio.trim() === '' || parseFloat(item.rasio) <= 0) {
-                    alert(`Harap isi rasio untuk satuan ${item.nama} (harus lebih dari 0)`);
-                    const input = document.querySelector(`#listKonversiContainer .compact-conversion-row:nth-child(${i+1}) .compact-input-field`);
-                    if (input) input.focus();
-                    return;
-                }
-            }
-            
-            let result = appState.satuanUtama.nama;
-            if(appState.satuanTambahan.length > 0) {
-                const extras = appState.satuanTambahan.map(s => s.nama).join(', ');
-                result += ` (${extras})`;
-            }
-            
-            document.getElementById('satuan').value = result;
-            document.getElementById('satuan').dispatchEvent(new Event('input', { bubbles: true }));
-            goBack();
-        };
-
-        document.getElementById('namaKategoriBaru').addEventListener('input', function() {
-            document.getElementById('btnSimpanKategori').disabled = !this.value.trim();
-        });
-
-        window.simpanKategoriBaru = function() {
-            const nama = document.getElementById('namaKategoriBaru').value.trim();
-            if (!nama) return;
-            
-            const properName = nama.toLowerCase().replace(/\b\w/g, c => c.toUpperCase());
-            
-            push(ref(db, 'categories'), { nama: properName, createdAt: new Date().toISOString() })
-                .then(() => {
-                    document.getElementById('kategori').value = properName;
-                    document.getElementById('kategori').dispatchEvent(new Event('input', { bubbles: true }));
-                    goBack();
-                    loadKategoriV6();
-                }).catch(error => {
-                    alert("Gagal menambahkan kategori: " + error.message);
-                });
-        };
-
-        function validasiFormSatuan() {
-            const nama = document.getElementById('namaSatuanBaru').value.trim();
-            const kode = document.getElementById('kodeSatuanBaru').value.trim();
-            document.getElementById('btnSimpanSatuan').disabled = !(nama && kode);
         }
+    };
+    
+    document.addEventListener('click', function(e) {
+        const container = document.getElementById('unitDropdownContainer');
+        const list = document.getElementById('dropdownUnitList');
+        if (container && list && !container.contains(e.target)) {
+            list.classList.remove('open');
+        }
+    });
 
-        document.getElementById('namaSatuanBaru').addEventListener('input', validasiFormSatuan);
-        document.getElementById('kodeSatuanBaru').addEventListener('input', validasiFormSatuan);
-
-        window.simpanSatuanBaru = function() {
-            const nama = document.getElementById('namaSatuanBaru').value.trim();
-            const kode = document.getElementById('kodeSatuanBaru').value.trim().toUpperCase();
-            
-            if (!nama || !kode) return;
-            
-            const properName = nama.toLowerCase().replace(/\b\w/g, c => c.toUpperCase());
-            
-            push(ref(db, 'units'), { nama: properName, kode: kode, createdAt: new Date().toISOString() })
-                .then(() => {
-                    document.getElementById('satuan').value = properName;
-                    document.getElementById('satuan').dispatchEvent(new Event('input', { bubbles: true }));
-                    goBack();
-                    loadSatuanV6();
-                }).catch(error => {
-                    alert("Gagal menambahkan satuan: " + error.message);
-                });
-        };
-
-        document.getElementById('btnSimpan').addEventListener('click', function() {
-            const namaBarang = document.getElementById('nama_barang').value.trim();
-            const kategori = document.getElementById('kategori').value.trim();
-            const satuan = document.getElementById('satuan').value.trim();
-            const stokAwal = parseInt(document.getElementById('stok_awal').value) || 0;
-            const stokMin = parseInt(document.getElementById('stok_min').value) || 0;
-            const hargaJual = parseInt(document.getElementById('harga_jual').value.replace(/[^\d]/g, '')) || 0;
-            const hargaBeli = parseInt(document.getElementById('harga_beli').value.replace(/[^\d]/g, '')) || 0;
-            const hargaEceran = parseInt(document.getElementById('harga_eceran').value.replace(/[^\d]/g, '')) || 0;
-            const hargaGrosir = parseInt(document.getElementById('harga_grosir').value.replace(/[^\d]/g, '')) || 0;
-            const peringatanStok = document.getElementById('peringatan_stok').checked;
-            
-            if (!namaBarang) {
-                alert("Nama barang harus diisi!"); return;
-            }
-            
-            let kodeSatuan = "PCS";
-            let satuanUtamaNama = "";
-            
-            if (appState.satuanUtama) {
-                satuanUtamaNama = appState.satuanUtama.nama;
-                kodeSatuan = appState.satuanUtama.kode;
-            } else {
-                satuanUtamaNama = satuan.split('(')[0].trim();
-                const satuanInfo = satuanData.find(s => s.nama === satuanUtamaNama);
-                if (satuanInfo) kodeSatuan = satuanInfo.kode;
-            }
-            
-            const konversiData = [];
-            if (appState.satuanTambahan && appState.satuanTambahan.length > 0) {
-                appState.satuanTambahan.forEach((item) => {
-                    if (item.nama && item.rasio) {
-                        konversiData.push({
-                            satuan: item.nama,
-                            rasio: parseFloat(item.rasio).toFixed(2),
-                            jumlahUtama: '1',
-                            jumlahTambahan: item.rasio
-                        });
-                    }
-                });
-            }
-            
-            const barangData = {
-                nama: namaBarang,
-                kategori: kategori || "Umum",
-                satuan: kodeSatuan,
-                satuanNama: satuan || "Pieces",
-                satuanUtama: satuanUtamaNama,
-                satuanTambahan: appState.satuanTambahan ? appState.satuanTambahan.map(s => s.nama).filter(n => n) : [],
-                konversi: konversiData,
-                stok: stokAwal,
-                stokMin: stokMin,
-                hargaJual: hargaJual,
-                hargaBeli: hargaBeli,
-                hargaEceran: hargaEceran,
-                hargaGrosir: hargaGrosir,
-                peringatanStok: peringatanStok,
-                createdAt: new Date().toISOString(),
-                updatedAt: new Date().toISOString()
+    // ============ 4. SETUP AWAL ============
+    document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('.back-button').forEach(btn => {
+            btn.onclick = function(e) { e.preventDefault(); window.goBack(); };
+        });
+        
+        const overlay = document.getElementById('modalOverlay');
+        if(overlay) {
+            overlay.onclick = function() {
+                if (panelStack.length > 0) window.goBack();
             };
-            
-            push(ref(db, 'products'), barangData)
-                .then(() => {
-                    alert("Barang berhasil ditambahkan!");
-                    resetFormV6();
-                    goToPage('page-inventaris');
-                })
-                .catch(error => {
-                    alert("Gagal menambahkan barang: " + error.message);
-                });
+        }
+
+        window.goToPage('page-inventaris');
+        initFirebase();
+    });
+
+    // ============ 5. NAVIGASI LAINNYA ============
+    window.showPage = window.goToPage;
+    window.bukaPengaturan = function() { window.goToPage('page-pengaturan'); };
+    window.tutupPengaturan = function() { window.goToPage('page-inventaris'); };
+    window.tutupTambahBarang = function() { window.goToPage('page-inventaris'); };
+    
+    window.bukaPanelKategori = function() { window.openPanel('panelKategori'); window.filterKategori(); };
+    window.tutupPanelKategori = function() { window.goBack(); };
+    window.tutupPanelSatuanCompact = function() { window.goBack(); };
+    window.tutupPanelSatuan = function() { window.goBack(); };
+    window.bukaFormKategori = function() { window.openPanel('formKategori'); };
+    window.tutupFormKategori = function() { window.goBack(); };
+    window.bukaFormSatuan = function() { window.openPanel('formSatuan'); };
+    window.tutupFormSatuan = function() { window.goBack(); };
+
+    // ============ 6. FIREBASE & DATA ============
+    window.kategoriData = [];
+    window.satuanData = [];
+    let cache = { products: {}, cat: {}, mkt: {}, sup: {} };
+    
+    function initFirebase() {
+        onValue(ref(db, 'products'), (snap) => {
+            cache.products = snap.val() || {}; 
+            renderProductList();
+            refreshList(cache.cat, 'category-list-display', 'kategori', 'cat'); 
+            refreshList(cache.mkt, 'market-list-display', 'marketplace', 'mkt'); 
+            refreshList(cache.sup, 'supplier-list-display', 'suplayer', 'sup');
         });
+        onValue(ref(db, 'categories'), (snap) => { 
+            cache.cat = snap.val() || {}; 
+            refreshList(cache.cat, 'category-list-display', 'kategori', 'cat'); 
+            loadKategoriV6(snap);
+        });
+        onValue(ref(db, 'marketplaces'), (snap) => { 
+            cache.mkt = snap.val() || {}; 
+            refreshList(cache.mkt, 'market-list-display', 'marketplace', 'mkt'); 
+        });
+        onValue(ref(db, 'suppliers'), (snap) => { 
+            cache.sup = snap.val() || {}; 
+            refreshList(cache.sup, 'supplier-list-display', 'suplayer', 'sup'); 
+        });
+        onValue(ref(db, 'units'), (snap) => {
+            renderUnitList(snap);
+            loadSatuanV6(snap);
+        });
+    }
 
-        function resetFormV6() {
-            document.getElementById('nama_barang').value = '';
-            document.getElementById('kategori').value = '';
-            document.getElementById('satuan').value = '';
-            document.getElementById('stok_awal').value = '';
-            document.getElementById('stok_min').value = '';
-            document.getElementById('harga_jual').value = '';
-            document.getElementById('harga_beli').value = '';
-            document.getElementById('harga_eceran').value = '';
-            document.getElementById('harga_grosir').value = '';
-            document.getElementById('peringatan_stok').checked = false;
-            document.getElementById('btnSimpan').disabled = true;
-            
-            appState = { satuanUtama: null, satuanTambahan: [] };
-            
-            document.querySelectorAll('.input-box-v6').forEach(input => {
-                input.dispatchEvent(new Event('input', { bubbles: true }));
-            });
+    // --- RENDER FUNCTIONS ---
+    function renderProductList() {
+        const inv = document.getElementById('inventory-list'); 
+        if(!inv) return;
+        inv.innerHTML = "";
+        for (let id in cache.products) {
+            const p = cache.products[id];
+            inv.innerHTML += `
+                <div class="card">
+                    <div class="initial">${p.nama.substring(0,2).toUpperCase()}</div>
+                    <div class="info">
+                        <div class="name"><b>${p.nama}</b></div>
+                        <div class="price-row">
+                            <div>Jual<strong>Rp ${Number(p.hargaJual).toLocaleString('id-ID')}</strong></div>
+                            <div>Beli<strong>Rp ${Number(p.hargaBeli).toLocaleString('id-ID')}</strong></div>
+                        </div>
+                    </div>
+                    <div class="status">
+                        <span class="badge">${p.kategori}</span>
+                        <div style="font-weight:800; margin-top:5px;">${p.stok} ${p.satuan || 'PCS'}</div>
+                    </div>
+                </div>`;
         }
+    }
 
-        function formatRupiah(input) {
-            const value = input.value.replace(/[^\d]/g, '');
-            if (value) input.value = 'Rp ' + parseInt(value).toLocaleString('id-ID');
-            else input.value = '';
+    function renderUnitList(snap) {
+        const el = document.getElementById('unit-list-display'); 
+        if(!el) return;
+        el.innerHTML = ""; 
+        const data = snap.val() || {};
+        for (let id in data) {
+            const item = document.createElement('div'); 
+            item.className = 'common-list-item';
+            item.innerHTML = `
+                <div class="unit-info">
+                    <b>${data[id].nama}</b>
+                    <div style="color:var(--gray);font-size:12px">${data[id].kode}</div>
+                </div>
+                <div class="unit-actions">
+                    <span class="material-icons-outlined edit-u" style="cursor:pointer; margin-right:15px">edit</span>
+                    <span class="material-icons-outlined del-u" style="color:var(--red); cursor:pointer">delete</span>
+                </div>`;
+            item.querySelector('.edit-u').onclick = () => window.openEditUnit(id, data[id].nama, data[id].kode);
+            item.querySelector('.del-u').onclick = () => { if(confirm('Hapus Satuan?')) remove(ref(db, `units/${id}`)); }; 
+            el.appendChild(item);
         }
+    }
+    
+    window.updateOnlineStatus = (c) => { 
+        const el = document.getElementById('status-icon');
+        if(el) el.style.color = c.checked ? "var(--green)" : "var(--gray)"; 
+    };
+    
+    window.adjustDecimal = (v) => { 
+        const i = document.getElementById('decimal-count'); 
+        if(!i) return;
+        let r = parseInt(i.value) + v; 
+        if (r >= 0 && r <= 4) i.value = r; 
+    };
+    
+    const refreshList = (data, container, key, type) => {
+        const el = document.getElementById(container); 
+        if(!el) return;
+        el.innerHTML = "";
+        for (let id in data) {
+            let count = 0; 
+            for(let pId in cache.products) { if(cache.products[pId][key] === data[id].nama) count++; }
+            const item = document.createElement('div'); 
+            item.className = 'common-list-item';
+            item.innerHTML = `
+                <div class="unit-info"><b>${data[id].nama}</b><div style="color:var(--gray);font-size:12px">${count} Barang</div></div>
+                <div class="unit-actions">
+                    <span class="material-icons-outlined edit-ic" style="cursor:pointer; margin-right:15px">edit</span>
+                    <span class="material-icons-outlined del-ic" style="color:var(--red); cursor:pointer">delete</span>
+                </div>`;
+            item.querySelector('.edit-ic').onclick = () => window.openEdit(type, id, data[id].nama);
+            item.querySelector('.del-ic').onclick = () => { if(confirm('Hapus?')) remove(ref(db, `${type === 'cat' ? 'categories' : type === 'mkt' ? 'marketplaces' : 'suppliers'}/${id}`)); };
+            el.appendChild(item);
+        }
+    };
 
-        document.getElementById('harga_jual').addEventListener('blur', function() { formatRupiah(this); });
-        document.getElementById('harga_beli').addEventListener('blur', function() { formatRupiah(this); });
-        document.getElementById('harga_eceran').addEventListener('blur', function() { formatRupiah(this); });
-        document.getElementById('harga_grosir').addEventListener('blur', function() { formatRupiah(this); });
-    </script>
+    function loadKategoriV6(snapCategories) {
+        const categories = snapCategories.val() || {};
+        const products = cache.products || {};
+        const productCount = {};
+        for (let pid in products) { const p = products[pid]; const kategori = p.kategori?.trim() || "Umum"; productCount[kategori] = (productCount[kategori] || 0) + 1; }
+        window.kategoriData = [];
+        for (let id in categories) { const cat = categories[id]; window.kategoriData.push({ id: id, nama: cat.nama, count: productCount[cat.nama] || 0 }); }
+        if (!window.kategoriData.find(c => c.nama === "Umum")) { window.kategoriData.push({ id: 'umum', nama: "Umum", count: productCount["Umum"] || 0 }); }
+        window.kategoriData.sort((a, b) => a.nama.localeCompare(b.nama));
+        if(window.filterKategori) window.filterKategori();
+    }
+
+    function loadSatuanV6(snapUnits) {
+        const units = snapUnits.val() || {};
+        const products = cache.products || {};
+        const productCount = {};
+        for (let pid in products) { const p = products[pid]; const satuan = p.satuan?.trim(); if (satuan) productCount[satuan] = (productCount[satuan] || 0) + 1; }
+        window.satuanData = [];
+        for (let id in units) { const unit = units[id]; window.satuanData.push({ id: id, nama: unit.nama, kode: unit.kode, count: productCount[unit.kode] || 0 }); }
+        if (!window.satuanData.find(u => u.kode === "PCS")) { window.satuanData.push({ id: 'default', nama: "Pieces", kode: "PCS", count: 0 }); }
+        window.satuanData.sort((a, b) => a.nama.localeCompare(b.nama));
+        if(window.filterSatuan) window.filterSatuan();
+    }
+
+window.tambahTierGrosirV6 = function() {
+    const container = document.getElementById('container-grosir-v6');
+    const displayUnit = document.getElementById('selectedUnitText').innerText || ""; 
+    const tierId = Date.now(); 
+
+    const row = document.createElement('div');
+    row.className = 'flex-row'; 
+    row.id = `tier-${tierId}`;
+    row.style.marginTop = '10px';
+
+    row.innerHTML = `
+        <div class="input-group w-30" style="position: relative;">
+            <input type="number" class="input-box-v6" placeholder=" ">
+            <label class="floating-label">Min Qty</label>
+            <span class="unit-indicator" style="opacity:1">${displayUnit}</span>
+        </div>
+        <div class="input-group w-70" style="position: relative;">
+            <input type="number" class="input-box-v6" placeholder=" " style="padding-right: 40px;">
+            <label class="floating-label">Harga Grosir</label>
+            
+            <span class="material-icons-outlined" 
+                  onclick="document.getElementById('tier-${tierId}').remove()" 
+                  style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); 
+                         color: var(--red); cursor: pointer; font-size: 20px; z-index: 5;">
+                delete
+            </span>
+        </div>
+    `;
+    container.appendChild(row);
+};
+
+function initPriceMirroring() {
+    const inputWarung = document.getElementById('harga_jual'); // Harga Warung
+    const inputEceran = document.getElementById('harga_eceran'); // Harga Eceran
+
+    if (inputWarung && inputEceran) {
+        inputWarung.addEventListener('input', () => {
+            // Salin nilai dari Warung ke Eceran secara otomatis
+            inputEceran.value = inputWarung.value;
+
+            // Trigger event input pada Eceran agar label floating-nya sadar ada isi
+            inputEceran.dispatchEvent(new Event('input'));
+            
+            // Tandai form sebagai kotor/berubah
+            isFormDirty = true;
+        });
+    }
+}
+
+// Panggil fungsi ini saat halaman dimuat
+document.addEventListener('DOMContentLoaded', initPriceMirroring);
+</script>
 </body>
 </html>
